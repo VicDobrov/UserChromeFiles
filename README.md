@@ -1,2 +1,7 @@
-# UserChromeFiles
-UserChromeFiles © Vitaliy V.
+# UserChromeFiles © Vitaliy V.
+UCF загрузчик скриптов/стилей расширяет возможности Firefox, используя функцию autoconfig.
+
+Установка: содержимое папки Firefox поместить в папку его установки, папку chrome поместить в папку вашего профиля.
+После изменения/добавления скриптов нажать в about:support «Очистить кэш запуска» или в UCF-диалоге «Перезапустить*».
+В настройках UserChromeFiles (кнопка Шестерёнка или about:user-chrome-files) выбрать нужные панели инструментов и дополнительные скрипты/стили.
+Папка custom_styles используется для различных файлов CSS, которые подключаются в CustomStylesScripts.jsm и CustomStylesScriptsChild.jsm.
