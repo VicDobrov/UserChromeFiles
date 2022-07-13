@@ -1,0 +1,8 @@
+{
+	"policies": {
+		"DisableAppUpdate": true,
+		"DisableTelemetry": true,
+		"DisableSystemAddonUpdate": true,
+		"DisableFeedbackCommands": true
+	}
+}
