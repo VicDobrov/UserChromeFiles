@@ -1,0 +1,28 @@
+/* Firefox Quantum userChrome.css tweaks ********************************************************/
+/* code mostly taken from 'Classic Theme Restorer' & 'Classic Toolbar Buttons' add-ons **********/
+/* Github: https://github.com/aris-t2/customcssforfx ********************************************/
+/************************************************************************************************/
+
+@import "./config/general_variables.css";
+@import "./css/buttons/buttons_on_navbar_classic_appearance.css";
+@import "./css/buttons/buttons_on_bookmarks_toolbar_classic_appearance.css";
+@import "./css/buttons/whatnew_button_always_hidden.css";
+@import "./css/buttons/back_and_forward_separated_history_popups.css";
+@import "./css/buttons/custom_backforward_large_ff3.css";
+@import "./css/appbutton/appbutton_on_navbar_separator_hidden.css";
+@import "./css/appbutton/appbutton_in_titlebar_autocolor.css";
+@import "./css/tabs/classic_squared_tabs.css";
+@import "./css/tabs/tab_icon_colors.css";
+@import "./css/generalui/private_mode_indicator_hidden.css";
+@import "./css/generalui/bookmark_icons_colorized.css";
+@import "./css/generalui/send_to_device_menuitems_hidden.css";
+@import "./css/generalui/set_as_desktop_background_menuitems_hidden.css";
+@import "./css/generalui/popup_animation_fade_time_reduced.css";
+@import "./css/toolbars/toolbars_old_padding.css";
+@import "./css/toolbars/tabs_toolbar_adjustments.css";
+@import "./css/toolbars/general_toolbar_colors.css";
+@import "./css/locationbar/identitybox_colors.css";
+@import "./css/locationbar/icons_colorized.css";
+@import "./css/locationbar/pageaction_separator_in_location_bar_hidden.css";
+@import "./css/locationbar/starbutton_popup_preview_image_hidden.css";
+@import "./css/locationbar/ac_popup_result_font_size.css";

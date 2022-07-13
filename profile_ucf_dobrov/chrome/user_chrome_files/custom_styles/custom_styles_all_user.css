@@ -1,0 +1,141 @@
+/* Этот файл для правил CSS с правами USER_SHEET работает во всех документах */
+@import url("./classic/userChrome.css");  /* <-- Classic Theme Restorer */
+@import url("./tabs_bellow.css");  /* VitalijV */
+
+:root{ /* глобальные переменные */
+	--general_ui_font_size: 11pt;
+	--urlbar-container-width: 340px;	/* панель адреса: лимит ширины */
+}
+.toolbarbutton-badge-stack .toolbarbutton-badge{
+	font-size: 10px !important;
+}
+#PanelUI-button, #PanelUI-button * {
+	font-size: var(--general_ui_font_size) !important;
+}
+/* override CSS code set by other 'options' */
+#main-window[uidensity="compact"] toolbar :-moz-any(.searchbar-textbox, #urlbar,#searchbar), .megabar #urlbar-results :-moz-any(.urlbarView-tags, .urlbarView-action, .urlbarView-title, .urlbarView-url), #urlbar-container[breakout] #urlbar[breakout], #searchbar, .searchbar-textbox {
+	font-size: var(--general_ui_font_size) !important;
+}
+.tabbrowser-tab *{
+	font-size:10pt !important;
+	max-height: var(--classic_squared_tabs_tab_height) !important; min-height: var(--classic_squared_tabs_tab_height) !important;
+}
+/* remove maximum/minimum width restriction of sidebar */
+#sidebar { max-width: none !important; min-width: 0px !important;
+}
+/* увеличить шрифт боковой панели */
+#bookmarks-view *, #historyTree{ font-size:12pt !important;
+}
+/* Фон боковой панели */
+#historyTree { background-color: #F0F4F9 !important;}
+#bookmarks-view, #bookmarks-view-children { background-color: #F2F2F0 !important;}
+
+/* жирный шрифт строки адреса */
+#urlbar{ font-weight: bold !important; font-size: 12pt !important;
+	border-radius: 0px 6px 6px 0px !important;
+}
+#urlbar-container{ /* панель адреса ширина */
+	min-width: var(--urlbar-container-width) !important; max-width: var(--urlbar-container-width) !important;
+}
+/* скрыть подпись иконки сайта */
+#identity-icon-label { display: none !important;}
+
+/* кнопка меню: комбо-значок «Закрыть/⇲/Мин…» */
+#PanelUI-menu-button:not(:hover) { -moz-image-region: auto !important;
+	list-style-image: url("data:image/svg+xml;charset=utf-8,<svg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><rect transform='matrix(2,0,0,2,-26,8.5)' x='13' y='-4.26' width='16' height='16' fill='hsl(220, 80%, 90%)'/><g fill='none' stroke='black'><path d='m18.825 4.43h12' stroke-width='2.6'/><g transform='translate(.4 .29)' opacity='.6' stroke-miterlimit='0'><path d='m29 14-15 15' stroke-width='3.43'/><path d='m14 13.86 15 15' stroke-width='3.44'/></g><g transform='matrix(1 0 0 .87 -6.6 -5)' stroke-width='2'><rect x='9' y='12.3' width='8' height='8' stroke-linecap='square' stroke-miterlimit='8' stroke-width='1.7'/><g transform='translate(.84 -.9)'><path d='m9.6 9.1h10.8' stroke-width='2.2'/><path d='m19.9 8v10' stroke-width='1.4'/></g></g><g transform='matrix(1 0 0 .7 5.5 -10)'><path d='m-2.3 46.6 3.6 7' stroke-width='1.7'/><path d='m1.3 53.6 3.57-7' stroke-width='1.7'/><path d='m1.3 53.6v-15' stroke-width='1.88'/></g></g></svg>") !important;
+}
+#PanelUI-menu-button .toolbarbutton-badge-stack {padding: 0px !important;}
+#PanelUI-button .toolbarbutton-icon {margin: 0px !important;
+	min-width: calc(var(--classic_squared_tabs_tab_height) + 8px) !important; min-height: calc(var(--classic_squared_tabs_tab_height) + 8px) !important;
+}
+#PanelUI-menu-button .toolbarbutton-icon { min-width: 28px !important; min-height: 28px !important; padding: 0 !important;}
+.toolbarbutton-icon { min-width: 18px !important; min-height: 18px !important;}
+
+.tabbrowser-tab:not([selected="true"]) .tab-close-button { /* значок Закрыть только на текущей вкладке */
+	visibility: collapse !important;
+}
+#tabbrowser-tabs .tabbrowser-tab:not([pinned])[selected="true"] .tab-close-button {
+	visibility: visible !important; display: block !important;
+}
+#TabsToolbar #tabbrowser-tabs .tabbrowser-tab:not([pinned]):not([selected="true"]) .tab-close-button, #TabsToolbar #tabbrowser-tabs .tabbrowser-tab[pinned]:not([selected="true"]) .tab-close-button {
+	visibility: collapse !important; display: none !important;
+}
+#sidebar-header{ padding-top: 0px !important; padding-bottom: 0px !important;} /* компактный заголовок боковой панели */
+
+:root[inFullscreen="true"] #nav-bar {
+	transition: margin-top 0.5s !important;
+}
+:root[inFullscreen="true"] #nav-bar { /* macos fix */
+	visibility: collapse !important;
+}
+
+/* разделители кнопок поиска подменю строки адреса */
+.searchbar-engine-one-off-item:not(#urlbar-anon-search-settings-compact) {
+    background: linear-gradient(transparent 15%, var(--panel-separator-color) 15%, var(--panel-separator-color) 85%, transparent 85%);
+    background-size: 1px auto;
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-clip: padding-box;
+    color: var(--panel-disabled-color);
+}
+.searchbar-engine-one-off-item:not(#urlbar-anon-search-settings-compact),
+.search-panel-one-offs-header {border-bottom: 1px solid var(--panel-separator-color);}
+.search-panel-one-offs {height: auto !important;}
+.search-one-offs .searchbar-separator {display: none;}
+#PopupSearchAutoComplete {padding-bottom: 0 !important;}
+.search-setting-button {border-top: none !important;}
+#urlbar .searchbar-engine-one-off-item {margin-inline-end: 0 !important;}
+#urlbar .search-one-offs {padding-bottom: 0 !important;}
+#urlbar .search-panel-header {display: none !important;}
+#urlbar .search-one-offs { padding-block: 0 !important;}
+
+/* размеры кнопок */ /*#favorites-dobrov .toolbarbutton-icon{ padding: 2px !important; }*/
+#ToggleButton .toolbarbutton-icon, #print-button .toolbarbutton-icon, #ucf_Reader .toolbarbutton-icon { padding: 4px !important;}
+
+/* Значок указанной папки Избранного (пустое имя), жёлтый цвет звёздочки, синий: rect=(top, right, bottom, left) */
+.bookmark-item[label=""] > .toolbarbutton-icon {
+	filter: invert(15%) sepia(300%) saturate(500%) !important;
+	height: 20px !important;
+}
+.bookmark-item[label=""]:hover {
+	cursor: pointer;
+}
+#star-button { filter: invert(40%) sepia(100%) saturate(500%) !important;}
+
+#pageAction-urlbar-_2495d258-41e7-4cd5-bc7d-ac15981f064e_ {
+	padding-bottom: 1px !important;
+	list-style-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAACSklEQVR4Xt1VK5CDMBCtjEQiI5FIJBKJrEQikUhkJbISWXECiUQikSdPVpyoO1Ry79HsTGYu7X3kZWYvudn39m12N/Tw/1ZZljHWHEWR1VoPWOoZHpge+I0ccr8VAHDAZsUg0j4J3vhYcr/NXil1w3ED+UIS/w9lVhQFsVeXxEiOjw1akiQVCSjPYq1V3EGyeZ4nAYEEPmJXLGJncl2M8AJo9MuCwBpWPMJnWVaIuJQLQtOj8mheEbYJ6TdGDrhSJh1qmJRn/usEkusqUIecE51pmnZVVSV1Xcc/FWiaJiaH3FCZ2LC9PDI1clWM3Qjfw3LRxwkSjh+DMcPzTFNKzszmivqmgZqn8L2FODTG/FK7WGvTnAfTL6vpxskkWW5kbPGiI5Qgo/GMtdBHDLHkkMsYXi9d9/FIQLAEjZs1481a7sPbzeg0Ne6Vrtz9M33E+BwKQZy4+zTK9BRVvQNf3jcrRkLdn3eBkNFHzOV6x3MnB7EkqeqA7i8ENwTfROBjN2bVz4sIbChPReMZRh85wHoCiNG4pDCJ6wF/lns2PbLxBXawPU2zX1O/Z/R9EfBvzdgs0ZHgvDy6Wu5AAdvq1EvdexFwZ/p2jODJpUB+PO4CjM0myyfCdpfRTF7Dzusrp8K6B5iLgDtb+oiRJpPLGIwlX1aXke5IUOh+2bSmBag6nfyRGwO/G6MTIXbnkMsYLvvOf+oKhIs3IcZ7aEuWZbFgvVvE9IU4EB/atlWh34Mayq+8IvYrrIN49OQbFBFDLGcf/JUxDv9qfQIh7hUoqCKBNAAAAABJRU5ErkJggg==") !important;
+}
+#pageAction-urlbar-_2495d258-41e7-4cd5-bc7d-ac15981f064e_:not(:hover){
+	filter: contrast(80%) opacity(80%); !important;
+}
+toolbar #downloads-button > .toolbarbutton-badge-stack { /* увеличить кнопку Загрузки */
+	transform: scale(1.33, 1.33) !important; padding: 4px !important;
+}
+/* переместить пункт меню */
+#context-openlinkinusercontext-menu { -moz-box-ordinal-group: 10;}
+#context-searchselect-ucf { -moz-box-ordinal-group: 0 !important;}
+
+@-moz-document url-prefix("chrome:"), url("about:downloads") {
+	richlistbox > richlistitem.download-state[state="0"] > .downloadPauseResumeButton {
+	    list-style-image: url("./svg/download-pause.svg") !important;
+	}
+	richlistbox > richlistitem.download-state[state="4"] > .downloadPauseResumeButton {
+	    list-style-image: url("./svg/download-resume.svg") !important;
+	}
+	richlistbox > richlistitem.download-state[buttonhidden] .downloadPauseResumeButton,
+	richlistbox > richlistitem.download-state:not(:is([state="0"],[state="4"])) .downloadPauseResumeButton {
+		display: none !important;
+	}
+}
+
+/* MacOS/Linux
+#TabsToolbar, #tabs-newtab-button, .tab-label-container, .scrollbutton-up, .scrollbutton-down { margin-top: -2px !important;}*/
+.tab-label-container{margin-top: -3px !important}
+
+/* кнопки окна */
+/* #window-controls {display: none !important;} */
+/*.titlebar-buttonbox { max-height: 0px !important; display:none !important;}*/
+
+/* скрыть на Linux
+.titlebar-buttonbox-container{display: none !important;}*/

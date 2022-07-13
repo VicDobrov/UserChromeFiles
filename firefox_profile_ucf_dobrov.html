@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>профиль Firefox 78+, улучшенный кнопками, стилями, user-скриптами</title>
+
+<style type="text/css">
+body { background-color: #e5ebfa; color: #555;}
+{ font-family: Helvetica, Arial, sans-serif; font-size:12px;}
+p{ margin:0px; padding:0px 0px 0px 0px; text-indent:0px;}
+	blockquote{margin-top:2px;margin-bottom:2px;}
+table{ table-layout:fixed; border-collapse:collapse; empty-cells:show;}
+td, th{ vertical-align:top; text-align:left;}
+div{ padding:0px 0px 0px 0px;}
+.RedText { color: #900090;} .BlueText { color: #0000CC;} .GrayText { color: #999999;}
+a.tooltip span { display: none; padding: 2px 3px; margin-left: 8px; max-width: 400px;}
+a.tooltip:hover span { display: inline; position: absolute; font-size: small; background: hsl(62, 53%, 90%); border: 1px solid #888;}
+#floatTip {
+	position: absolute; display: none;
+	border: 1px solid #666666; /* рамка */
+	padding: 4px; /* поля вокруг текста */
+	font-family: sans-serif;
+	color: #333;
+	border-radius: 2px;
+	box-shadow: 4px 4px 2px 0px #bbbbbb;
+	background-color: hsl(62, 53%, 90%); /* Цвет фона */
+	width: 350px; /* ширина блока */
+}
+a {text-decoration: none}
+a:hover {text-decoration: underline}
+.small {
+	color: #555;
+	font-family:Helvetica, sans-serif; font-size:small !important;
+}
+H2 { font-weight: bold; font-size: large; background-color: #d0f5df; padding: 0px 0px 0px 50px; margin: 8px 0px 0px 0; width: 90%;}
+H3 { font-weight: bold; font-size: medium; color: #3570B8; margin: 8px 0px 0px 0;}
+.trigger_note	{ DISPLAY: none}
+.aHistory		{ text-decoration: none;
+}
+.aHistory:hover		{ text-decoration: underline}
+.history		{ text-align: left;
+	font-family:sans-serif; font-size:medium !important;
+	margin-left: 8px;
+	background-color: #EbEdEe;
+	max-width: 960px;
+}
+</style>
+<script type="text/javascript">
+function toggle(section, sec = document.getElementById(section)) {
+	sec.style.display = (sec.style.display == "block") ? "none" : "block";
+	document.getElementById("faq").style.display = (sec.style.display == "block") ? "none" : "block";
+}
+document.onmousemove = moveTip;
+function moveTip(e) {
+ floatTipStyle = document.getElementById("floatTip").style;
+ w = 250;
+ if (document.all) {
+	x = event.clientX + document.body.scrollLeft;
+	y = event.clientY + document.body.scrollTop;
+ } else
+	x = e.pageX; y = e.pageY;
+ if ((x + w + 10) < document.body.clientWidth)
+	floatTipStyle.left = x + 'px'
+ else
+	floatTipStyle.left = x - w + 'px';
+}
+function toolTip(msg) {
+ floatTipStyle = document.getElementById("floatTip").style;
+ if (msg) {
+	document.getElementById("floatTip").innerHTML = msg;
+ 	floatTipStyle.display = "block";
+ } else
+	floatTipStyle.display = "none";
+}
+window.fav = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsElEQVR4AXSRA3RtZxBGp7Zt27Zt27bt2KltP9u2jVi6Pmac3a5zX6T9Y3nmg7z00gul+bk5VnZmhvXv139Y478ebv31zW9WfkGulZOTZeXmZlvvvvN2/KSTTnpUkmwmPUlJ+TjEJuRHQaYJ8tNJVFbU0ImiqXiex8WXXvzz1ltvvfPgA4YcgzQIB4+5i2Wr10NTOwDFxUWoqsqwIUO49uqrZ0iSzYN/SP5vIZkjyEbhwPCtPBl7jcti9yMNhyFzN6PUrsV1PQzTJK4oAOy+++5PSSd/5/0akkWChE7mLf1Dno2/wkEN9yBVZyBzj6TIrqKltYXa+hCd7LjjDq8ObGHMeUhoS7YbcjtL16zqtEDRqpmw7A6qFkwAYKeddnxl4AF/7oMsFuS38ymvqqSTaNEQMJ+hfsyHAOy2267dClJTPwkBQcqdtIQriSwdQc2yaWyYOxPUQiAD+5uDSJQuY/+DD35eOklLTQm1trZimia2beN6HuqqYVD7B62lhfhLsqGxAPgS8o6kIfdN7j7qwMwDRbYNBqSnpYR83w9qMgwjeAnVZv286aA/C81vgPkZqB+A8yA0PwT2i9CUQtM/V5UNOMBxXBTdQVueAUoGhF+EqhthxTawRKB8O1hxVuujF+5yVTDA83wURUHTNHRdD4bYjkvx3BEw9XYYLzBRYM7+MPtYzj9k/4+kk/S01JDjOCQSiWDA/0qCPAzHJzI9D0YfD5MEpm8NC46CqUdw6O7bpUlnBgW52aFGz8PQ9eQzkgoShgPzHoWJJzLmz1/46+d/YelpUHI6/61Ml+EAUKuLHB8jO4ONtWW/oaHeBiNDAzg20NPbYGhouH5invmpMDfd/XYOjput7Rw2zM81v/v/hN3/TVGsDzgZGCIY4NmTBGAsxSW0OlZquaUIgw2IDwDaoWY6CKZOJAAAAABJRU5ErkJggg==';
+</script>
+</head>
+<body>
+
+<p><a href="http://forum.mozilla-russia.org/viewtopic.php?id=76642" onMouseOver="toolTip('<b><i>&nbsp;&nbsp;рекомендуется</i> Firefox версии 90 и выше</b><hr>Расширение возможностей и настройка <br>стиля браузера с помощью скриптов<br>Автоматизация скриптами iMacros<br>и многое другое на форуме<br>https://forum.mozilla-russia.org')" onMouseOut="toolTip()" ><strong>Экспертный профиль Firefox</strong></a> <a class="tooltip" href="http://victor-dobrov.narod.ru/projects.html">© Dobrov<span>мои проекты</span></a> <span class="GrayText"> – <span class="RedText"><em>кнопки</em></span><em>,</em> <span class="BlueText">скрипты</span><font color="#444">, стили</font><small> [<a class="tooltip" href="http://victor-dobrov.narod.ru/share/firefox_profile_dobrov.7z">12.04.2022<span>скачать архив</span></a>]</small></p><div id="floatTip"></div>
+
+<p style="margin-top: 9px; margin-bottom: 5px; line-height: 130%">
+	<span style="background-color:#EFF"><strong>Кнопки</strong> выполняют <strong>несколько действий</strong>:</span> Справка при наведении мыши ⦺<br>
+	Вернуть <span style="color: darkred">удалённые закладки</span>, перевод сайта/текста, <span style="background: linear-gradient(to right, #4ff, #cff 70pt)">  Прогресс загрузки   </span><br>
+	<span style="background-color:#FED"><strong>Меню переключения</strong> скрытых настроек</span>, Добавить закладку без запроса<br>
+		Яркость: колёсико ± на Замке <img src='data:image/gif;base64,R0lGODlhLAAUAPIAAFZdZnJ6gm+LsZOdrJmqvrnD08jV59jj9CH5BAAAAAAALAAAAAAsABQAAAOUeLrc/jDKSau9WBkyAgDBQBjWJghjNXxsCwyUcc4COX3CUCjFIHwUQs5g8BEowEPhuEhKTjaZAAk4rKpN7HO6OFGtzkMY4u1yJUBCeNzw0d6wiKdQcNYD2/dbsoI5+3l6MxJ3BnUac4GCZxAeUzsHP3iKghN1IHQeAJARizQUly2cnZ5lEzI4NhNui3EZr7CxsrOvCQA7' style="margin-bottom:-6px">, режим <font style="background-color: #F0F0D0">Прокси</font> <font style="background-color: #FFE8FF">разным</font> <font style="background-color: #E0F0D4">фоном</font> <strong>Меню</strong><br>
+	<strong>Расположение страниц в Закладках</strong> показывается в подсказке Звёздочки<br>
+	Проиграть/скачать видео или ссылку <strong>программой из контекстного меню</strong><br>
+	<strong>Обновление вкладок</strong> по любому таймеру и многое другое: <small><a class="tooltip" href="#" onclick="toggle('help'); return false"><strong style="color:#4000c0; text-decoration: underline">Полный список</strong>▼<span>Техническая информация</span></a></small><br>
+</p>
+<p><div class="trigger_note" id="help"><table style="margin-bottom: 8px" class="history" width="97%" cellspacing="1"><tbody><tr><td> <!-- справка -->
+<strong>Кнопки</strong> — расширяемые кликами <small>кнопок мыши и колёсика,</small> сочетания клавиш и жесты:<br>
+<strong>новые</strong> 14 — <script>document.write('<img src='+ window.fav +' style="margin-bottom:-3px">')</script> Журнал<small> и меню опций, История, Закладки, Папки, Пароли, Просмотр части страницы или Запись в Html, Менеджер сессий, <strong>Восстановить удалённые закладки</strong> или fav-иконки, Ссылки в подсказках, Дополнения, Инспектор атрибутов, UCF…</small><br>
+<strong>стандартные</strong> 7 — Загрузки, ≡ Меню, Печать, Звёздочка, Щит защиты, Замок, Обновить/Стоп<br>
+<strong>расширения</strong> 2 — SingleFile (сохранение по Alt+Shift+S), Reader View.<br>
+<strong>User.js</strong> скрипт пользователя: запуск по Alt+X, <strong>ucf_aom-button.js</strong> управление дополнениями<br>
+<strong>ucf_hookClicks.js</strong> глобальные функции, подсказки, перехват нажатий мыши и клавиатуры<br>
+<strong>ucf_QuickToggle.js</strong> открытие боковой панели, меню скрытых системных настроек<br>
+<strong>attrsInspector.js</strong> Attributes Inspector, <strong>auto_hide_sidebar.js</strong> скрытие боковой панели<br>
+<strong>menubarVisibilityChance.js, ucf_autohidetabstoolbar.js</strong> автоскрытие панели с одной вкладкой<br>
+<strong>ucf-loads-favicons.js</strong> восстановить иконки закладок<br>
+<strong>ucf_BookmarkDir.js</strong> быстрая закладка, перевод сайта/текста<br>
+<strong>ucf_contextsearch.js</strong> поиск в контекстном меню, <strong>ucf_findbarclose.js</strong> автоскрытие поиска<br>
+<strong>ucf_cooks-pass.js</strong> пароли и куки, <strong>ucf_UrlTooltip.js</strong> ссылки в подсказках<br>
+<strong>ucf_LocationBarEnhancer.js</strong> градиент загрузки страниц<br>
+<strong>ucf_pauseResume.js</strong> кнопка Пауза для скачиваемых файлов<br>
+<strong>ucf_downloads_clear.js</strong> кнопка "Очистить загрузки" на DownloadsPanel<br>
+<strong>ucf_session.js</strong> сохранение | восстановление сессий<br>
+<strong>ucf_tab-update.js</strong> автообновление вкладок по таймеру<br>
+<strong>ucf_undo-tab.js</strong> история закрытых вкладок/окон<br>
+<strong>ucf_win_contextmenuopenwith.js</strong> можно прописать свои приложения открытия ссылок<br>
+<strong>ucf_win_mousedrag.js</strong> жесты мыши для ссылок и выделенного текста<br>
+<strong>AppMenuTbbSaveHTMLChild.jsm</strong> сохранение страниц в единый Html<br>
+<strong>ClickPicSave.jsm</strong> сохранение картинок, в том числе и недоступных для сохранения обычным способом<br>
+<strong>UCFTitleChangedChild.jsm</strong> авто-коррекция имён (заголовков) вкладок<br>
+<strong>PageReadMode.user.js</strong> выбор части страницы курсорными клавишами после нажатия Alt+R<br>
+<strong>undoBookmarksContextMenu.uc.js</strong> восстановить удалённые Закладки в панели закладок<br>
+Возможности дополняются <a href="https://greasyfork.org">пользовательскими скриптами</a> 🐵, например <a href="https://greasyfork.org/users/136230"><strong>Vk Media Downloader</strong></a>,<br>
+<a href="https://greasyfork.org/scripts?q=Enable+Right+Click"><strong>Enable Right Click</strong> - </a>разблокировать копирование текста на странице по нажатию Ctrl+` (ё)<br>
+<font style="font-size:middle; background-color: #DFF">Обозначения: ◧ Левая кнопка мыши, ◨ Правая, ◉ Средняя (колёсико), ⇅ крутить Ролик</font><br>
+
+</td></tr></tbody></table></div></p>
+
+<div class="trigger_faq" id="faq">
+<p>1) <strong>⤓</strong> кнопка <strong>Загрузки</strong> добавлены клики мыши, в списке есть <strong>Пауза</strong>\Старт<br></p>
+<blockquote>
+		<strong>Правый клик:</strong> сохранить Страницу | Выделен. текст в <strong>единый .html</strong><br>
+		<strong>◧</strong> клик <strong>+ Shift</strong> Графика вкл/<strong style="background-color:#FFD0FF">откл</strong>, <strong>Левый клик + Alt</strong> папка <strong>Загрузки</strong><br>
+		Колёсико ◉ клик мыши: Сохранить | Выделенный текст как файл .txt<br>
+		<p style="margin-left: -25px"><i style="color:darkblue">единый html это файл, содержащий все данные: графику, текст, стили</i></p>
+</blockquote>
+
+<p>2) <big><strong>≡</strong></big> стандартная кнопка <strong>Меню</strong> — вне курсора составной значок <img src="data:image/svg+xml;charset=utf-8,<svg width='20' height='20' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><rect transform='matrix(2,0,0,2,-26,8.5)' x='13' y='-4.26' width='16' height='16' fill='hsl(0, 10%, 89%)'/><g fill='none' stroke='black'><path d='m18.825 4.43h12' stroke-width='2.6'/><g transform='translate(.4 .29)' opacity='.6' stroke-miterlimit='0'><path d='m29 14-15 15' stroke-width='3.43'/><path d='m14 13.86 15 15' stroke-width='3.44'/></g><g transform='matrix(1 0 0 .87 -6.6 -5)' stroke-width='2'><rect x='9' y='12.3' width='8' height='8' stroke-linecap='square' stroke-miterlimit='8' stroke-width='1.7'/><g transform='translate(.84 -.9)'><path d='m9.6 9.1h10.8' stroke-width='2.2'/><path d='m19.9 8v10' stroke-width='1.4'/></g></g><g transform='matrix(1 0 0 .7 5.5 -10)'><path d='m-2.3 46.6 3.6 7' stroke-width='1.7'/><path d='m1.3 53.6 3.57-7' stroke-width='1.7'/><path d='m1.3 53.6v-15' stroke-width='1.88'/></g></g></svg>" style="margin-bottom:-2px"></p>
+<blockquote>
+	<strong>◧</strong> Левый + Alt или <strong>Колёсико</strong>: Развернуть | Восстановить окно<br>
+	<strong>◧ держать</strong> кнопку: Закрыть Firefox, <strong>◧ лев. + Shift</strong> <span style="background-color:#FEA">краткая Справка</span><br>
+	<strong>⇅</strong> Ролик крутить вверх: <strong>Вернуть</strong> вкладку, Вниз: <strong>Закрыть</strong> вкладку<br>
+	<strong>◨</strong> правый Свернуть, <strong>◨ + Alt</strong> Информация для решения проблем<br>
+	<strong>В меню <big>≡</big></strong> Диалог сохранения: Страница\Выбранное в единый HTML<br>
+</blockquote>
+<p>3) <script>document.write('<img src='+ window.fav +' style="margin-bottom:-3px">')</script> <strong>Журнал</strong> + <strong>боковая панель с кнопками</strong>, Колёсико ± <strong>Масштаб</strong><br></p>
+
+<blockquote>
+	Клик мыши: открыть Журнал, <strong>◧</strong> + Shift - <strong>zoom</strong> Текст/страница<br>
+		<strong>◧</strong> левый клик +Alt: Библиотека, <strong>◧</strong> держать: Вкл/Выкл <strong>Антизапрет</strong><br>
+		◉ Колёсико – «Новая вкладка», <strong>◨ правый клик</strong> – <span style="background-color:#FED">Меню настроек</span><br>
+</blockquote>
+
+<p>4) <strong> Менеджер сессий</strong> — сохранить вкладки и положение страниц в базу<br></p>
+<blockquote>
+	<strong>◨ клик на имени</strong>: 	Выделить и Открывать эту сессию при запуске<br>
+	◉ <strong>колёсико</strong> или Клик + Ctrl: Открыть сессию в новых вкладках<br>
+</blockquote>
+
+<strong>Четыре режима чтения</strong>: Alt+R и три в строке адреса: иконка <strong>ReaderView</strong><br>
+<strong>Восстановить вкладки</strong>, Управления дополнениями, Инспектор атрибутов<br>
+<strong>Жесты мыши</strong> например, <strong>перетащив</strong> ссылку влево, скопируете её в буфер<br>
+<strong>Поиск похожих</strong>: двойной клик на фото. <strong>Сохранить</strong>: тащите фото вправо<br>
+</div> <!-- блок trigger_faq скрывается -->
+
+<p style="margin-top: 8px">
+	Добавлены <a href="https://greasyfork.org/ru"><strong>user-скрипты</strong></a> и <a href="https://addons.mozilla.org/ru">дополнения</a>: <a href="https://addons.mozilla.org/ru/firefox/addon/violentmonkey">Violentmonkey</a>, uBlock Origin<br></p>
+<strong><span class="RedText">Установите</span></strong> <a href="http://victor-dobrov.narod.ru/share/firefox_profile_dobrov.7z">профиль</a> согласно структуре папок. Подробности на <a class="tooltip" href="http://forum.mozilla-russia.org/viewtopic.php?id=76642"><strong>форуме</strong><span>перейти на Форум<br>долгий клик колёсика на Замке откроет настройки UCF</span></a>.<br>
+
+<strong>Удалите папку <a class="tooltip" href="http://www.google.ru/search?q=Firefox как очистить кэш запуска startupCache">startupCache<span>Введите «about:support» в адресной строке,<br>нажмите «Очистить кеш запуска»<br>~/.cache/mozilla/firefox/ПРОФИЛЬ/startupCache<br><br>откройте ссылку для подробной инструкции</span></a></strong> и запустите профиль так: <strong>firefox -P user</strong>
+</body></html>
