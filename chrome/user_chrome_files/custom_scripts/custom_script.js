@@ -1,11 +1,13 @@
 // Этот скрипт можно использовать для создания кнопок с помощью CustomizableUI.createWidget
-(async () => { [] // подключить внешние скрипты js или jsm, [инициализация]
-	.forEach(function(js) { try { if (/\.jsm$/i.test(js)) { // var obj =
-				ChromeUtils.import('chrome://user_chrome_files/content/custom_scripts/'+ js); // js[1] && obj[js[1]]();
-			} else Services.scriptloader.loadSubScript('chrome://user_chrome_files/content/custom_scripts/'+ js);
-		} catch(e) {Cu.reportError(e);}
-	});
-})();
+(async (scripts) => { // подключить внешние скрипты
+  [['ucf_QuickToggle.js'], ['UCFTitleChangedChild.jsm', 'registerUCFTitleChanged'], ['Test.jsm']]
+  .forEach(function(js) { try { if (/\.jsm$/i.test(js[0])) { // [скрипт js или jsm, инициализация]
+        var obj = ChromeUtils.import(scripts + js[0]);
+        js[1] && obj[js[1]]();
+      } else Services.scriptloader.loadSubScript(scripts + js[0]);
+    } catch(ex) {Cu.reportError(ex);}
+  });
+})('chrome://user_chrome_files/content/custom_scripts/');
 
 /* вариант с отдельными скриптами:
 (async () => { var loadscript = (name, funcName) => {
