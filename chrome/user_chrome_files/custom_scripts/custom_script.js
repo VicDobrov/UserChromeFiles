@@ -17,7 +17,6 @@
       funcName && obj[funcName]();
     } else
       Services.scriptloader.loadSubScript(href);
-    return true;
   }
   catch(ex) {Cu.reportError(ex);}
 }
