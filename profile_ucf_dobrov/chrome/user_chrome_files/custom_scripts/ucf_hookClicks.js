@@ -26,7 +26,8 @@ var DEBUG = 2, hmap = new Map([ ["downloads-button", // тексты: кнопк
 
 `Правый клик	➜ Быстрая закладка
 Лев.клик + Alt	Библиотека закладок
-◧ держать: Перевод сайта/выд.текста\n\n`], ["favdirs-button",
+◧ держать, ◉	Перевести сайт
+			или выделенный текст\n\n`], ["favdirs-button",
 
 `Левый клик	★ Закладки
 ◧ + Alt		Домашняя папка
@@ -37,7 +38,7 @@ var DEBUG = 2, hmap = new Map([ ["downloads-button", // тексты: кнопк
 
 `левая кнопка	◧ мыши: «Журнал»
 ◉ Колёсико	Открыть новую вкладку
-			↑ или клавиши ${AppConstants.platform == "macosx" ? "⌘" : "Ctrl+"}T\n
+			◉ или клавиши ${AppConstants.platform == "macosx" ? "⌘" : "Ctrl+"}T\n
 ◧ лев.+ Alt	Библиотека закладок
 ◧ + Shift	масштаб Текст / Всё
 Ø Ролик ±	масштаб Страницы\n
@@ -631,12 +632,9 @@ data = { // клики любых кнопок: meta*64 ctrl*32 shift*16 alt*8 (
 	"#ToggleButton": { mousedownTarget: true,
 		0(btn) { // Left Click
 			if (btn.id == 'ToggleButton') { // это клик в меню кнопки
-				var bar = btn.ownerDocument.querySelector("#ucf-additional-vertical-bar");
-				if (!bar)
-					window.SidebarUI.toggle("viewHistorySidebar")
-				else
-					window.setToolbarVisibility(bar, bar.collapsed),
-					bar.collapsed ? window.SidebarUI.hide() : window.SidebarUI.show("viewHistorySidebar");
+				var bar = document.getElementById("ucf-additional-vertical-bar");
+				if (bar) window.setToolbarVisibility(bar, document.getElementById("sidebar-box").hidden);
+				window.SidebarUI.toggle("viewHistorySidebar");
 			}
 		},
 		2(trg, forward) { zoom(forward); // wheel
