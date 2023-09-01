@@ -1,0 +1,10 @@
+{
+	"policies": {
+		"DisableAppUpdate": true,
+		"DisableTelemetry": true,
+		"OverrideFirstRunPage": "",
+		"OverridePostUpdatePage": "",
+		"DisableSystemAddonUpdate": true,
+		"DisableFeedbackCommands": true
+	}
+}

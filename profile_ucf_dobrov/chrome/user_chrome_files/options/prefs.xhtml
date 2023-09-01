@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf8"/>
+<title>Настройки UserChromeFiles</title>
+<link href="chrome://user_chrome_files/content/options/svg/prefs.svg" rel="icon" type="image/svg+xml"/>
+<link rel="stylesheet" href="chrome://user_chrome_files/content/options/prefs.css" type="text/css"/>
+<script src="chrome://user_chrome_files/content/options/prefs.js"></script>
+</head>
+<body>
+<div id="header">
+<div class="controls">
+<input type="button" id="restore"  title="Восстановить настройки по умолчанию" value="По умолчанию"/>
+<input type="button" id="restart"  title="Перезапустить приложение" value="Перезапустить"/>
+<input type="button" id="restart_no_cache"  title="Перезапустить и заново создать кэш быстрого запуска &#10;*Используйте это после редактирования, обновления скриптов" value="Перезапустить*"/>
+</div>
+<div class="controls">
+<input type="button" id="homepage"  title="Открыть страницу проекта UserChromeFiles" value="О UserChromeFiles"/>
+</div>
+</div>
+<div class="columns">
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.vertical_top_bottom_bar_enable"/>
+<span>Создать панели и кнопки</span>
+</label>
+<fieldset>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.top_enable"/>
+<span>Создать Дополнительную панель</span>
+</label><fieldset>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.top_next_navbar"/>
+<span>Размещение Доп. панели под панелью навигации</span>
+</label></fieldset>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.bottom_enable"/>
+<span>Создать Нижнюю панель</span>
+</label>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.vertical_enable"/>
+<span>Создать Вертикальную панель</span>
+</label><fieldset>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.vertical_bar_start"/>
+<span>Размещение Верт. панели слева</span>
+</label>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.vertical_fullscreen"/>
+<span>Верт. панель в полноэкранном режиме</span>
+</label>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.vertical_autohide"/>
+<span>Автоматически скрывать Верт. панель</span>
+</label><fieldset>
+<label class="text-input">
+<input type="number" min="0" max="999999" style="width:5em" data-pref="extensions.user_chrome_files.vertical_showdelay"/>
+<span>Задержка появления Верт. панели в ms</span>
+</label>
+<label class="text-input">
+<input type="number" min="0" max="999999" style="width:5em" data-pref="extensions.user_chrome_files.vertical_hidedelay"/>
+<span>Задержка скрытия Верт. панели в ms</span>
+</label>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.vertical_mouseenter_sidebar"/>
+<span>Скрывать при наведении на боковую панель</span>
+</label></fieldset></fieldset></fieldset>
+</div>
+<div class="columns" title="Для детальной настройки см. CustomStylesScripts.jsm">
+<div>
+<label>
+<span class="text">Включить стили:</span>
+</label>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.custom_styles_chrome"/>
+<span>Для докум. всех окон [ChromeOnly]</span>
+</label>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.custom_styles_all"/>
+<span>Для всех документов</span>
+</label>
+</div>
+<div class="columnend">
+<label>
+<span class="text">Включить скрипты:</span>
+</label>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.custom_scripts_background"/>
+<span>В фоне [System Principal]</span>
+</label>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.custom_scripts_chrome"/>
+<span>Для докум. окна браузера [ChromeOnly]</span>
+</label>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.custom_scripts_all_chrome"/>
+<span>Для докум. всех окон [ChromeOnly]</span>
+</label>
+</div>
+</div>
+<label title="Для детальной настройки см. CustomStylesScriptsChild.jsm">
+<input type="checkbox" data-pref="extensions.user_chrome_files.custom_styles_scripts_child"/>
+<span>Включить стили и скрипты для контента [about:, chrome:, moz-extension:]</span>
+</label>
+<label><span class="text"> </span></label>
+<div class="columns">
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.winbuttons"/>
+<span title="Подключить стиль win_buttons-vitv.css &#10;(нужен перезапуск)">Скрыть кнопки управления окном </span>
+</label>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.expert"/>
+<span title="Подсказки кнопок и действия зависят от режима:&#10;Простой/Эксперт (нужен перезапуск)&#10;&#10;боковая панель открыта: Вывод нажатий в консоль">Экспертный режим (лог)</span>
+</label>
+</div>
+</body>
+</html>

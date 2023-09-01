@@ -1,0 +1,129 @@
+/* Этот файл для правил CSS с правами USER_SHEET работает во всех документах */
+
+:root{ /* Dobrov userChrome_mod.css – глобальные переменные */
+	--general_ui_font_size: 11pt;
+	--urlbar-container-width: 340px;	/* панель адреса: лимит ширины */
+}
+.toolbarbutton-badge-stack .toolbarbutton-badge{
+	font-size: 10px !important;
+}
+#PanelUI-button, #PanelUI-button * {
+	font-size: var(--general_ui_font_size) !important;
+}
+/* override CSS code set by other 'options' */
+#main-window[uidensity="compact"] toolbar :-moz-any(.searchbar-textbox, #urlbar,#searchbar), .megabar #urlbar-results :-moz-any(.urlbarView-tags, .urlbarView-action, .urlbarView-title, .urlbarView-url), #urlbar-container[breakout] #urlbar[breakout], #searchbar, .searchbar-textbox {
+	font-size: var(--general_ui_font_size) !important;
+}
+/* remove maximum/minimum width restriction of sidebar */
+#sidebar { max-width: none !important; min-width: 0px !important;
+}
+/* увеличить шрифт боковой панели */
+#bookmarks-view *, #historyTree{ font-size:12pt !important;
+}
+/* Фон боковой панели */
+#historyTree { background-color: #F0F4F9 !important;}
+#bookmarks-view, #bookmarks-view-children { background-color: #F2F2F0 !important;}
+
+/* жирный шрифт строки адреса */
+#urlbar{ font-weight: bold !important; font-size: 12pt !important;
+	border-radius: 0px 6px 6px 0px !important;
+}
+#urlbar-container{ /* панель адреса ширина */
+	min-width: var(--urlbar-container-width) !important; max-width: var(--urlbar-container-width) !important;
+}
+/* скрыть подпись иконки сайта */
+#identity-icon-label { display: none !important;}
+
+/* кнопка меню: комбо-значок «Закрыть/⇲/Мин…» */
+#PanelUI-menu-button:not(:hover) { -moz-image-region: auto !important;
+	list-style-image: url("data:image/svg+xml,<svg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><rect transform='matrix(2,0,0,2,-26,8.5)' x='13' y='-4.26' width='16' height='16' fill='hsl(220, 80%, 90%)'/><g fill='none' stroke='black'><path d='m18.825 4.43h12' stroke-width='2.6'/><g transform='translate(.4 .3)' opacity='.6' stroke-miterlimit='0'><path d='m29 14-15 15' stroke-width='3.4'/><path d='m14 13.8 15 15' stroke-width='3.4'/></g><g transform='matrix(1 0 0 .9 -6.6 -5)' stroke-width='2'><rect x='9' y='12.3' width='8' height='8' stroke-linecap='square' stroke-miterlimit='8' stroke-width='1.7'/><g transform='translate(.8 -.9)'><path d='m9.6 9.1h10.8' stroke-width='2.2'/><path d='m19.9 8v10' stroke-width='1.4'/></g></g><g transform='matrix(1 0 0 .7 5.5 -10)'><path d='m-2.3 46.6 3.6 7' stroke-width='1.7'/><path d='m1.3 53.6 3.57-7' stroke-width='1.7'/><path d='m1.3 53.6v-15' stroke-width='1.88'/></g></g></svg>") !important;
+}
+#PanelUI-menu-button .toolbarbutton-badge-stack {padding: 0px !important;}
+#PanelUI-button .toolbarbutton-icon {margin: 0px !important;
+	min-width: calc(var(--classic_squared_tabs_tab_height) + 8px) !important; min-height: calc(var(--classic_squared_tabs_tab_height) + 8px) !important;
+}
+#PanelUI-menu-button .toolbarbutton-icon { min-width: 28px !important; min-height: 28px !important; padding: 0 !important;}
+.toolbarbutton-icon { min-width: 18px !important; min-height: 18px !important;}
+
+.tabbrowser-tab:not([selected="true"]) .tab-close-button { /* значок Закрыть только на текущей вкладке */
+	visibility: collapse !important;
+}
+#tabbrowser-tabs .tabbrowser-tab:not([pinned])[selected="true"] .tab-close-button {
+	visibility: visible !important; display: block !important;
+}
+#TabsToolbar #tabbrowser-tabs .tabbrowser-tab:not([pinned]):not([selected="true"]) .tab-close-button, #TabsToolbar #tabbrowser-tabs .tabbrowser-tab[pinned]:not([selected="true"]) .tab-close-button {
+	visibility: collapse !important; display: none !important;
+}
+#sidebar-header{ padding-top: 0px !important; padding-bottom: 0px !important;} /* компактный заголовок боковой панели */
+
+#navigator-toolbox[fullscreenShouldAnimate] {transition: none !important;}
+
+/* разделители кнопок поиска подменю строки адреса */
+.searchbar-engine-one-off-item:not(#urlbar-anon-search-settings-compact) {
+    background: linear-gradient(transparent 15%, var(--panel-separator-color) 15%, var(--panel-separator-color) 85%, transparent 85%);
+    background-size: 1px auto;
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-clip: padding-box;
+    color: var(--panel-disabled-color);
+}
+.searchbar-engine-one-off-item:not(#urlbar-anon-search-settings-compact),
+.search-panel-one-offs-header {border-bottom: 1px solid var(--panel-separator-color);}
+.search-panel-one-offs {height: auto !important;}
+.search-one-offs .searchbar-separator {display: none;}
+#PopupSearchAutoComplete {padding-bottom: 0 !important;}
+.search-setting-button {border-top: none !important;}
+#urlbar .searchbar-engine-one-off-item {margin-inline-end: 0 !important;}
+#urlbar .search-one-offs {padding-bottom: 0 !important;}
+#urlbar .search-panel-header {display: none !important;}
+#urlbar .search-one-offs { padding-block: 0 !important;}
+
+/* размеры кнопок */ /*#favorites-dobrov .toolbarbutton-icon{ padding: 2px !important; }*/
+#ToggleButton .toolbarbutton-icon, #print-button .toolbarbutton-icon, #ucf_Reader .toolbarbutton-icon { padding: 4px !important;}
+
+/* Значок указанной папки Избранного (пустое имя), жёлтый цвет звёздочки, синий: rect=(top, right, bottom, left) */
+.bookmark-item[label=""] > .toolbarbutton-icon {
+	filter: invert(15%) sepia(300%) saturate(500%) !important;
+	height: 20px !important;
+}
+.bookmark-item[label=""]:hover {
+	cursor: pointer;
+}
+/* подсветка при наведении */
+/*#ucf-additional-vertical-bar *:hover { filter: invert(15%) sepia(200%) !important;} */
+
+.bookmark-item[label="‌"] > .toolbarbutton-icon { /* значок Инструменты: имя папки = U+200C */
+	  list-style-image: url("data:image/svg+xml;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAEKklEQVR4Xr2Ve2hWZRjAf+fsm7s4d1E3b3OaZrOZTsxLC+2iVi4pSUgUNdJGWU2KrO2frgaSCrFBLKVcqWGEllb2RwvJNJPJzNumiXOjzG26uWlb3+2c8zyNl8OHykwJ7QcPvOfl8D7P8zsP7+FWYwHUff2KcpNwe7WX5Bd+uhafAAAq5BXOAvUAEHWx/DWA+muu2BNiqIJCsKWdMydkDRBLYPMfOdvUzqq1OxBR/o0AgJgKXFSjAFjqoJdXK/5aBIAL7V1ML1zJ6YbzPDrzTsaNyQG1SMzsgxxXDFcrEnWwJOo/Oqi4+BAORSmrqKLmYAMrlj9M6VvbzOH5d2UzcngGKmFQGxULfHU3rKip+SKPzSsjb/RgNq5fytxFFfxSfZqBWans2PICvZMTbkCRCIiD+CrwHNNF87lLLCr6mHVlC7l9RBZvvrud1rZObNti66YiBg3ojXhRUM90cOn8BUR66kDFeMZzTai4BEMhXirZwoYPFjNyWDqVm/bwXlkVlmWx8MmJ7PrxOOpF/XAIXgzihsMmWfXnz8y+rqJ1G/bw4rMPkjO0L7t+Oknxa18A8Pqrj/BR+QI6uyJ8+30d18OOzbS6RosJz+XEb01MnTyc2rozzF9aiesKqX0SKSm+31T8TslDbN1+iOWl25g+p4Knl2/kZHMXWXdkY0lgZ/XmogpiCcRDXRfxTLD/wCkmjBuMehHmL9nAX51hpt5zG3MK87BtDxEHC5fK8rkUL51CwaQcVhZP5audR0lJtRnd/a7A89dUtH3nYZqaL7F3fwOnGlrJyc5gxn2jeHxWnunEx3zsUSP6m7307u4cx7vWFDmYLsQl6nh0dHR1T00/VpfvAsBxXMrX72VMbiYJ8TBj2khUFR+SEmzcSAQLRd0oKoKKFUuAasS4x4tSU9PIvupGGn9vo2BiDnfnD2LZU5NITAiQnGibqj3Xid1LwZBDclLA7MXZIF4YdR0QpUdFNYf/oL6xjT37G5k3Z6w5uFd8HKl9EoySqzlU28K4vIF0BqOkpyX1rEjFn+VgkKN1fzIgM4XJ44fw9uofiERd7p0wiPiATSBOGZadRt/0pNhtWrW7npJlBVR9d4yxuf0xitwIqvblilxEPNZ9so8jtU3MnpnLmjemc+58Fz8fOMPBI2cRUSIRl+On2mi/GGLwgBT+6ozQLyOJpIQ4aupaWPHyGFOseCHQgJ/AR1W7Xfbim8+WkJkRj3gRhg5JY8ETaSAuACoCYJJd6AgadaWrdlN7spXWjjAZaYl4TqgHRepgAUWLpwCYFhFi+DZQFADLprvyZP4OOuTnZbH5y2NMG5+FqmUmUb0wIimXJ4iCWqD4WKgdIIYqBuEKeifH8dyiieZ+avi1FrXjjAnxHFSpB7D/l59+deUDyk0i6uWiqvWWWB9OW7b+fW41/wC6L0CdjHJJGwAAAABJRU5ErkJggg==") !important; -moz-image-region: auto !important; height: 20px !important;
+}
+#personal-toolbar-empty-description, #PersonalToolbar .toolbarbutton-1, toolbarbutton.bookmark-item:not(.subviewbutton) {
+	padding: var(--bookmark-block-padding) 0px;
+	font-size: 125%; font-family: 'Noto Sans', 'Arial Narrow'; font-stretch: condensed;
+}
+
+#star-button { filter: invert(40%) sepia(100%) saturate(500%) !important;}
+
+#pageAction-urlbar-_2495d258-41e7-4cd5-bc7d-ac15981f064e_ { /* Reader View - иконка Очки */
+	padding-bottom: 1px !important;
+	list-style-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAACSklEQVR4Xt1VK5CDMBCtjEQiI5FIJBKJrEQikUhkJbISWXECiUQikSdPVpyoO1Ry79HsTGYu7X3kZWYvudn39m12N/Tw/1ZZljHWHEWR1VoPWOoZHpge+I0ccr8VAHDAZsUg0j4J3vhYcr/NXil1w3ED+UIS/w9lVhQFsVeXxEiOjw1akiQVCSjPYq1V3EGyeZ4nAYEEPmJXLGJncl2M8AJo9MuCwBpWPMJnWVaIuJQLQtOj8mheEbYJ6TdGDrhSJh1qmJRn/usEkusqUIecE51pmnZVVSV1Xcc/FWiaJiaH3FCZ2LC9PDI1clWM3Qjfw3LRxwkSjh+DMcPzTFNKzszmivqmgZqn8L2FODTG/FK7WGvTnAfTL6vpxskkWW5kbPGiI5Qgo/GMtdBHDLHkkMsYXi9d9/FIQLAEjZs1481a7sPbzeg0Ne6Vrtz9M33E+BwKQZy4+zTK9BRVvQNf3jcrRkLdn3eBkNFHzOV6x3MnB7EkqeqA7i8ENwTfROBjN2bVz4sIbChPReMZRh85wHoCiNG4pDCJ6wF/lns2PbLxBXawPU2zX1O/Z/R9EfBvzdgs0ZHgvDy6Wu5AAdvq1EvdexFwZ/p2jODJpUB+PO4CjM0myyfCdpfRTF7Dzusrp8K6B5iLgDtb+oiRJpPLGIwlX1aXke5IUOh+2bSmBag6nfyRGwO/G6MTIXbnkMsYLvvOf+oKhIs3IcZ7aEuWZbFgvVvE9IU4EB/atlWh34Mayq+8IvYrrIN49OQbFBFDLGcf/JUxDv9qfQIh7hUoqCKBNAAAAABJRU5ErkJggg==") !important;
+}
+#pageAction-urlbar-_2495d258-41e7-4cd5-bc7d-ac15981f064e_:not(:hover){filter: contrast(80%) opacity(70%); !important;}
+
+/* переместить пункт меню */
+#context-openlinkinusercontext-menu {
+ -moz-box-ordinal-group: 10;
+}
+#context-searchselect-ucf { -moz-box-ordinal-group: 0 !important;}
+
+@-moz-document url-prefix("chrome:"), url("about:downloads") {
+	richlistbox > richlistitem.download-state[state="0"] > .downloadPauseResumeButton {
+	    list-style-image: url("./svg/download-pause.svg") !important;
+	}
+	richlistbox > richlistitem.download-state[state="4"] > .downloadPauseResumeButton {
+	    list-style-image: url("./svg/download-resume.svg") !important;
+	}
+	richlistbox > richlistitem.download-state[buttonhidden] .downloadPauseResumeButton,
+	richlistbox > richlistitem.download-state:not(:is([state="0"],[state="4"])) .downloadPauseResumeButton {
+		display: none !important;
+	}
+}
+menu[label="Text Linky Tool"]{ display: none !important;}

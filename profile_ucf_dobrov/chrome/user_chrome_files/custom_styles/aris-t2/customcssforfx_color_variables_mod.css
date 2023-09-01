@@ -1,0 +1,47 @@
+/* Firefox Quantum userChrome.css tweaks ************************************************/
+/* Github: https://github.com/aris-t2/customcssforfx
+/****************************************************************************************/
+
+:root {
+  /* custom height for 'classic squared tabs' only */
+  --classic_squared_tabs_tab_height: 22px !important;
+  /* for increase_ui_font_size.css */
+  --general_ui_font_size: 11pt !important;
+
+  --navbar-background: #e6ebfa;
+  --urlbar-container-width: 435px;  /* панель адреса: лимит ширины 390 / 432px + ★ в url / 448 + иконка Greasemonkey / 472 */
+
+  --general_toolbar_color_toolbars: linear-gradient(var(--navbar-background), var(--navbar-background)) !important;
+  --general_toolbar_color_navbar: linear-gradient(var(--navbar-background),var(--navbar-background)) !important;
+  --general_toolbar_text_color: inherit !important;
+  --general_toolbar_text_shadow: transparent !important;
+  --tabs_toolbar_color_tabs_not_on_top: linear-gradient(var(--navbar-background),var(--navbar-background)) !important;
+  --tabs_toolbar_border-tnot_normal_mode_size: 1px !important;
+  --tabs_toolbar_border-tnot_normal_mode: var(--tabs-border-color) !important;
+  --colored_menubar_background_image: linear-gradient(var(--navbar-background),var(--navbar-background)) !important;
+  --colored_menubar_text_color: black !important;
+  --statusbar_background_color: linear-gradient(var(--navbar-background),var(--navbar-background)) !important;
+  --statusbar_font_color: inherit !important;
+
+/* активная вкладка */
+  --classic_squared_tabs_active_tab: linear-gradient(#FFFFD8, #EFE8C0) !important;
+  --classic_squared_tabs_hovered_tabs: linear-gradient(to top,#F0F4FF,#F8F8F8,#F0F4FF) !important;
+  --classic_squared_tabs_other_tabs: linear-gradient(to top,#e6ebfa,#e6ebfa,#e6ebfa) !important;
+  --classic_squared_tabs_unloaded_tabs: linear-gradient(to top,#E8E0D0,#E8E0D0,#E8E0D0) !important; /* не загружена */
+  --classic_squared_tabs-border_size: 1px;
+  --classic_squared_tabs-border1: #5f7181 !important;
+  --classic_squared_tabs-border2: rgba(0,0,0,.2) !important;
+  --classic_squared_tabs-border3: rgba(0,0,0,.5) !important;
+  --classic_squared_tabs_new_tab_icon_color: black !important;
+  --classic_squared_tabs_tab_text_color: black !important;
+  --classic_squared_tabs_tab_text_shadow: transparent !important;
+  --classic_squared_tabs_lwt-dark_active_tab: inherit !important; /* linear-gradient(blue, hsla(0,0%,60%,.5) 80%) */
+  --classic_squared_tabs_lwt-dark_hovered_tabs: linear-gradient(hsla(0,0%,80%,.5), hsla(0,0%,60%,.5) 80%) !important;
+  --classic_squared_tabs_lwt-dark_other_tabs: linear-gradient(hsla(0,0%,60%,.5), hsla(0,0%,45%,.5) 80%) !important;
+  --classic_squared_tabs_lwt-bright_hovered_tabs: linear-gradient(hsla(0,0%,60%,.6), hsla(0,0%,45%,.6) 80%) !important;
+  --classic_squared_tabs_lwt-bright_other_tabs: linear-gradient(hsla(0,0%,40%,.6), hsla(0,0%,30%,.6) 80%) !important;
+  --classic_squared_tabs_lwt-bright_active_tab: inherit !important; /* linear-gradient(blue, hsla(0,0%,60%,.5) 80%) */
+}
+#tabbrowser-arrowscrollbox {
+  background: var(--navbar-background) !important;
+}

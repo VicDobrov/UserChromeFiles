@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16">
+  <style>
+    .context {
+      fill:none;stroke:#ffffff;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round;
+    }
+    .background {
+      fill: #3b226d;
+    }
+    @supports (-moz-context-properties: fill) {
+    .context {
+      stroke:context-fill #8e8e98;stroke-opacity:context-fill-opacity;
+    }
+    .background {
+      display: none;
+    }
+    }
+  </style>
+<rect class="background" x="0" y="0" width="16" height="16" rx="3" ry="3"/>
+<path class="context" d="M8 1 .6 8.4h1v5c0 1 1 2 2 2h8.8c1 0 2-1 2-2v-5h1zm2.4 14v-4c0-3.2-4.8-3.2-4.8 0v4"/>
+</svg>

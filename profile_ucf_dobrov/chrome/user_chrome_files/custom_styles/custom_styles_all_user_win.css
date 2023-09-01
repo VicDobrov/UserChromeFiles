@@ -1,0 +1,201 @@
+/* правила CSS с правами USER_SHEET работает во всех документах */
+@import url("./aris-t2/userChrome.css");
+@import url("./menubarVisibilityChance.css");
+
+@-moz-document url("chrome://browser/content/browser.xhtml") { /* tabs_bellow VitalijV */
+:root { /* вкладки снизу: стиль плюс скрипты https://forum.mozilla-russia.org/viewtopic.php?pid=784310#p784310 */
+	--v-toolbar-menubar-height: 20px; /* высота панели меню, только чётные числа не меньше 20px для macos = 0
+	если изменяете эту переменную то и в --v-toolbar-menubar-height-content - атрибут height= нужно установить в 2 раза больше*/
+	--v-toolbar-menubar-height-content: url("data:image/svg+xml,<svg width='28' height='40' xmlns='http://www.w3.org/2000/svg'><rect x='0' y='0' width='100%' height='100%' style='fill:transparent;'/></svg>");  /* height='2 * --v-toolbar-menubar-height' */
+	--tab-border-radius: 4px !important;
+	--proton-tab-block-margin: 0px !important;
+	--tab-block-margin: 0px !important;
+	--tabs-navbar-shadow-size: 0px !important;
+}
+#navigator-toolbox {
+	border-block: none !important;
+	box-shadow: none !important;
+	padding-top: 0 !important;
+	-moz-appearance: none !important;
+	appearance: none !important;
+}
+:root:not([inFullscreen])[tabsintitlebar] #navigator-toolbox {
+	position: relative !important;
+}
+#navigator-toolbox > toolbar {
+	-moz-box-ordinal-group: 10 !important;
+}
+#navigator-toolbox > #nav-bar {
+	margin-block: 0 !important;
+	box-shadow: none !important;
+	-moz-box-ordinal-group: 0 !important;
+	padding-inline: 0 !important;
+}
+:root:not([inFullscreen]) #navigator-toolbox > #nav-bar {
+	margin-top: var(--v-toolbar-menubar-height) !important;
+}
+#navigator-toolbox > #PersonalToolbar {
+	-moz-box-ordinal-group: 1 !important;
+}
+:root:not([inFullscreen])[tabsintitlebar] > *|body::before {
+	content: var(--v-toolbar-menubar-height-content) !important;
+	display: -moz-box !important;
+	flex-grow: 0 !important;
+	flex-direction: column !important;
+	justify-content: start !important;
+	align-items: stretch !important;
+	-moz-box-ordinal-group: 0 !important;
+	margin-bottom: calc(-2 * var(--v-toolbar-menubar-height)) !important;
+	box-sizing: content-box !important;
+}
+:root:not([inFullscreen])[tabsintitlebar][sizemode="normal"] > *|body::before {
+	-moz-appearance: -moz-window-titlebar !important;
+	appearance: -moz-window-titlebar !important;
+}
+:root:not([inFullscreen])[tabsintitlebar][sizemode="maximized"] > *|body::before {
+	-moz-appearance: -moz-window-titlebar-maximized !important;
+	appearance: -moz-window-titlebar-maximized !important;
+}
+:root:not([inFullscreen])[tabsintitlebar]:-moz-lwtheme > *|body::before {
+	visibility: hidden !important;
+}
+@media not all and (-moz-os-version: windows-win7) {
+	@media not all and (-moz-os-version: windows-win8) {
+:root:-moz-lwtheme {
+	background-color: var(--lwt-accent-color, -moz-Dialog) !important;
+}
+:root:-moz-window-inactive:-moz-lwtheme {
+	background-color: var(--lwt-accent-color-inactive, var(--lwt-accent-color, -moz-Dialog)) !important;
+}
+	}
+}
+#navigator-toolbox > #titlebar {
+	-moz-appearance: none !important;
+	appearance: none !important;
+	-moz-box-ordinal-group: 100 !important;
+	position: static !important;
+}
+#toolbar-menubar {
+	padding-block: 0 !important;
+	margin-block: 0 !important;
+	border: none !important;
+	background: none !important;
+	--toolbarbutton-outer-padding: 0px !important;
+	--toolbarbutton-inner-padding: calc((var(--v-toolbar-menubar-height) - 16px) / 2) !important;
+	-moz-appearance: none !important;
+	appearance: none !important;
+}
+:root:not(:is([inFullscreen],[chromehidden~="menubar"])) #toolbar-menubar {
+	position: absolute !important;
+	top: 0 !important;
+	left: 0 !important;
+	right: 0 !important;
+	display: flex !important;
+	flex-wrap: nowrap !important;
+	flex-direction: row !important;
+	align-items: stretch !important;
+	justify-content: flex-start !important;
+	min-height: 0 !important;
+	height: var(--v-toolbar-menubar-height) !important;
+	overflow: hidden !important;
+}
+#toolbar-menubar .toolbarbutton-badge {
+	margin-inline-end: calc(-1 * (var(--toolbarbutton-outer-padding) + var(--toolbarbutton-inner-padding))) !important;
+}
+:root:not([inFullscreen]) #toolbar-menubar > :is(toolbaritem,toolbarbutton) {
+	align-self: center !important;
+}
+:root:not([inFullscreen]) #toolbar-menubar > :is(#menubar-items,#wrapper-menubar-items,.titlebar-buttonbox-container) {
+	align-self: flex-start !important;
+}
+:root:not([inFullscreen]) #toolbar-menubar > * {
+	padding-block: 0 !important;
+	margin-block: 0 !important;
+}
+:root:not([inFullscreen]) #toolbar-menubar[autohide="true"][inactive="true"]:not([customizing="true"]) > *:not(.titlebar-buttonbox-container) {
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
+:root[inFullscreen] #toolbar-menubar {
+	visibility: collapse !important;
+}
+:root:not([inFullscreen]) #toolbar-menubar > :is(*[style*="-moz-box-ordinal-group: 1000;"],.titlebar-buttonbox-container) {
+	order: 1000 !important;
+}
+:root:not([inFullscreen]) #toolbar-menubar > :is(toolbarspring,spacer,[id^="wrapper-customizableui-special-spring"]) {
+	flex-grow: 1 !important;
+}
+:root:not([inFullscreen]) #toolbar-menubar > :is(#search-container,#wrapper-search-container) {
+	flex-grow: 100 !important;
+}
+#toolbar-menubar #search-container {
+	padding-block: 0 !important;
+}
+#toolbar-menubar #searchbar {
+	min-height: calc(var(--v-toolbar-menubar-height) - 2px) !important;
+}
+:root:not(:-moz-lwtheme) .tab-background {
+	--toolbar-bgimage: none;
+	--toolbar-non-lwt-bgimage: none;
+}
+#TabsToolbar > .toolbar-items {
+	padding-top: 0 !important;
+	margin-top: 0 !important;
+}
+.tabbrowser-tab[usercontextid] .tab-context-line {
+	margin-block: 0 !important;
+	margin-inline: calc(var(--tab-border-radius) / 2) !important;
+}
+#scrollbutton-up, #scrollbutton-down {
+	border-block: none !important;
+	border-end-end-radius: 0 !important;
+	border-end-start-radius: 0 !important;
+}
+:root[inFullscreen] #window-controls {
+	position: absolute !important;
+	display: flex !important;
+	align-items: start !important;
+	top: 0 !important;
+	inset-inline-start: auto !important;
+	inset-inline-end: 0 !important;
+	margin: 0 !important;
+}
+:root:not([inFullscreen])[v_menubar_autohide="true"] #navigator-toolbox > #nav-bar {
+	margin-top: 0 !important;
+}
+:root:not([inFullscreen])[v_menubar_autohide="true"] #toolbar-menubar {
+	pointer-events: none !important;
+}
+:root:not([inFullscreen])[v_menubar_autohide="true"] #toolbar-menubar .titlebar-buttonbox-container {
+	pointer-events: auto !important;
+}
+@media (-moz-windows-classic) {
+:root:not([inFullscreen])[tabsintitlebar][sizemode="normal"] #navigator-toolbox::before {
+	content: "" !important;
+	display: -moz-box !important;
+	height: 4px !important;
+	-moz-box-ordinal-group: 0 !important;
+	visibility: visible !important;
+}
+:root:not([inFullscreen])[tabsintitlebar][sizemode="normal"]:-moz-lwtheme #navigator-toolbox::before {
+	background-image: linear-gradient(to bottom, ThreeDLightShadow 0, ThreeDLightShadow 1px, ThreeDHighlight 1px, ThreeDHighlight 2px, ActiveBorder 2px, ActiveBorder 4px, transparent 4px) !important;
+}
+:root:not([inFullscreen])[tabsintitlebar][sizemode="normal"] #toolbar-menubar {
+	margin-top: 4px !important;
+}
+}
+:root[data-l10n-id="browser-main-window-mac"] {
+	--v-toolbar-menubar-height: 0px !important;
+	--v-toolbar-menubar-height-content: none !important;
+}
+:root:not([inFullscreen])[tabsintitlebar][data-l10n-id="browser-main-window-mac"] #nav-bar {
+	margin-inline-start: calc(var(--toolbarbutton-outer-padding, 2px) + var(--v-titlebar-button-horizont-padding, 6px) * 6 + var(--v-titlebar-button-image-width, 12px) * 3) !important;
+}
+:root:not([inFullscreen])[tabsintitlebar][data-l10n-id="browser-main-window-mac"] #TabsToolbar .titlebar-buttonbox-container {
+	visibility: visible !important;
+	display: -moz-box !important;
+	position: absolute !important;
+	display: flex !important;
+	top: 0 !important;
+}
+}

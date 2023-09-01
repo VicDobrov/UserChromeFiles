@@ -1,0 +1,8 @@
+/* правила CSS с правами USER_SHEET работает во всех документах */
+@import url("./aris-t2/userChrome.css") /* aris-t2/customcssforfx */;
+@import url("./menubarVisibilityChance.css");
+
+#nav-bar[inFullscreen="true"], #TabsToolbar[inFullscreen="true"] { visibility: collapse !important}
+
+/* скрыть кнопки окна */
+/*.titlebar-buttonbox { display: none !important;}*/
