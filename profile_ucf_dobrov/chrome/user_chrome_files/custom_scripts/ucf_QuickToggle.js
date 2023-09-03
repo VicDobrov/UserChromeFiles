@@ -38,7 +38,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 			pref: ["browser.safebrowsing.downloads.remote.block_dangerous", "Опасные файлы, сайты",,"browser.safebrowsing.downloads.remote.block_dangerous_host"], userChoice: true, userAlt: false,
 			values: [[true, "Запрет",,,`glob.pref('browser.safebrowsing.downloads.remote.block_dangerous_host',true)`], [false, "Открыть",,,`glob.pref('browser.safebrowsing.downloads.remote.block_dangerous_host',false)`]]
 	},{
-			pref: ["ucf.savedirs", "Загрузки",,'пути сохранения Страниц и Графики\nСинтаксис «_Html/subdir|_Pics/subdir»\nsubdir: пусто | 0 заголовок | 1 домен',
+			pref: ["ucf.savedirs", "Загрузки",,'Пути сохранения Страниц и Графики\nСинтаксис «_Html/subdir|_Pics/subdir»\nsubdir: пусто | 0 заголовок | 1 домен',
 				["", "всё в общей папке"]], userChoice: "_Сайты||_Фото|0", userAlt: "_Web|1|_Images|0", userPro: "",
 			values: [ // сохранение Html/Pics. [Загрузки]/"_Html/subdir|_Pics/subdir" subdir: пусто | 0 заголовок | 1 домен
 				["", "всё в общую папку"],
@@ -51,7 +51,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 	},null,{
 			pref: ["network.proxy.autoconfig_url", "Прокси (VPN) URL", "п", "Переключение сетевых настроек",,`glob.mode_skin('')`],
 			userChoice: "localhost", userAlt: I[1], userPro: "", refresh: true,
-			values: [ // mode_skin — отображать изменения любой опции
+			values: [
 				["localhost", "системный", "0",, `glob.pref('network.proxy.type', 0)`],
 				["127.0.0.1", "Tor или Opera", "1", "Необходим сервис tor или opera-proxy",
 					`glob.pref('network.proxy.type', 1)`],
@@ -61,7 +61,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 				[glob.pref([I[2], "file:///etc/proxy.pac"]), "user .pac файл", "4", "about:config "+ I[2]], // нужен диалог выбора pac-файла
 				["", "сброшен",""]]
 	},{
-			pref: ["network.proxy.type", "Режим прокси", "р",,,`glob.mode_skin('')`], userChoice: 5, userAlt: 2, userPro: 1, refresh: true, //
+			pref: ["network.proxy.type", "Режим прокси", "р",,,`glob.mode_skin('')`], userChoice: 5, userAlt: 2, userPro: 1, refresh: true, // mode_skin — отображать изменения любой опции
 			values: [ //фон кнопки Меню: серый, голубой, красный, жёлтый, зелёный
 				[0, "Без прокси", "0", "по-умолчанию"],
 				[5, "Системный (из IE)", "5"],
@@ -86,7 +86,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 			pref: ["browser.display.use_document_fonts", "Загружать шрифты страниц"], userChoice: 1, userAlt: 0, refresh: true,
 			values: [[1, "Да"], [0, "Нет"]]
 	},{
-			pref: ["gfx.webrender.force-disabled", "Ускорять отрисовку страниц", , "gfx.webrender.compositor.force-enabled\ngfx.webrender.all\n\nАппаратная отрисовка страниц видеокартой.\nотключите при разных проблемах с графикой"],
+			pref: ["gfx.webrender.force-disabled", "Ускорять отрисовку страниц", ,"gfx.webrender.compositor.force-enabled\ngfx.webrender.all\n\nАппаратная отрисовка страниц видеокартой.\nотключите при разных проблемах с графикой"],
 			userChoice: false, userAlt: true, userPro: undefined, restart: true, values: [
 			[true, "Нет",,,`[["gfx.webrender.compositor.force-enabled", false], ["gfx.webrender.all", false]].map((a) =>{glob.pref(...a)})`],
 			[false, "Да",,,`[["gfx.webrender.compositor.force-enabled", true], ["gfx.webrender.all", true]].map((a) =>{glob.pref(...a)})`]]
@@ -108,23 +108,23 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 			pref: ["media.peerconnection.enabled", "WebRTC ваш реальный IP"], userChoice: false,
 			values: [[true, "Выдать"], [false, "Скрыть"]]
 	},null,{
-			pref: ["browser.cache.disk.capacity", "Кэш браузера",,"\ncache.memory.max_entry_size:\nДиск и память: 5120\nтолько Память: -1"], userChoice: 1048576, userAlt: 0, userPro: 256000,
+			pref: ["browser.cache.disk.capacity", "Кэш браузера",,"\ncache.memory.max_entry_size:\nДиск и память: 5120\nтолько Память: -1"], userChoice: 1048576, userAlt: 0, userPro: 256e3,
 			values: [
-			[256000, "По-умолчанию"],
+			[256e3, "По-умолчанию"],
 			[1048576, "Диск и Память",,,`[["browser.cache.memory.enable", true], ["browser.cache.disk.enable", true], ["browser.cache.memory.max_entry_size", 5120]].map((a) =>{glob.pref(...a)})`],
 			[0, "только Память",,,`[["browser.cache.memory.enable", true], ["browser.cache.disk.enable", false], ["browser.cache.memory.max_entry_size", -1]].map((a) =>{glob.pref(...a)})`],
 			[2097152, "только Диск",,,`[["browser.cache.memory.enable", false], ["browser.cache.disk.enable", true]].map((a) =>{glob.pref(...a)})`]]
 	},{
-			pref: ["browser.sessionstore.interval", "Резервирование сессий",,"Браузер резервирует сессии на\nслучай сбоя, снижая ресурс SSD"], userChoice: 300000, userAlt: I[3],  userPro: 15000,
+			pref: ["browser.sessionstore.interval", "Резервирование сессий",,"Браузер резервирует сессии на\nслучай сбоя, снижая ресурс SSD"], userChoice: 3e5, userAlt: I[3], userPro: 15e3,
 			values: [
-			[I[3], `${I[3]/60e3 + " мин"}`], [15000, "15 сек"], [60000, "1 мин"], [300000, "5 мин"], [900000, "15 мин"], [1800000, "30 мин"]]
+			[I[3], `${I[3]/60e3 + " мин"}`], [15e3, "15 сек"], [6e4, "1 мин"], [3e5, "5 мин"], [9e5, "15 мин"], [18e5, "30 мин"]]
 	},{
 			pref: ["devtools.debugger.remote-enabled", "Удалённая отладка",,"Также включить инструменты разработчика для chrome"], userAlt: true,
 			values: [
 			[true, "Да + chrome",,,`glob.pref("devtools.chrome.enabled", true)`],
 			[false, "Отключена",,, `glob.pref("devtools.chrome.enabled", false)`]]
 	},{
-			pref: [I[5], "User Agent",,"от user-агент зависит вид сайтов", [ua, "встроенный"]],
+			pref: [I[5], "User Agent",,"Тип гаджета меняет вид сайта", [ua, "встроенный"]],
 			userChoice: ua, userAlt: I.at(-1) + I[6], userPro: I.at(-1) + I[7], refresh: true,
 			values: [ [ua, "По-умолчанию"],
 				[I.at(-1) + I[6], "Chrome 99 Android 9"], [I[7], "Firefox 115 MacOS 12"],
@@ -191,15 +191,19 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 			btn.append(popup);
 		},
 		map: {b: "Bool", n: "Int", s: "String"},
-		createElement(doc, obj) {  // pref
+		createElement(doc, obj) { // pref
 			if (!obj) return doc.createElementNS(I[4], "menuseparator");
 			var pref = doc.ownerGlobal.Object.create(null), node, img, bool;
 			for(var [key, val] of Object.entries(obj)) {
 				if (key == "pref") {
-					var [apref, lab, akey, hint, undef, code] = val;  // строка меню
+					var [apref, lab, akey, hint, undef, code] = val; // строка меню
 					pref.pref = apref; pref.lab = lab || apref;
-					if (hint) pref.hint = hint;
-					if (undef) pref.undef = undef; // если не массив: undef || undef == ""
+					if (hint) {
+						if (RegExp(/\p{L}/,'u').test(hint[0]) && (hint[0] === hint[0].toUpperCase()))
+							hint = '\n'+ hint;
+						pref.hint = hint;
+					}
+					if (undef) pref.undef = undef; //если не массив: undef || undef == ""
 					if (code) pref.code = code;
 				}
 				else if (key == "image") img = val, pref.img = true;
