@@ -9,28 +9,23 @@
 Разделитель: Имя меню "—,⟳,↯" Опция, ⟳ обновить страницу, ↯ перезапуск браузера
 иконка равна ключу: userChoice:зелёный userAlt:жёлтый userPro:серый пусто:красный */
 
-(async (name, id, func) => { // mod by Dobrov нужен скрипт ucf_hookClicks.js
+(async (name, func) => { // mod by Dobrov нужен скрипт ucf_hookClicks.js
 	return CustomizableUI.createWidget(func()); // only UCF
-})(this.constructor.name, "ToggleButton", () => {
+})(this.constructor.name, () => {
 
-	var {prefs} = Services, db = prefs.getDefaultBranch(""),
-	my_vpn = "https://antizapret.prostovpn.org/proxy.pac",
-	menuactive = (Services.appinfo.OS == "Darwin") ? '#e8e8e8' : '#124', // текст, подсвеченный курсором, без Aero '#fff'
-	xul_ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
-	font_pref = (font) => { return font.map(function(name) { // массив с вложениями
+	var {prefs} = Services, db = prefs.getDefaultBranch(""), ua = glob.ua(true), //real ЮзерАгент
+	I = [Services.appinfo.OS == "Darwin" ? '#e8e8e8' : '#124', //текст под курсором, без Aero '#fff'
+	"https://antizapret.prostovpn.org/proxy.pac", "user.pacfile",
+	glob.pref(['browser.sessionstore.interval', 15e3]),
+	"http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul","general.useragent.override", "Linux; Android 9; Pixel 2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.88 Mobile Safari/537.36","Macintosh; Intel Mac OS X 10.15; rv:115.0) Gecko/20100101 Firefox/115.0","Mozilla/5.0 ("],
+	fonts = (font) => { return font.map(function(name) { // массив с вложениями
 		return (name == font[font.length -1]) ? ["", name] : [name, name];});
 	},
-	fontserif = font_pref(["Arial","Cantarell","DejaVu Sans","Roboto","PT Serif","Segoe UI","Ubuntu","Cambria","Fira Sans","Georgia","Noto Sans","Calibri","Times","системный"]),
-	fontsans = [["PT Sans","PT Sans"], ...fontserif],
-
-	uAndr = "Mozilla/5.0 (Android 9; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0",
-	uaMac = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:88.0) Gecko/20100101 Firefox/88.0",
-	ua_my = "general.useragent.override", ua = glob.ua(true), // реальный ЮзерАгент
-	sstore = glob.pref(['browser.sessionstore.interval', 15e3]), pacfile = "user.pacfile";
+	serif = fonts("Arial|Cantarell|DejaVu Sans|Roboto|PT Serif|Segoe UI|Ubuntu|Cambria|Fira Sans|Georgia|Noto Sans|Calibri|Times|системный".split('|')), sans = [["PT Sans","PT Sans"], ...serif];
 
 	var hints = new Map([ // опция отсутствует ? выполнить код и вернуть строку
 		["ucf.savedirs", `glob.crop(glob.dirsvcget("DfltDwnld").path, 34)`],
-		[ua_my, `glob.ua()`] // текущий ЮзерАгент
+		[I[5], `glob.ua()`] // текущий ЮзерАгент
 	]),
 	secondary = [{ // menu: [apref, lab, akey, hint, [undef, str], code] radio: [val, lab, str-val, add-hint, code]
 			pref: ["dom.disable_open_during_load", "Всплывающие окна"], userChoice: 2, userAlt: true, values: [[true, "Блокировать"], [false, "Разрешить"]]
@@ -53,22 +48,22 @@
 				[`Сайт||Фото|`, "ввести свои пути",,"ключ в about:config",`glob.about_config("ucf.savedirs")`]]
 	},null,{
 			pref: ["network.proxy.autoconfig_url", "Прокси (VPN) URL", "п", "Переключение сетевых настроек",,`glob.mode_skin('')`],
-			userChoice: "localhost", userAlt: my_vpn, userPro: "", refresh: true,
+			userChoice: "localhost", userAlt: I[1], userPro: "", refresh: true,
 			values: [ // mode_skin — отображать изменения любой опции
 				["localhost", "системный", "0",, `glob.pref('network.proxy.type', 0)`],
 				["127.0.0.1", "Tor или Opera", "1", "Необходим сервис tor или opera-proxy",
 					`glob.pref('network.proxy.type', 1)`],
-				[my_vpn, "АнтиЗапрет", "2", "Надёжный доступ на заблокированные сайты\n«Режим прокси» меняется на 2",
+				[I[1], "АнтиЗапрет", "2", "Надёжный доступ на заблокированные сайты\n«Режим прокси» меняется на 2",
 					`glob.pref('network.proxy.type', 2)`],
 				// ["https://git.io/ac-anticensority-pac", "ac-anticensority", "3"],
-				[glob.pref([pacfile, "file:///etc/proxy.pac"]), "user .pac файл", "4", "about:config "+ pacfile], // нужен диалог выбора pac-файла
+				[glob.pref([I[2], "file:///etc/proxy.pac"]), "user .pac файл", "4", "about:config "+ I[2]], // нужен диалог выбора pac-файла
 				["", "сброшен",""]]
 	},{
 			pref: ["network.proxy.type", "Режим прокси", "р",,,`glob.mode_skin('')`], userChoice: 5, userAlt: 2, userPro: 1, refresh: true, //
 			values: [ //фон кнопки Меню: серый, голубой, красный, жёлтый, зелёный
 				[0, "Без прокси", "0", "по-умолчанию"],
 				[5, "Системный (из IE)", "5"],
-				[2, "Автонастройка", "2", "about:config "+ pacfile],
+				[2, "Автонастройка", "2", "about:config "+ I[2]],
 				[1, "Ручная настройка", "1", "Используется network.proxy.autoconfig_url"],
 				[4, "Автоопределение", "4"] ]
 	},{
@@ -82,9 +77,9 @@
 			pref: ["browser.zoom.full", "Масштабировать"], userChoice: true, userAlt: false,
 			values: [[true, "всю страницу"], [false, "только текст"]]
 	},{
-			pref: ["font.name.sans-serif.x-cyrillic", "Шрифт без засечек ",,"Также влияет на всплывающие подсказки\nСистемный: загрузка шрифтов документа"], userChoice: "", userAlt: "Roboto", userPro: "Arial", values: fontsans
+			pref: ["font.name.sans-serif.x-cyrillic", "Шрифт без засечек ",,"Также влияет на всплывающие подсказки\nСистемный: загрузка шрифтов документа"], userChoice: "", userAlt: "Roboto", userPro: "Arial", values: sans
 	},{
-			pref: ["font.name.serif.x-cyrillic", "Шрифт с засечками"], userChoice: "", userAlt: "Arial", values: fontserif
+			pref: ["font.name.serif.x-cyrillic", "Шрифт с засечками"], userChoice: "", userAlt: "Arial", values: serif
 	},{
 			pref: ["browser.display.use_document_fonts", "Загружать шрифты страниц"], userChoice: 1, userAlt: 0, refresh: true,
 			values: [[1, "Да"], [0, "Нет"]]
@@ -118,34 +113,32 @@
 			[0, "только Память",,,`[["browser.cache.memory.enable", true], ["browser.cache.disk.enable", false], ["browser.cache.memory.max_entry_size", -1]].map((a) =>{glob.pref(...a)})`],
 			[2097152, "только Диск",,,`[["browser.cache.memory.enable", false], ["browser.cache.disk.enable", true]].map((a) =>{glob.pref(...a)})`]]
 	},{
-			pref: ["browser.sessionstore.interval", "Резервирование сессий",,"Браузер резервирует сессии на\nслучай сбоя, снижая ресурс SSD"], userChoice: 300000, userAlt: sstore,  userPro: 15000,
+			pref: ["browser.sessionstore.interval", "Резервирование сессий",,"Браузер резервирует сессии на\nслучай сбоя, снижая ресурс SSD"], userChoice: 300000, userAlt: I[3],  userPro: 15000,
 			values: [
-			[sstore, `${sstore/60e3 + " мин"}`], [15000, "15 сек"], [60000, "1 мин"], [300000, "5 мин"], [900000, "15 мин"], [1800000, "30 мин"]]
+			[I[3], `${I[3]/60e3 + " мин"}`], [15000, "15 сек"], [60000, "1 мин"], [300000, "5 мин"], [900000, "15 мин"], [1800000, "30 мин"]]
 	},{
 			pref: ["devtools.debugger.remote-enabled", "Удалённая отладка",,"Также включить инструменты разработчика для chrome"], userAlt: true,
 			values: [
 			[true, "Да + chrome",,,`glob.pref("devtools.chrome.enabled", true)`],
 			[false, "Отключена",,, `glob.pref("devtools.chrome.enabled", false)`]]
 	},{
-			pref: [ua_my, "User Agent",,"от user-агент зависит вид сайтов", [ua, "встроенный"]],
-			userChoice: ua, userAlt: uAndr, userPro: uaMac, refresh: true,
+			pref: [I[5], "User Agent",,"от user-агент зависит вид сайтов", [ua, "встроенный"]],
+			userChoice: ua, userAlt: I.at(-1) + I[6], userPro: I.at(-1) + I[7], refresh: true,
 			values: [ [ua, "По-умолчанию"],
-				[uAndr, "Firefox 68 Android"], [uaMac, "Firefox 88 MacOS"],
-				["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.98 Safari/537.36", "Chrome61 Win10"],
-				["Mozilla/5.0 (Windows; U; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)", "MSIE 6.0 Windows"],
-				["Mozilla/5.0 (Linux; Android 7.0; PLUS Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.98 Mobile Safari/537.36", "Chrome61 Android7"],
-				["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.1 Safari/603.1.30", "Safari 6 MacOS"],
+				[I.at(-1) + I[6], "Chrome 99 Android 9"], [I[7], "Firefox 115 MacOS 12"],
+				[I.at(-1) + "Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.98 Safari/537.36", "Chrome61 Win10"],
+				[I.at(-1) + "Windows; U; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)", "MSIE 6.0 Windows"],
+				[I.at(-1) + "Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.1 Safari/603.1.30", "Safari 6 MacOS"],
 				["Opera/9.80 (Windows NT 6.2; Win64; x64) Presto/2.12 Version/12.16", "Opera12 W8"],
-				["Mozilla/5.0 (Linux; Android 5.1.1; SM-G928X Build/LMY47X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.83 Mobile Safari/537.36", "Samsung Galaxy S6"],
-				["Mozilla/5.0 (PlayStation 4 3.11) AppleWebKit/537.73 (KHTML, like Gecko)", "Playstation 4"],
+				[I.at(-1) + "Linux; Android 5.1.1; SM-G928X Build/LMY47X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.83 Mobile Safari/537.36", "Samsung Galaxy S6"],
+				[I.at(-1) + "PlayStation 4 3.11) AppleWebKit/537.73 (KHTML, like Gecko)", "Playstation 4"],
 				["Xbox (Xbox; Xbox One) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Mobile Safari/537.36 Edge/13.10586", "Xbox One (mobile)"],
-				["Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; SAMSUNG; GT-I8350)", "Windows Phone"],
-				["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.143 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36", "Yandex OSX"],
-				["Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "GoogleBot"]]
+				[I.at(-1) + "compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; SAMSUNG; GT-I8350)", "Windows Phone"],
+				[I.at(-1) + "Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.143 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36", "Yandex OSX"],
+				[I.at(-1) + "compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "GoogleBot"]]
 		}];
 	return {
-		label: "Журнал, Меню опций",
-		id: "ToggleButton", localized: false,
+		id: "ToggleButton", label: "Журнал, Меню опций", localized: false,
 		image: "data:image/webp;base64,UklGRkYCAABXRUJQVlA4WAoAAAAQAAAAFwAAFwAAQUxQSJcAAAANcGJr25S8mH4SNGxAgsguPCZ0BcMOiDSNRpvVaCTa3AI2qm2e2ofz7OuwgIiYgMzb4kVjGvegnQFAwXgFVnvcOmtnMJtutAa3Vo4mhRMDpWq8AjfU+yQoYf1/oTkTIdUrknKswNQ5yAdDzqgr4CYbsJWQfEyEU5QNEl2eKFM2AAIbjmSIMjwXPGyEdj6Bdn4mj9KO63sAAFZQOCCIAQAAdAgAnQEqGAAYAD6dRppKgoCqgAE4lsAKwgisgG27uzPePSvBIu/Pr0HJqW+AfoAIHl2DrAnRo/G3JBpTx8yE7L6LFQyD+yUNvuRYAAD+7mwmpaoBcsJ1hVKsMI2ucqid8qndm+WEvH4l4il6lA8FPscgnrRHrnSjjyNcfUV21+TkfqOWKou2UvVsZSl1z+jKs760Vij5XCWF9Uo6TZAhKfrJpeILyQYwq2Ee/g1uyEH/dJMI/91DsVpI6i2vV/Jqpd4/KniJtTm1woLvaotA2ikt3eeBaqlHf8WPe++lSWS7fETjgvzzbflp0Rj+v23kbb9e/VjUcPaD83shRuwzEo6CAO/AGxE+Zwbvv9NDsQT6T+S4CCDOFTuMRVv9/0E4P+uK+Vc3bMfQQD05gY/fes+ZX6ZHkvFdMn7zX8LMVvI59p7F806HPD2lBjs4lWWhQ5ckJDNflZL49370shr3/Q9uMJN9i/NVCu4OT7K3+4+/RkAMnjuY09u+3i4y4CldQG789iIAAAA=",
 		UserImg: "data:image/webp;base64,UklGRsgAAABXRUJQVlA4TLsAAAAvD8ADEFW4rbVtaVj67ViCCWhDSugiHSSVle7uMoJnhO973wgztW2IIZo4RvFEMdqu2rZtGJfNqWfYX0SisXgaGvkBFK5k4EEDTtS7Q31XN3ei94VeQuI61k6unuRaB86CMExsYWnFt+imhRgmCMMWJmYWliTRJgrYIAzfJfUMSCK7hDdji3VQkkTjE9hMrsCmNheZy9gzEqlhndwlMoJ5NSqr+KCIfPuDUm+Uoz7+FEmkmIjg/Pcf/6EBAA==", // серый
 		UserChoiceImg: "data:image/webp;base64,UklGRgoBAABXRUJQVlA4TP0AAAAvD8ADEI9hpG2kwpf60h8+nBQkbSSp/tW9hIMPFw5E0kaSKuP9q3kJDx8ePDjQSCQp2z8RkhhIHBVAEdD9J4JYEkEUJSiDD0EIEcFgBSIspCAcbdlyRzfeYpwnDotGYFHIfXe6pdToDwUE2bZNRzds24qTx9b8h+chHET0fwLiX3vNO6jyh5aWbwMaqX3Ttu/j0VDG+5ZB9nQ2nYwBUGepB8vqYH9v+qrpnsESzDcnh9i3DZ4oB3cfPD0+kmSTuyCucHH+8dXwLphnt5+6vgQlz3KwrB90f3drUFqXYE/zJz9KsufsQbatX741WnxtabN4hjds8X2veQdVxr8CAA==", // зелёный
@@ -170,7 +163,7 @@
 			var cb = Array.isArray(btn._destructors);
 			var id = cb ? btn.id : "ToggleButton";
 			var css = `#${id} menu[_moz-menuactive] {
-				color: ${menuactive} !important;
+				color: ${I[0]} !important;
 			}`;
 			var args = [
 				"data:text/css;charset=utf-8," + encodeURIComponent(css),
@@ -186,7 +179,7 @@
 			})(btn);
 		},
 		createPopup(doc, btn, name, data) {
-			var popup = doc.createElementNS(xul_ns, "menupopup");
+			var popup = doc.createElementNS(I[4], "menupopup");
 			var prop = name + "Popup";
 			btn.popups.push(btn[prop] = popup);
 			popup.id = this.id + "-" + prop;
@@ -197,7 +190,7 @@
 		},
 		map: {b: "Bool", n: "Int", s: "String"},
 		createElement(doc, obj) {  // pref
-			if (!obj) return doc.createElementNS(xul_ns, "menuseparator");
+			if (!obj) return doc.createElementNS(I[4], "menuseparator");
 			var pref = doc.ownerGlobal.Object.create(null), node, img, bool;
 			for(var [key, val] of Object.entries(obj)) {
 				if (key == "pref") {
@@ -228,14 +221,14 @@
 			}
 			if (!map) pref.set = set;
 
-			node = doc.createElementNS(xul_ns, "menu");
+			node = doc.createElementNS(I[4], "menu");
 			node.className = "menu-iconic";
 			img && node.setAttribute("image", img);
 			akey && node.setAttribute("accesskey", akey);
 			(node.pref = pref).vals = doc.ownerGlobal.Object.create(null);
 			this.createRadios(doc,
 				str.startsWith("B") && !pref.hasVals ? [[true, "true"], [false, "false"]] : obj.values,
-				node.appendChild(doc.createElementNS(xul_ns, "menupopup"))
+				node.appendChild(doc.createElementNS(I[4], "menupopup"))
 			);
 			if ("userChoice" in obj) pref.noAlt = !("userAlt" in obj);
 			return node;
@@ -290,11 +283,11 @@
 		createRadios(doc, vals, popup) {
 			for(var arr of vals) {
 				if (!arr) {
-					popup.append(doc.createElementNS(xul_ns, "menuseparator"));
+					popup.append(doc.createElementNS(I[4], "menuseparator"));
 					continue;
 				}
 				var [val, lab, key, hint] = arr;
-				var menuitem = doc.createElementNS(xul_ns, "menuitem");
+				var menuitem = doc.createElementNS(I[4], "menuitem");
 				with (menuitem)
 					setAttribute("type", "radio"), setAttribute("closemenu", "none"),
 					style.setProperty("font-style", "italic", "important"),
@@ -386,7 +379,7 @@
 					else break;}
 			}
 		},
-		click(e) { // строки меню
+		click(e) { //строки меню
 			if (e.button) return;
 			var trg = e.target, {pref} = trg;
 			if (!pref) return;
@@ -398,7 +391,7 @@
 			this.maybeClosePopup(e, menu);
 			if (newVal != menu.pref.val)
 				menu.pref.set(menu.pref.pref, newVal), this.maybeRe(menu, true);
-			menu.pref.code && eval(menu.pref.code); // выполнить
+			menu.pref.code && eval(menu.pref.code); //run
 		},
 		contextmenu(e) { // RMB на кнопке
 			var trg = e.target, win = e.view;
@@ -411,7 +404,7 @@
 				this.maybeClosePopup(e, trg);
 				if (trg.pref.user)
 					prefs.clearUserPref(trg.pref.pref), this.maybeRe(trg);
-				var code = trg.pref.code; code && eval(code); // выполнить код
+				var code = trg.pref.code; code && eval(code); //run
 			}
 			e.preventDefault();
 		}

@@ -1,7 +1,7 @@
 var EXPORTED_SYMBOLS = ["UcfStylesScripts"];
 const {AppConstants} = ChromeUtils.import("resource://gre/modules/AppConstants.jsm");
-var os = name => `${name.replace(/\.[^.$]+$/,'')}_${AppConstants.platform}${name.lastIndexOf('.') > 0 ? "." + name.split('.').pop() : ""}`, // macosx linux win
-osonly = (name, oss = []) => oss.includes(AppConstants.platform) ? name : "", // запуск только на указанных ОС
+var os = name => `${name.replace(/\.[^.$]+$/,'')}_${AppConstants.platform}${name.lastIndexOf('.') > 0 ? "."+ name.split('.').pop() : ""}`, //linux win macosx
+osonly = (name, oss = []) => oss.includes(AppConstants.platform) ? name : "", //для указанных OS
 jsmImport = (s, e = /\.mjs$/i.test(s) ? "ESModule" : "") => `ChromeUtils.import${e}("chrome://user_chrome_files/content/custom_scripts/${s}")`;
 
 var UcfStylesScripts = {
@@ -34,8 +34,8 @@ var UcfStylesScripts = {
 	scriptschrome: { // Для докум. окна браузера [ChromeOnly]
 		domload: [ // По событию "DOMContentLoaded"
 		{ path: "ucf_hookClicks.js", ucfobj: true, }, // используется скриптами, грузит attrsInspector.js
-		{ path: "ucf_QuickToggle.js", ucfobj: true, }, // требует ucf_hookClicks.js
-		{ path: "ucf_mousedrag.js", ucfobj: true, }, // требует ucf_hookClicks.js
+		{ path: "ucf_QuickToggle.js", ucfobj: true, }, // нужен ucf_hookClicks
+		{ path: "ucf_mousedrag.js", ucfobj: true, }, // нужен ucf_hookClicks
 		{ path: "ucf_contextsearch.js", ucfobj: true, },
 		{ path: "ucf_BookmarkDir.js", ucfobj: true, },
 		{ path: "ucf_cooks-pass.js", ucfobj: true, },
@@ -45,13 +45,13 @@ var UcfStylesScripts = {
 		{ path: "ucf_contextmenuopenwith.js", ucfobj: true, },
 		{ path: "ucf_downloads_clear.js", ucfobj: true, },
 		{ path: "ucf_undoBookmarks.js", ucfobj: true, },
-		{ path: osonly("menubarVisibilityChance.js", ["linux", "win"]), ucfobj: true, }, // запуск только на Linux и Windows
+		{ path: osonly("menubarVisibilityChance.js", ["linux","win"]), ucfobj: true, }, //кроме MacOS
 		],
 		load: [ // По событию "load"
 			// { path: "special_widgets.js", ucfobj: true, }, // <-- Special Widgets
 			// { path: "auto_hide_sidebar.js", ucfobj: true, }, // <-- Auto Hide Sidebar
 		{ path: "ucf_findbarclose.js", ucfobj: true, },
-		{ func: osonly("ucf_custom_script_win.menubarvisibilitychance.settoolbarvisibility();", ["linux", "win"]) },
+		{ func: osonly("ucf_custom_script_win.menubarvisibilitychance.settoolbarvisibility();", ["linux","win"])},
 		],
 	},
 	scriptsallchrome: { // Для докум. всех окон [ChromeOnly]
@@ -69,8 +69,7 @@ var UcfStylesScripts = {
 		{ path: "ucf_UrlTooltip.js", },
 		{ path: "ucf_SessionManager.js", },
 		{ path: "ucf-loads-favicons.js", },
-		// { path: "ucf-confirm-fav.js", },
-		// { func: jsmImport("SelectionToSearchbar.jsm"), },
+		{ path: "ucf_fav-export-html.js", },
 		{ func: jsmImport("SingleHTML.jsm"), },
 		{ func: jsmImport("ClickPicSave.jsm"), }, // нужен SingleHTML
 		{ func: `${jsmImport("UCFTitleChangedChild.jsm")}.registerUCFTitleChanged();`, },
@@ -78,25 +77,27 @@ var UcfStylesScripts = {
 	/** ************************▲ Настройки ▲************************ */
 };
 
-var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
-var UcfSSS = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
-var preloadSheet = (obj, func) => {
+var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm");
+var UcfSSS = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService),
+chfile = (f) => { f = Services.io.newURI('chrome://user_chrome_files/content/custom_styles/'+ f);
+	if (Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).convertChromeURL(f).QueryInterface(Ci.nsIFileURL).file.exists())
+		return f; return false;
+},
+preloadSheet = (obj, func) => {
 	try {
-		let uri = Services.io.newURI(`chrome://user_chrome_files/content/custom_styles/${obj.path}`);
+		let uri = chfile(obj.path); if (!uri) return;
 		let type = UcfSSS[obj.type];
 		let preload = UcfSSS.preloadSheet(uri, type);
 		(obj.sheet = f => {
-			try {
-				f(preload, type);
-			} catch (e) {}
+			try { f(preload, type);} catch (e) {}
 		})(func);
 	} catch (e) {
 		obj.sheet = () => {};
 	}
-};
-var registerSheet = async obj => {
+},
+registerSheet = async obj => {
 	try {
-		let uri = Services.io.newURI(`chrome://user_chrome_files/content/custom_styles/${obj.path}`);
+		let uri = chfile(obj.path); if (!uri) return;
 		let type = UcfSSS[obj.type];
 		if (!UcfSSS.sheetRegistered(uri, type))
 			UcfSSS.loadAndRegisterSheet(uri, type);
