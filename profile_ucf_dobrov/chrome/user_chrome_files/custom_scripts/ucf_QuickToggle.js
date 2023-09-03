@@ -1,29 +1,31 @@
 /* Быстрое переключение опций about:config для окна [ChromeOnly] http://forum.mozilla-russia.org/viewtopic.php?pid=789824#p789824
-нужна доработка: скрытое по Escape меню открывается на 2 раз, если мышь неподвижна
+BUG мышь неподвижна: скрытое по Escape меню открывается на второй клик
 
 30 скрытых настроек. Ctrl+Click или Правый: сброс опции по-умолчанию
 клик по параметру с Shift блокирует авто-закрытие меню
+⟳ Обновить страницу, ↯ Перезапуск браузера
 строки с userAlt имеют шрифт italic
 	refresh: false - reload current tab,	true - reload current tab skip cache
 	restart: false - restart browser,	true - restart browser with confirm
-Разделитель: Имя меню "—,⟳,↯" Опция, ⟳ обновить страницу, ↯ перезапуск браузера
 иконка равна ключу: userChoice:зелёный userAlt:жёлтый userPro:серый пусто:красный */
 
 (async (name, func) => { // mod by Dobrov нужен скрипт ucf_hookClicks.js
-	return CustomizableUI.createWidget(func()); // only UCF
+	return CustomizableUI.createWidget(func()); //only UCF
 })(this.constructor.name, () => {
 
 	var {prefs} = Services, db = prefs.getDefaultBranch(""), ua = glob.ua(true), //real ЮзерАгент
 	I = [Services.appinfo.OS == "Darwin" ? '#e8e8e8' : '#124', //текст под курсором, без Aero '#fff'
 	"https://antizapret.prostovpn.org/proxy.pac", "user.pacfile",
 	glob.pref(['browser.sessionstore.interval', 15e3]),
-	"http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul","general.useragent.override", "Linux; Android 9; Pixel 2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.88 Mobile Safari/537.36","Macintosh; Intel Mac OS X 10.15; rv:115.0) Gecko/20100101 Firefox/115.0","Mozilla/5.0 ("],
+	"http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul","general.useragent.override",
+	"Linux; Android 9; Pixel 2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.88 Mobile Safari/537.36",
+	"Macintosh; Intel Mac OS X 10.15; rv:115.0) Gecko/20100101 Firefox/115.0","Mozilla/5.0 ("],
 	fonts = (font) => { return font.map(function(name) { // массив с вложениями
 		return (name == font[font.length -1]) ? ["", name] : [name, name];});
 	},
 	serif = fonts("Arial|Cantarell|DejaVu Sans|Roboto|PT Serif|Segoe UI|Ubuntu|Cambria|Fira Sans|Georgia|Noto Sans|Calibri|Times|системный".split('|')), sans = [["PT Sans","PT Sans"], ...serif];
 
-	var hints = new Map([ // опция отсутствует ? выполнить код и вернуть строку
+	var hints = new Map([ //опция отсутствует ? выполнить код и вернуть строку
 		["ucf.savedirs", `glob.crop(glob.dirsvcget("DfltDwnld").path, 34)`],
 		[I[5], `glob.ua()`] // текущий ЮзерАгент
 	]),
