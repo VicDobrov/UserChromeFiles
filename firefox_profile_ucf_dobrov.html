@@ -86,7 +86,7 @@ window.fav = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9h
 <p><a href="http://forum.mozilla-russia.org/viewtopic.php?id=76642" onMouseOver="toolTip('<b><i>&nbsp;&nbsp;рекомендуется</i> Firefox версии 90 и выше</b><hr>Расширение возможностей и настройка <br>стиля браузера с помощью скриптов<br>Автоматизация скриптами iMacros<br>и многое другое на форуме<br>https://forum.mozilla-russia.org')" onMouseOut="toolTip()" ><strong>Экспертный профиль Firefox</strong></a> <a class="tooltip" href="http://victor-dobrov.narod.ru/projects.html">© Dobrov<span>мои проекты</span></a> <span class="GrayText"> – <span class="RedText"><em>кнопки</em></span><em>,</em> <span class="BlueText">скрипты</span><font color="#444">, стили</font><small> [<a class="tooltip" href="src.zip">22.06.2023<span>скачать архив</span></a>]</small></p><div id="floatTip"></div>
 
 <p style="margin-top: 9px; margin-bottom: 5px; line-height: 130%">
-	<span style="background-color:#EFF"><strong>Кнопки</strong> выполняют <strong>несколько действий</strong>:</span> Справка при наведении мыши ⦺<br>
+	<span style="background-color:#EFF"><strong>Кнопки</strong> выполняют <strong>несколько действий</strong>:</span> Справка при наведении мыши<br>
 	Вернуть <span style="color: darkred">удалённые закладки</span>, перевод сайта/текста, <span style="background: linear-gradient(to right, #4ff, #cff 70pt)">  Прогресс загрузки   </span><br>
 	<span style="background-color:#FED"><strong>Меню переключения</strong> скрытых настроек</span>, Добавить закладку без запроса<br>
 		Яркость: колёсико ± на Замке <img src='data:image/gif;base64,R0lGODlhLAAUAPIAAFZdZnJ6gm+LsZOdrJmqvrnD08jV59jj9CH5BAAAAAAALAAAAAAsABQAAAOUeLrc/jDKSau9WBkyAgDBQBjWJghjNXxsCwyUcc4COX3CUCjFIHwUQs5g8BEowEPhuEhKTjaZAAk4rKpN7HO6OFGtzkMY4u1yJUBCeNzw0d6wiKdQcNYD2/dbsoI5+3l6MxJ3BnUac4GCZxAeUzsHP3iKghN1IHQeAJARizQUly2cnZ5lEzI4NhNui3EZr7CxsrOvCQA7' style="margin-bottom:-6px">, режим <font style="background-color: #F0F0D0">Прокси</font> <font style="background-color: #FFE8FF">разным</font> <font style="background-color: #E0F0D4">фоном</font> <strong>Меню</strong><br>
@@ -98,10 +98,10 @@ window.fav = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9h
 <strong>Кнопки</strong> — расширяемые кликами <small>кнопок мыши и колёсика,</small> сочетания клавиш и жесты:<br>
 <strong>новые</strong> 15 — <script>document.write('<img src='+ window.fav +' style="margin-bottom:-3px">')</script> Журнал<small> и меню опций, История, Закладки, Папки, Пароли, Просмотр части страницы или Запись в Html, Менеджер сессий, <strong>Восстановить удалённые закладки</strong> или fav-иконки, Ссылки в подсказках, Дополнения, Инспектор атрибутов, UCF…</small><br>
 <strong>стандартные</strong> 7 — Загрузки, ≡ Меню, Печать, Звёздочка, Щит защиты, Замок, Обновить/Стоп<br>
-<strong>расширения</strong> 2 — SingleFile (сохранение по Alt+Shift+S), Reader View.<br>
+<strong>расширения</strong> 2 — SingleFile (сохранение по Alt+Ctrl+S), Reader View.<br>
 <strong>User.js</strong> скрипт пользователя: запуск по Alt+X, <strong>ucf_aom-button.js</strong> управление дополнениями<br>
 <strong>ucf_hookClicks.js</strong> общие функции. Подсказки, действия мыши и клавиатуры можно изменить, примеры в начале скрипта.<br>
-<font color="darkred">&nbsp;&nbsp;<small>Добавьте ваши действия клавиш и мыши по данным в <strong>консоли</strong>, если включена <strong>Отладка</strong> в Настройках UCF</small></font><br>
+<font color="darkred">&nbsp;&nbsp;<small>Добавьте ваши действия клавиш и мыши по выводу <strong>консоли</strong>, если <strong>включена Отладка</strong> в опциях UCF<br>&nbsp;&nbsp;или открыта <strong>Боковая панель.</strong> CapsLock включен: пропуск действий мыши и клавиш из ucf_hookClicks</small></font><br>
 <strong>Quick Toggle</strong> меню скрытых системных настроек, открытие боковой панели<br>
 <strong>Attributes Inspector</strong> просмотр свойств элементов: Ctrl+Shift+C copy. <span style="background-color:#FED">Долгий клик меняет режим работы кнопок</span><br>
 <strong>ucf_BookmarkDir.js</strong> быстрая закладка, перевод сайта/текста<br>
@@ -161,7 +161,7 @@ window.fav = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9h
 <p>4) <strong> Звёздочка</strong> ◉ Колёсико: открыть первую ссылку в Меню > Закладки<br></p>
 <blockquote>
 	<p style="font-size:small; font-style:italic; color:darkblue; margin-bottom:5px">добавьте в Меню закладок ваш Любимый сайт, иначе откроется Яндекс-поиск</p>
-	<p style="font-size:small"><strong>В подсказке</strong> путь в Закладках недавно добавленной папки или активной вкладки</p>
+	<p style="font-size:small"><strong>В подсказке</strong> путь в Закладках недавно добавленной папки или текущей вкладки</p>
 	<strong>◨ правый клик</strong>: Добавить/убрать сайт в Закладки без запроса<br>
 	<strong>◧ левый + Alt</strong>: Библиотека (Закладки, Журнал, Загрузки)<br>
 	<strong>◧ левый</strong> держать 0.5 сек: перевод сайта/выделенного текста<br>
@@ -174,7 +174,7 @@ window.fav = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9h
 </blockquote>
 
 <strong>Четыре режима чтения</strong>: Alt+R и три в строке адреса: иконка <strong>ReaderView</strong><br>
-<strong>Восстановить вкладки</strong>, Управления дополнениями, Инспектор атрибутов<br>
+<strong>Восстановить, Закрыть вкладки</strong>, Управление дополнениями, Инспектор<br>
 <strong>Жесты мыши</strong> например, <strong>перетащив</strong> ссылку влево, скопируете её в буфер<br>
 <strong>Поиск похожих</strong>: двойной клик на фото. <strong>Сохранить</strong>: тащите фото вправо
 </div> <!-- блок trigger_faq скрывается -->
