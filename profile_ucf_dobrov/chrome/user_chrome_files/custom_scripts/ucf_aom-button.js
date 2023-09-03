@@ -1,7 +1,7 @@
 try {(() => { var label = "Дополнения",
 tooltiptext = "ЛКМ: Меню дополнений\nСКМ: Отладка дополнений\nПКМ: Открыть менеджер дополнений",
 id = "ucf-aom-button",
-img = "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' height='16' width='16' viewBox='0 0 48 48'><g><rect x='0' y='0' width='48' height='48' rx='3' ry='3' style='fill:rgb(0, 120, 173);'/><path style='opacity:0.25;fill:black;' d='M 24,4.5 18,12 3,23.7 12,32.7 3.9,44.1 7.8,48 H 45 C 46.7,48 48,46.7 48,45 V 26.1 L 34.8,12.9 31.8,12.3 Z'/><path style='fill:white;' d='M 19.88,3 C 16.93,3 14.55,4.662 14.55,6.701 14.63,7.474 15.11,8.438 15.37,8.762 16.59,10.41 16.59,11.44 16.29,12.06 H 6.299 C 4.476,12.06 3,13.53 3,15.35 V 23.68 C 3.625,24 4.65,24 6.299,22.77 6.625,22.52 7.587,22.02 8.363,21.94 10.4,21.94 12.06,24.35 12.06,27.29 12.06,30.24 10.4,32.65 8.363,32.65 7.725,32.63 6.774,32.07 6.299,31.82 4.65,30.59 3.625,30.59 3,30.91 V 41.71 C 3,43.53 4.476,45 6.299,45 H 19.58 C 19.88,44.38 19.88,43.35 18.65,41.71 18.4,41.38 17.91,40.42 17.82,39.65 17.82,37.6 20.23,35.94 23.18,35.94 26.14,35.94 28.55,37.6 28.55,39.65 28.53,40.28 27.97,41.23 27.71,41.71 26.47,43.35 26.47,44.38 26.79,45 H 32.65 C 34.47,45 35.96,43.53 35.96,41.71 V 32.55 C 36.56,32.23 37.59,32.23 39.23,33.47 39.72,33.73 40.68,34.29 41.29,34.29 43.35,34.29 45,31.91 45,28.94 45,25.99 43.35,23.59 41.29,23.59 40.54,23.67 39.58,24.17 39.23,24.41 37.59,25.65 36.56,25.65 35.96,25.33 V 15.35 C 35.96,13.53 34.47,12.06 32.65,12.06 H 23.49 C 23.19,11.44 23.19,10.41 24.41,8.762 24.66,8.287 25.22,7.337 25.23,6.713 25.23,4.662 22.85,3 19.88,3' /></g></svg>",
+img = "data:image/webp;base64,UklGRh4BAABXRUJQVlA4TBIBAAAvD8ADELfBtpEkRXPsXf4p3pnPOJ0G20aSFPXdPVP+wb33HjPDMGgkSdEeenj/7pj5d9pM2zaG1L/8d49RAzFk+OFHkAFI2IebP3l3/DtebtGLjgp2n3+J/Mr/IBQfnLvW13v8/jGZdeu73Tm/lvqgN+hHY5Szb8a7OX8AARiXqSdsG1MFDrviB4hxCsSfIMOPQPyW5ciYGmXRRSlIcpDAYWTbSnNxiYcQl/vjjtN/b99aiOj/BFxpeSPJ08RPDyrl0QN2FxPOEP8/F9UIWmcuJBi6L2FTvASZrDOD6in4KFqNkweLF3mvHRWAsOB0v4Q2wqAgDN3fttNsvv0QblEUKrcpilwzBoBVUQfIpNv5XRiX",
 checked = "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' height='16' width='16'><path d='M 3,7 7,11 13,5' style='fill:none;stroke:white;stroke-width:1;'/></svg>",
 show_version = true,
 show_description = true,
@@ -237,8 +237,7 @@ CustomizableUI.createWidget({
 			#${id}-popup menuitem::after {
 				display: -moz-box !important;
 				content: "" !important;
-				height: 16px !important;
-				width: 16px !important;
+				height: 16px !important; width: 16px !important;
 				padding: 0 !important;
 				border: 1px solid rgb(0, 116, 232) !important;
 				border-radius: 0 !important;
@@ -275,8 +274,7 @@ CustomizableUI.createWidget({
 			#${id}-popup menuitem > .menu-accel-container .menu-iconic-accel {
 				display: -moz-box !important;
 				margin: 0 !important;
-				height: 8px !important;
-				width: 8px !important;
+				height: 8px !important; width: 8px !important;
 				border-radius: 4px !important;
 				background-color: transparent !important;
 				opacity: 1 !important;
