@@ -7,8 +7,8 @@ var UcfStylesScripts = {
     *   type: права стиля AGENT_SHEET,  AUTHOR_SHEET или USER_SHEET
     */
     stylescontent: [
-        // { path: "custom_styles_content_author.css", type: "AUTHOR_SHEET", sheet(f) { preloadSheet(this, f); }, },
-        // { path: "custom_styles_content_user.css", type: "USER_SHEET", sheet(f) { preloadSheet(this, f); }, },
+        { path: "custom_styles_content_author.css", type: "AUTHOR_SHEET", sheet(f) { preloadSheet(this, f); }, },
+        { path: "custom_styles_content_user.css", type: "USER_SHEET", sheet(f) { preloadSheet(this, f); }, },
     ],
     /**
     * Настройки скриптов:
@@ -30,7 +30,7 @@ var UcfStylesScripts = {
     /** ************************▲ Настройки ▲************************ */
 };
 
-var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+if (typeof Services != "object") var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm");
 var UcfSSS = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
 var preloadSheet = async (obj, func) => {
     try {

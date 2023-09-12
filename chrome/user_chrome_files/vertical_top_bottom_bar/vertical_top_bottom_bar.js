@@ -116,7 +116,13 @@ var vertical_top_bottom_bar = {
                 closebutton.setAttribute("removable", "false");
                 closebutton.setAttribute("oncommand", "var bar = this.parentNode; setToolbarVisibility(bar, bar.collapsed);");
                 bottombar.append(closebutton);
-                document.querySelector("#browser-bottombox")?.append(bottombar);
+                let id = "browser-bottombox", box = document.getElementById(id);
+                if (!box) {
+                    box = document.createXULElement("vbox");
+                    box.id = id;
+                    document.getElementById("a11y-announcement")?.before(box);
+                }
+                box.append(bottombar);
                 this.bottombar = bottombar;
                 externalToolbars = true;
                 toolbarcreate = true;

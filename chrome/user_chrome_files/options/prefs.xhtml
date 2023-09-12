@@ -18,10 +18,12 @@
 <input type="button" id="homepage"  title="Открыть страницу проекта UserChromeFiles" value="О UserChromeFiles"/>
 </div>
 </div>
+<div class="columns">
 <label>
 <input type="checkbox" data-pref="extensions.user_chrome_files.vertical_top_bottom_bar_enable"/>
 <span>Создать панели и кнопки</span>
-</label><fieldset>
+</label>
+<fieldset>
 <label>
 <input type="checkbox" data-pref="extensions.user_chrome_files.top_enable"/>
 <span>Создать Дополнительную панель</span>
@@ -44,7 +46,7 @@
 </label>
 <label>
 <input type="checkbox" data-pref="extensions.user_chrome_files.vertical_fullscreen"/>
-<span>Отображать Верт. панель в полноэкранном режиме</span>
+<span>Верт. панель в полноэкранном режиме</span>
 </label>
 <label>
 <input type="checkbox" data-pref="extensions.user_chrome_files.vertical_autohide"/>
@@ -60,8 +62,9 @@
 </label>
 <label>
 <input type="checkbox" data-pref="extensions.user_chrome_files.vertical_mouseenter_sidebar"/>
-<span>Скрывать Верт. панель при наведении на боковую панель</span>
+<span>Скрывать при наведении на боковую панель</span>
 </label></fieldset></fieldset></fieldset>
+</div>
 <div class="columns" title="Для детальной настройки см. CustomStylesScripts.jsm">
 <div>
 <label>
@@ -98,5 +101,20 @@
 <input type="checkbox" data-pref="extensions.user_chrome_files.custom_styles_scripts_child"/>
 <span>Включить стили и скрипты для контента [about:, chrome:, moz-extension:]</span>
 </label>
+<label><span class="text"> </span></label>
+<div class="columns">
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.winbuttons"/>
+<span title="Подключить стиль win_buttons-vitv.css &#10;(кроме MacOS) нужен перезапуск">Кнопки управления окна </span>
+</label>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.expert"/>
+<span title="разные действия и подсказки кнопок&#10;в режимах Простой/Эксперт">Экспертный режим </span>
+</label>
+<label>
+<input type="checkbox" data-pref="extensions.user_chrome_files.debug"/>
+<span title="Вывод некоторых команд, действий мыши/клавиш в лог&#10;(включено или открыта Боковая панель)">Отладка в консоли</span>
+</label>
+</div>
 </body>
 </html>

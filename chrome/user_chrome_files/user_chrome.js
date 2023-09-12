@@ -1,6 +1,5 @@
-// Не редактировать!
-var { UcfPrefs } = ChromeUtils.import("chrome://user_chrome_files/content/UcfPrefs.jsm");
-ChromeUtils.defineModuleGetter(this, "UcfStylesScripts", "chrome://user_chrome_files/content/custom_scripts/CustomStylesScripts.jsm");
+var { UcfPrefs } = ChromeUtils.import("chrome://user_chrome_files/content/UcfPrefs.jsm"); const Ucfs = 'chrome://user_chrome_files/content/custom_scripts/';
+ChromeUtils.defineModuleGetter(this, "UcfStylesScripts", Ucfs +"CustomStylesScripts.jsm");
 ChromeUtils.defineModuleGetter(this, "CustomizableUI", "resource:///modules/CustomizableUI.jsm");
 var user_chrome = {
 	initPrefsStyles() {
@@ -28,6 +27,9 @@ var user_chrome = {
 		branch.setBoolPref("custom_styles_scripts_child", false);
 		branch.setStringPref("custom_styles_scripts_groups", "[\"browsers\"]");
 		branch.setBoolPref("custom_safemode", true);
+		branch.setBoolPref("winbuttons", false);
+		branch.setBoolPref("expert", false);
+		branch.setBoolPref("debug", false);
 		if (UcfPrefs.vertical_top_bottom_bar_enable = UcfPrefs.gbranch.getBoolPref("vertical_top_bottom_bar_enable"))
 			this.sheettoolbars(() => {});
 		let noSafeMode = true;
@@ -51,7 +53,7 @@ var user_chrome = {
 				(async () => {
 					var actorOptions = {
 						child: {
-							moduleURI: "chrome://user_chrome_files/content/custom_scripts/CustomStylesScriptsChild.jsm",
+							moduleURI: Ucfs +"CustomStylesScriptsChild.jsm",
 							events: {
 								DOMWindowCreated: {},
 								DOMContentLoaded: {},
@@ -94,10 +96,9 @@ var user_chrome = {
 				return AboutUcfPrefs.newuri;
 			}
 			createInstance(outer, iid) {
-				if (outer) {
-					throw "2147746064";
-				}
-				return this.QueryInterface(iid);
+				if (iid && outer)
+					throw Cr.NS_ERROR_NO_AGGREGATION;
+				return this.QueryInterface(iid || outer);
 			}
 		}
 		var newFactory = new AboutUcfPrefs();
@@ -260,7 +261,7 @@ var user_chrome = {
 				for (let s of UcfStylesScripts.scriptsbackground) {
 					try {
 						if (s.path)
-							Services.scriptloader.loadSubScript(`chrome://user_chrome_files/content/custom_scripts/${s.path}`, scope, "UTF-8");
+							Services.scriptloader.loadSubScript(Ucfs + s.path, scope, "UTF-8");
 						if (s.func)
 							new scope.Function(s.func).apply(scope, null);
 					} catch (e) {}
@@ -514,12 +515,12 @@ class UserChrome {
 	}
 	_loadChromeScripts(win) {
 		try {
-			Services.scriptloader.loadSubScript("chrome://user_chrome_files/content/custom_scripts/custom_script_win.js", win, "UTF-8");
+			Services.scriptloader.loadSubScript(Ucfs +"custom_script_win.js", win, "UTF-8");
 		} catch (e) {}
 		for (let s of UcfStylesScripts.scriptschrome.domload) {
 			try {
 				if (s.path)
-					Services.scriptloader.loadSubScript(`chrome://user_chrome_files/content/custom_scripts/${s.path}`, s.ucfobj ? win.ucf_custom_script_win : win, "UTF-8");
+					Services.scriptloader.loadSubScript(Ucfs + s.path, s.ucfobj ? win.ucf_custom_script_win : win, "UTF-8");
 				if (s.func)
 					new win.Function(s.func).apply(win, null);
 			} catch (e) {}
@@ -532,7 +533,7 @@ class UserChrome {
 		for (let s of UcfStylesScripts.scriptschrome.load) {
 			try {
 				if (s.path)
-					Services.scriptloader.loadSubScript(`chrome://user_chrome_files/content/custom_scripts/${s.path}`, s.ucfobj ? win.ucf_custom_script_win : win, "UTF-8");
+					Services.scriptloader.loadSubScript(Ucfs + s.path, s.ucfobj ? win.ucf_custom_script_win : win, "UTF-8");
 				if (s.func)
 					new win.Function(s.func).apply(win, null);
 			} catch (e) {}
@@ -540,13 +541,13 @@ class UserChrome {
 	}
 	_loadAllChromeScripts(win, href) {
 		try {
-			Services.scriptloader.loadSubScript("chrome://user_chrome_files/content/custom_scripts/custom_script_all_win.js", win, "UTF-8");
+			Services.scriptloader.loadSubScript(Ucfs +"custom_script_all_win.js", win, "UTF-8");
 		} catch (e) {}
 		for (let s of UcfStylesScripts.scriptsallchrome.domload) {
 			try {
 				if (s.urlregxp.test(href)) {
 					if (s.path)
-						Services.scriptloader.loadSubScript(`chrome://user_chrome_files/content/custom_scripts/${s.path}`, s.ucfobj ? win.ucf_custom_script_all_win : win, "UTF-8");
+						Services.scriptloader.loadSubScript(Ucfs + s.path, s.ucfobj ? win.ucf_custom_script_all_win : win, "UTF-8");
 					if (s.func)
 						new win.Function(s.func).apply(win, null);
 				}
@@ -561,7 +562,7 @@ class UserChrome {
 			try {
 				if (s.urlregxp.test(href)) {
 					if (s.path)
-						Services.scriptloader.loadSubScript(`chrome://user_chrome_files/content/custom_scripts/${s.path}`, s.ucfobj ? win.ucf_custom_script_all_win : win, "UTF-8");
+						Services.scriptloader.loadSubScript(Ucfs + s.path, s.ucfobj ? win.ucf_custom_script_all_win : win, "UTF-8");
 					if (s.func)
 						new win.Function(s.func).apply(win, null);
 				}

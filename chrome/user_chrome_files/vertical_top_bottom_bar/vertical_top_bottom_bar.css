@@ -99,10 +99,10 @@ toolbarpaletteitem[place] > toolbaritem.ucf-additional-springs {
     font-size: 1rem !important;
     min-width: 20px !important;
     width: auto !important;
-    -moz-box-flex: 1 !important;
-    -moz-box-align: stretch !important;
-    -moz-box-pack: start !important;
-    -moz-box-orient: vertical !important;
+    flex-grow: 1 !important;
+    align-items: stretch !important;
+    justify-content: start !important;
+    flex-direction: column !important;
 }
 :root:-moz-lwtheme[style*="--lwt-additional-images"] #navigator-toolbox {
     background-attachment: fixed !important;
@@ -147,7 +147,7 @@ toolbarpaletteitem[place] > toolbaritem.ucf-additional-springs {
     min-width: 0 !important;
 }
 #ucf-additional-vertical-box > #ucf-additional-vertical-bar > toolbaritem.toolbaritem-combined-buttons {
-    -moz-box-orient: vertical !important;
+    flex-direction: column !important;
     margin-inline: 0 !important;
 }
 #ucf-additional-vertical-box > #ucf-additional-vertical-bar > toolbaritem.toolbaritem-combined-buttons > toolbarbutton.toolbarbutton-combined > .toolbarbutton-text {
@@ -180,18 +180,8 @@ toolbarpaletteitem[place] > toolbaritem.ucf-additional-springs {
 #ucf-additional-vertical-box > #ucf-additional-vertical-bar > toolbarspacer {
 	height: 15px !important;
 }
-@supports (display: -moz-box) {
-    #ucf-additional-vertical-container {
-        display: -moz-box !important;
-    }
-}
-@supports not (display: -moz-box) { /* FIX Firefox 113 */
-    #ucf-additional-vertical-container {
-        display: flex !important;
-    }
-    #ucf-additional-vertical-bar {
-        flex-grow: 1 !important;
-    }
+#ucf-additional-vertical-container {
+    display: flex !important;
 }
 #ucf-additional-vertical-container[vertautohide="true"] {
     position: relative !important;
@@ -315,14 +305,14 @@ toolbarpaletteitem[place] > toolbaritem.ucf-additional-springs {
 }
 #ucf-additional-vertical-box > #ucf-additional-vertical-bar > #personal-bookmarks {
     width: 0 !important;
-    -moz-box-flex: 0 !important;
+    flex-grow: 0 !important;
     margin: 0 !important;
 }
 #ucf-additional-vertical-box > #ucf-additional-vertical-bar > #search-container {
     width: 0 !important;
     max-height: 0 !important;
     overflow-y: visible !important;
-    -moz-box-flex: 0 !important;
+    flex-grow: 0 !important;
     min-width: 80px !important;
     margin: 0 !important;
 }

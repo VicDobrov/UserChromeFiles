@@ -81,6 +81,6 @@ toolbar:not(#nav-bar) toolbarspring {
 }
 toolbarpaletteitem[place="palette"][id^="wrapper-customizableui-special-spacer"],
 toolbarpaletteitem[place="palette"][id^="wrapper-customizableui-special-separator"] {
-    -moz-box-align: center !important;
+    align-items: center !important;
 }
 }

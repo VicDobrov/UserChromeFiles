@@ -1,18 +1,21 @@
-//
+// UserChromeFiles Vitaliy V. http://forum.mozilla-russia.org/viewtopic.php?id=76642
 (async () => { Cu.evalInSandbox(`
-var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm"), user_chrome_files_sandbox = {
+	if (typeof Services != "object")
+  	var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm");
+	var user_chrome_files_sandbox = {
 	init() {
 		Services.obs.addObserver(this, "domwindowopened");
 		Services.obs.addObserver(this, "profile-after-change");
 	},
 	observe(aWindow, aTopic, aData) {
 		Services.obs.removeObserver(this, "profile-after-change");
-		this.observe = (window, topic, data) => {
-			if (!(window instanceof Ci.nsIDOMChromeWindow)) return;
+		this.observe = (window, topic, data) => { 
+			try {if (!(window .isChromeWindow)) return;} // FF116+
+			catch {if (!(window instanceof Ci.nsIDOMChromeWindow)) return;}
 			var docElementInserted = e => {
 				var win = e.target.defaultView;
-				if (win instanceof Ci.nsIDOMChromeWindow)
-					user_chrome.initWindow(win);
+				try {if (win .isChromeWindow) user_chrome.initWindow(win);}
+				catch {if (win instanceof Ci.nsIDOMChromeWindow) user_chrome.initWindow(win);}
 			};
 			window.windowRoot.addEventListener("DOMDocElementInserted", docElementInserted, true);
 			window.addEventListener("load", e => {
@@ -44,3 +47,7 @@ var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm"), user
 };
 user_chrome_files_sandbox.init();`, Cu.Sandbox(Cc["@mozilla.org/systemprincipal;1"].createInstance(Ci.nsIPrincipal), { wantComponents: true, sandboxName: "UserChromeFiles", wantGlobalProperties: ["ChromeUtils"],}));
 })();
+
+lockPref("extensions.experiments.enabled", true);
+lockPref("extensions.legacy.enabled", true);
+lockPref("xpinstall.signatures.required", false);

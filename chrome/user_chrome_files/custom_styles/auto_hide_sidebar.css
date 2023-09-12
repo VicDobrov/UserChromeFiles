@@ -1,11 +1,11 @@
 @-moz-document url("chrome://browser/content/browser.xhtml") {
 #sidebar-box {
-    --v-sidebar-min-width: 2px;
+    --v-sidebar-min-width: 2px; /* зона открытия от края экрана */
     --v-sidebar-min-width-normal: 5px;
-    --v-sidebar-max-width: 30em;
-    --v-sidebar-transition-delay-show: .3s;
-    --v-sidebar-transition-delay-hide: .6s;
-    --v-sidebar-transition-duration: .3s;
+    --v-sidebar-max-width: 30em; /* ширина */
+    --v-sidebar-transition-delay-show: .3s; /* время до открытия */
+    --v-sidebar-transition-delay-hide: .6s; /* время до закрытия */
+    --v-sidebar-transition-duration: .3s; /* время анимации */
     /* ********************************************** */
 
     position: relative !important;
@@ -62,9 +62,9 @@
     display: none !important;
 }
 #sidebar-box > #sidebar {
-    min-width: 0 !important;
+    min-width: 30px !important;
     width: auto !important;
     max-width: none !important;
-    -moz-box-flex: 1 !important;
+    flex-grow: 1 !important;
 }
 }

@@ -22,4 +22,7 @@ var UcfPrefs = {
     custom_scripts_chrome: false,
     custom_scripts_all_chrome: false,
     custom_styles_scripts_child: false,
+    winbuttons: false,
+    expert: false,
+    debug: false,
 };
