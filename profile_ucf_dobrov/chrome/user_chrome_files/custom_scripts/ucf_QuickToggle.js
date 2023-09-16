@@ -4,10 +4,9 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 30 скрытых настроек. Ctrl+Click или Правый: сброс опции по-умолчанию
 клик по параметру с Shift блокирует авто-закрытие меню
 ⟳ Обновить страницу, ↯ Перезапуск браузера
-строки с userAlt имеют шрифт italic
-	refresh: false - reload current tab,	true - reload current tab skip cache
-	restart: false - restart browser,	true - restart browser with confirm
-иконка равна ключу: userChoice:зелёный userAlt:жёлтый userPro:серый пусто:красный */
+строки с pYellow = шрифт italic, цвет = ключ, пусто:Red 
+	refresh: false - reload current tab,	true - reload skip cache
+	restart: false - restart browser,	true - restart with confirm */
 
 (async (name, func) => { // mod by Dobrov нужен скрипт ucf_hookClicks.js
 	return CustomizableUI.createWidget(func()); //only UCF
@@ -20,7 +19,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 	"http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul","general.useragent.override",
 	"Linux; Android 9; Pixel 2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.88 Mobile Safari/537.36",
 	"Macintosh; Intel Mac OS X 10.15; rv:115.0) Gecko/20100101 Firefox/115.0","Mozilla/5.0 ("],
-	fonts = (font) => { return font.map(function(name) { // массив с вложениями
+	fonts = (font) => { return font.map(function(name) { //array с вложениями
 		return (name == font[font.length -1]) ? ["", name] : [name, name];});
 	},
 	serif = fonts("Arial|Cantarell|DejaVu Sans|Roboto|PT Serif|Segoe UI|Ubuntu|Cambria|Fira Sans|Georgia|Noto Sans|Calibri|Times|системный".split('|')), sans = [["PT Sans","PT Sans"], ...serif];
@@ -30,16 +29,16 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 		[I[5], `glob.ua()`] // текущий ЮзерАгент
 	]),
 	secondary = [{ // menu: [apref, lab, akey, hint, [undef, str], code] radio: [val, lab, str-val, add-hint, code]
-			pref: ["dom.disable_open_during_load", "Всплывающие окна"], userChoice: 2, userAlt: true, values: [[true, "Блокировать"], [false, "Разрешить"]]
+			pref: ["dom.disable_open_during_load", "Всплывающие окна"], pDefGreen: 2, pYellow: true, values: [[true, "Блокировать"], [false, "Разрешить"]]
 	},{
-			pref: ["javascript.enabled", "Выполнять скрипты Java",,"Поддержка интерактивных сайтов, рекламы\nтакже разрешает действия горячих клавиш"], userChoice: true, refresh: true,
+			pref: ["javascript.enabled", "Выполнять скрипты Java",,"Поддержка интерактивных сайтов, рекламы\nтакже разрешает действия горячих клавиш"], pDefGreen: true, refresh: true,
 			values: [[true, "Да"], [false, "Нет"]]
 	},{
-			pref: ["browser.safebrowsing.downloads.remote.block_dangerous", "Опасные файлы, сайты",,"browser.safebrowsing.downloads.remote.block_dangerous_host"], userChoice: true, userAlt: false,
+			pref: ["browser.safebrowsing.downloads.remote.block_dangerous", "Опасные файлы, сайты",,"browser.safebrowsing.downloads.remote.block_dangerous_host"], pDefGreen: true, pYellow: false,
 			values: [[true, "Запрет",,,`glob.pref('browser.safebrowsing.downloads.remote.block_dangerous_host',true)`], [false, "Открыть",,,`glob.pref('browser.safebrowsing.downloads.remote.block_dangerous_host',false)`]]
 	},{
 			pref: ["ucf.savedirs", "Загрузки",,'Пути сохранения Страниц и Графики\nСинтаксис «_Html/subdir|_Pics/subdir»\nsubdir: пусто | 0 заголовок | 1 домен',
-				["", "всё в общей папке"]], userChoice: "_Сайты||_Фото|0", userAlt: "_Web|1|_Images|0", userPro: "",
+				["", "всё в общей папке"]], pDefGreen: "_Сайты||_Фото|0", pYellow: "_Web|1|_Images|0", pGray: "",
 			values: [ // сохранение Html/Pics. [Загрузки]/"_Html/subdir|_Pics/subdir" subdir: пусто | 0 заголовок | 1 домен
 				["", "всё в общую папку"],
 				[`_Сайты||_Фото|0`, "_Сайты|_Фото/имя…"],
@@ -50,7 +49,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 				[`Сайт||Фото|`, "ввести свои пути",,"ключ в about:config",`glob.about_config("ucf.savedirs")`]]
 	},null,{
 			pref: ["network.proxy.autoconfig_url", "Прокси (VPN) URL", "п", "Переключение сетевых настроек",,`glob.mode_skin('')`],
-			userChoice: "localhost", userAlt: I[1], userPro: "", refresh: true,
+			pDefGreen: "localhost", pYellow: I[1], pGray: "", refresh: true,
 			values: [
 				["localhost", "системный", "0",, `glob.pref('network.proxy.type', 0)`],
 				["127.0.0.1", "Tor или Opera", "1", "Необходим сервис tor или opera-proxy",
@@ -61,7 +60,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 				[glob.pref([I[2], "file:///etc/proxy.pac"]), "user .pac файл", "4", "about:config "+ I[2]], // нужен диалог выбора pac-файла
 				["", "сброшен",""]]
 	},{
-			pref: ["network.proxy.type", "Режим прокси", "р",,,`glob.mode_skin('')`], userChoice: 5, userAlt: 2, userPro: 1, refresh: true, // mode_skin — отображать изменения любой опции
+			pref: ["network.proxy.type", "Режим прокси", "р",,,`glob.mode_skin('')`], pDefGreen: 5, pYellow: 2, pGray: 1, refresh: true, // mode_skin — отображать изменения любой опции
 			values: [ //фон кнопки Меню: серый, голубой, красный, жёлтый, зелёный
 				[0, "Без прокси", "0", "по-умолчанию"],
 				[5, "Системный (из IE)", "5"],
@@ -69,63 +68,55 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 				[1, "Ручная настройка", "1", "Используется network.proxy.autoconfig_url"],
 				[4, "Автоопределение", "4"] ]
 	},{
-			pref: ["network.trr.mode", "DNS поверх HttpS",, "Шифрование DNS-трафика для\nзащиты персональных данных"], userChoice: 0, userAlt: 2, userPro: 5, refresh: true,
+			pref: ["network.trr.mode", "DNS поверх HttpS",, "Шифрование DNS-трафика для\nзащиты персональных данных"], pDefGreen: 0, pYellow: 2, pGray: 5, refresh: true,
 			values: [
 				[0, "по-умолчанию", "0"], [1, "автоматически", "1", "используется DNS или DoH, в зависимости от того, что быстрее"], [2, "DoH, затем DNS", "2"], [3, "только DoH", "3"], [4, "DNS и DoH", "4"], [5, "отключить DoH", "5"] ]
 	},{
-			pref: ["network.cookie.cookieBehavior", "Получать куки",, "Персональные настройки посещённых сайтов"], userChoice: 3, userAlt: 0, userPro: 4, refresh: false,
+			pref: ["network.cookie.cookieBehavior", "Получать куки",, "Персональные настройки посещённых сайтов"], pDefGreen: 3, pYellow: 0, pGray: 4, refresh: false,
 			values: [[0, "со всех сайтов"], [3, "посещённые сайты"], [4, "кроме трекеров"], [1, "кроме сторонних"], [2, "никогда"]]
 	},null,{
-			pref: ["browser.zoom.full", "Масштабировать"], userChoice: true, userAlt: false,
-			values: [[true, "всю страницу"], [false, "только текст"]]
+			pref: ["font.name.sans-serif.x-cyrillic", "Шрифт без засечек ",,"Также влияет на всплывающие подсказки\nСистемный: загрузка шрифтов документа"], pDefGreen: "", pYellow: "Roboto", pGray: "Arial", values: sans
 	},{
-			pref: ["font.name.sans-serif.x-cyrillic", "Шрифт без засечек ",,"Также влияет на всплывающие подсказки\nСистемный: загрузка шрифтов документа"], userChoice: "", userAlt: "Roboto", userPro: "Arial", values: sans
+			pref: ["font.name.serif.x-cyrillic", "Шрифт с засечками"], pDefGreen: "", pYellow: "Arial", values: serif
 	},{
-			pref: ["font.name.serif.x-cyrillic", "Шрифт с засечками"], userChoice: "", userAlt: "Arial", values: serif
-	},{
-			pref: ["browser.display.use_document_fonts", "Загружать шрифты страниц"], userChoice: 1, userAlt: 0, refresh: true,
+			pref: ["browser.display.use_document_fonts", "Загружать шрифты страниц"], pDefGreen: 1, pGray: 0, refresh: true,
 			values: [[1, "Да"], [0, "Нет"]]
 	},{
 			pref: ["gfx.webrender.force-disabled", "Ускорять отрисовку страниц", ,"gfx.webrender.compositor.force-enabled\ngfx.webrender.all\n\nАппаратная отрисовка страниц видеокартой.\nотключите при разных проблемах с графикой"],
-			userChoice: false, userAlt: true, userPro: undefined, restart: true, values: [
+			pDefGreen: false, pYellow: true, pGray: undefined, restart: true, values: [
 			[true, "Нет",,,`[["gfx.webrender.compositor.force-enabled", false], ["gfx.webrender.all", false]].map((a) =>{glob.pref(...a)})`],
 			[false, "Да",,,`[["gfx.webrender.compositor.force-enabled", true], ["gfx.webrender.all", true]].map((a) =>{glob.pref(...a)})`]]
 	},null,{
-			pref: ["network.http.sendRefererHeader", "Referer: для чего"], userChoice: 2, userAlt: 1,
-			values: [[0, "Ни для чего", "0"], [1, "Только ссылки", "1"], [2, "Ссылки, графика", "2"]]
-	},{
-			pref: ["media.autoplay.default", "Авто-play аудио/видео"], userChoice: 0, userAlt: 2, userPro: 5, refresh: true,
+			pref: ["media.autoplay.default", "Авто-play аудио/видео"], pDefGreen: 0, pYellow: 2, pGray: 5, refresh: true,
 			values: [
 				[0, "Разрешить", "0"], [2, "Спрашивать", "2"], [1, "Запретить", "1"], [5, "Блокировать", "5"]]
 	},{
 			pref: ["dom.storage.enabled", "Локальное хранилище",, "Сохранение персональных данных, по\nкоторым вас можно идентифицировать"],
-			userChoice: false, userAlt: true,
+			pDefGreen: false, pYellow: true,
 			values: [[true, "Разрешить"], [false, "Запретить"]]
 	},{
-			pref: ["privacy.resistFingerprinting", "Изоляция Firstparty-Fingerprint", ,"privacy.firstparty.isolate\n\nЗащита данных пользователя также\nзапрещает запоминать размер окна"], userChoice: false,
+			pref: ["privacy.resistFingerprinting", "Изоляция Firstparty-Fingerprint", ,"privacy.firstparty.isolate\n\nЗащита данных пользователя также\nзапрещает запоминать размер окна"], pDefGreen: false,
 			values: [[true, "Да", , "Защита от слежки",`glob.pref('privacy.firstparty.isolate', true)`], [false, "Нет", , "Защита от слежки",`glob.pref('privacy.firstparty.isolate', false)`]]
 	},{
-			pref: ["media.peerconnection.enabled", "WebRTC ваш реальный IP"], userChoice: false,
+			pref: ["media.peerconnection.enabled", "WebRTC ваш реальный IP"], pDefGreen: false,
 			values: [[true, "Выдать"], [false, "Скрыть"]]
 	},null,{
-			pref: ["browser.cache.disk.capacity", "Кэш браузера",,"\ncache.memory.max_entry_size:\nДиск и память: 5120\nтолько Память: -1"], userChoice: 1048576, userAlt: 0, userPro: 256e3,
+			pref: ["network.http.sendRefererHeader", "Referer: для чего"], pDefGreen: 2, pYellow: 1,
+			values: [[0, "Ни для чего", "0"], [1, "Только ссылки", "1"], [2, "Ссылки, графика", "2"]]
+	},{
+			pref: ["browser.cache.disk.capacity", "Кэш браузера",,"\ncache.memory.max_entry_size:\nДиск и память: 5120\nтолько Память: -1"], pDefGreen: 1048576, pYellow: 0, pGray: 256e3,
 			values: [
 			[256e3, "По-умолчанию"],
 			[1048576, "Диск и Память",,,`[["browser.cache.memory.enable", true], ["browser.cache.disk.enable", true], ["browser.cache.memory.max_entry_size", 5120]].map((a) =>{glob.pref(...a)})`],
 			[0, "только Память",,,`[["browser.cache.memory.enable", true], ["browser.cache.disk.enable", false], ["browser.cache.memory.max_entry_size", -1]].map((a) =>{glob.pref(...a)})`],
 			[2097152, "только Диск",,,`[["browser.cache.memory.enable", false], ["browser.cache.disk.enable", true]].map((a) =>{glob.pref(...a)})`]]
 	},{
-			pref: ["browser.sessionstore.interval", "Резервирование сессий",,"Браузер резервирует сессии на\nслучай сбоя, снижая ресурс SSD"], userChoice: 3e5, userAlt: I[3], userPro: 15e3,
+			pref: ["browser.sessionstore.interval", "Резервирование сессий",,"Браузер резервирует сессии на\nслучай сбоя, снижая ресурс SSD"], pDefGreen: 3e5, pYellow: I[3], pGray: 15e3,
 			values: [
 			[I[3], `${I[3]/60e3 + " мин"}`], [15e3, "15 сек"], [6e4, "1 мин"], [3e5, "5 мин"], [9e5, "15 мин"], [18e5, "30 мин"]]
 	},{
-			pref: ["devtools.debugger.remote-enabled", "Удалённая отладка",,"Также включить инструменты разработчика для chrome"], userAlt: true,
-			values: [
-			[true, "Да + chrome",,,`glob.pref("devtools.chrome.enabled", true)`],
-			[false, "Отключена",,, `glob.pref("devtools.chrome.enabled", false)`]]
-	},{
 			pref: [I[5], "User Agent",,"Тип гаджета меняет вид сайта", [ua, "встроенный"]],
-			userChoice: ua, userAlt: I.at(-1) + I[6], userPro: I.at(-1) + I[7], refresh: true,
+			pDefGreen: ua, pYellow: I.at(-1) + I[6], pGray: I.at(-1) + I[7], refresh: true,
 			values: [ [ua, "По-умолчанию"],
 				[I.at(-1) + I[6], "Chrome 99 Android 9"], [I[7], "Firefox 115 MacOS 12"],
 				[I.at(-1) + "Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.98 Safari/537.36", "Chrome61 Win10"],
@@ -141,21 +132,19 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 		}];
 	return {
 		id: "ToggleButton", label: "Журнал, Меню опций", localized: false,
-		image: "data:image/webp;base64,UklGRkYCAABXRUJQVlA4WAoAAAAQAAAAFwAAFwAAQUxQSJcAAAANcGJr25S8mH4SNGxAgsguPCZ0BcMOiDSNRpvVaCTa3AI2qm2e2ofz7OuwgIiYgMzb4kVjGvegnQFAwXgFVnvcOmtnMJtutAa3Vo4mhRMDpWq8AjfU+yQoYf1/oTkTIdUrknKswNQ5yAdDzqgr4CYbsJWQfEyEU5QNEl2eKFM2AAIbjmSIMjwXPGyEdj6Bdn4mj9KO63sAAFZQOCCIAQAAdAgAnQEqGAAYAD6dRppKgoCqgAE4lsAKwgisgG27uzPePSvBIu/Pr0HJqW+AfoAIHl2DrAnRo/G3JBpTx8yE7L6LFQyD+yUNvuRYAAD+7mwmpaoBcsJ1hVKsMI2ucqid8qndm+WEvH4l4il6lA8FPscgnrRHrnSjjyNcfUV21+TkfqOWKou2UvVsZSl1z+jKs760Vij5XCWF9Uo6TZAhKfrJpeILyQYwq2Ee/g1uyEH/dJMI/91DsVpI6i2vV/Jqpd4/KniJtTm1woLvaotA2ikt3eeBaqlHf8WPe++lSWS7fETjgvzzbflp0Rj+v23kbb9e/VjUcPaD83shRuwzEo6CAO/AGxE+Zwbvv9NDsQT6T+S4CCDOFTuMRVv9/0E4P+uK+Vc3bMfQQD05gY/fes+ZX6ZHkvFdMn7zX8LMVvI59p7F806HPD2lBjs4lWWhQ5ckJDNflZL49370shr3/Q9uMJN9i/NVCu4OT7K3+4+/RkAMnjuY09u+3i4y4CldQG789iIAAAA=",
-		UserImg: "data:image/webp;base64,UklGRsgAAABXRUJQVlA4TLsAAAAvD8ADEFW4rbVtaVj67ViCCWhDSugiHSSVle7uMoJnhO973wgztW2IIZo4RvFEMdqu2rZtGJfNqWfYX0SisXgaGvkBFK5k4EEDTtS7Q31XN3ei94VeQuI61k6unuRaB86CMExsYWnFt+imhRgmCMMWJmYWliTRJgrYIAzfJfUMSCK7hDdji3VQkkTjE9hMrsCmNheZy9gzEqlhndwlMoJ5NSqr+KCIfPuDUm+Uoz7+FEmkmIjg/Pcf/6EBAA==", // серый
-		UserChoiceImg: "data:image/webp;base64,UklGRgoBAABXRUJQVlA4TP0AAAAvD8ADEI9hpG2kwpf60h8+nBQkbSSp/tW9hIMPFw5E0kaSKuP9q3kJDx8ePDjQSCQp2z8RkhhIHBVAEdD9J4JYEkEUJSiDD0EIEcFgBSIspCAcbdlyRzfeYpwnDotGYFHIfXe6pdToDwUE2bZNRzds24qTx9b8h+chHET0fwLiX3vNO6jyh5aWbwMaqX3Ttu/j0VDG+5ZB9nQ2nYwBUGepB8vqYH9v+qrpnsESzDcnh9i3DZ4oB3cfPD0+kmSTuyCucHH+8dXwLphnt5+6vgQlz3KwrB90f3drUFqXYE/zJz9KsufsQbatX741WnxtabN4hjds8X2veQdVxr8CAA==", // зелёный
-		notChoiceImg: "data:image/webp;base64,UklGRhwBAABXRUJQVlA4TBABAAAvD8ADEL+hNJKkaOTJkycJn7CQJ5GjeXIgE4ZY/5Qq+HyMRJJyEvkR6K+IQwQk8qSRSFJWfgwkMZD0b0IC1KZtwDhl9h1Afx+SIEmAIEmChO+PwVWRpOsj2EgllBRDKy1EiJmhs5ztdaTnOAkEFBjQIGAdDiPJNq37bdu2nX9uDOGevQcR/SeQtNn+Aovh/vL2eF1FYR/cz9tNJKgHvf+4jseiYn59JAC38yqV8N57SDibw3OXzaQlyWKE3dPhtSzkshkiAttSHa4VLRXzqkqhogJIvVEjLbNWScIVeC3araaGoOqxeDk89z3rdphZzMITuF3mA/SJCFA2B9xPs9FkbKTsP8JcDtMhB7nQ747/CA==", // красный
-		UserAltImg: "data:image/webp;base64,UklGRv4AAABXRUJQVlA4TPEAAAAvD8ADEFeBppGkTMdJQAKSkI0MSsoTgAhDkW1sG3VEF0EER06Mtm1jWBi4/68cNBJJykpiIHFUQNK/CQlIOO+Lr4fmLsUtio7rgkBiUAjszusVxAQkHiEB8xAnXoQwz5sOM4QYHEaSbVrnWf8/21b+GX6GsBvRfwJBCHHADPlLlGQhM0Qfif18v7HTj9/3mI7z4onp8Wrkj+t2ANg4+pEgdYZ5WTdwmQcnFWRF2w8zAPZtkQnCik3bAWhZMRRQAVDVrEoFCAWZoamkApKakQlSV4f2BnBTQRSYxgcGkQDx0zLfWM+PYwLPNml7iH//+A8AAA==", // жёлтый
+		icon: "data:image/webp;base64,UklGRkYCAABXRUJQVlA4WAoAAAAQAAAAFwAAFwAAQUxQSJcAAAANcGJr25S8mH4SNGxAgsguPCZ0BcMOiDSNRpvVaCTa3AI2qm2e2ofz7OuwgIiYgMzb4kVjGvegnQFAwXgFVnvcOmtnMJtutAa3Vo4mhRMDpWq8AjfU+yQoYf1/oTkTIdUrknKswNQ5yAdDzqgr4CYbsJWQfEyEU5QNEl2eKFM2AAIbjmSIMjwXPGyEdj6Bdn4mj9KO63sAAFZQOCCIAQAAdAgAnQEqGAAYAD6dRppKgoCqgAE4lsAKwgisgG27uzPePSvBIu/Pr0HJqW+AfoAIHl2DrAnRo/G3JBpTx8yE7L6LFQyD+yUNvuRYAAD+7mwmpaoBcsJ1hVKsMI2ucqid8qndm+WEvH4l4il6lA8FPscgnrRHrnSjjyNcfUV21+TkfqOWKou2UvVsZSl1z+jKs760Vij5XCWF9Uo6TZAhKfrJpeILyQYwq2Ee/g1uyEH/dJMI/91DsVpI6i2vV/Jqpd4/KniJtTm1woLvaotA2ikt3eeBaqlHf8WPe++lSWS7fETjgvzzbflp0Rj+v23kbb9e/VjUcPaD83shRuwzEo6CAO/AGxE+Zwbvv9NDsQT6T+S4CCDOFTuMRVv9/0E4P+uK+Vc3bMfQQD05gY/fes+ZX6ZHkvFdMn7zX8LMVvI59p7F806HPD2lBjs4lWWhQ5ckJDNflZL49370shr3/Q9uMJN9i/NVCu4OT7K3+4+/RkAMnjuY09u+3i4y4CldQG789iIAAAA=",
+		defGreen: "data:image/webp;base64,UklGRgoBAABXRUJQVlA4TP0AAAAvD8ADEI9hpG2kwpf60h8+nBQkbSSp/tW9hIMPFw5E0kaSKuP9q3kJDx8ePDjQSCQp2z8RkhhIHBVAEdD9J4JYEkEUJSiDD0EIEcFgBSIspCAcbdlyRzfeYpwnDotGYFHIfXe6pdToDwUE2bZNRzds24qTx9b8h+chHET0fwLiX3vNO6jyh5aWbwMaqX3Ttu/j0VDG+5ZB9nQ2nYwBUGepB8vqYH9v+qrpnsESzDcnh9i3DZ4oB3cfPD0+kmSTuyCucHH+8dXwLphnt5+6vgQlz3KwrB90f3drUFqXYE/zJz9KsufsQbatX741WnxtabN4hjds8X2veQdVxr8CAA==",
+		Gray: "data:image/webp;base64,UklGRsgAAABXRUJQVlA4TLsAAAAvD8ADEFW4rbVtaVj67ViCCWhDSugiHSSVle7uMoJnhO973wgztW2IIZo4RvFEMdqu2rZtGJfNqWfYX0SisXgaGvkBFK5k4EEDTtS7Q31XN3ei94VeQuI61k6unuRaB86CMExsYWnFt+imhRgmCMMWJmYWliTRJgrYIAzfJfUMSCK7hDdji3VQkkTjE9hMrsCmNheZy9gzEqlhndwlMoJ5NSqr+KCIfPuDUm+Uoz7+FEmkmIjg/Pcf/6EBAA==",
+		Red: "data:image/webp;base64,UklGRhwBAABXRUJQVlA4TBABAAAvD8ADEL+hNJKkaOTJkycJn7CQJ5GjeXIgE4ZY/5Qq+HyMRJJyEvkR6K+IQwQk8qSRSFJWfgwkMZD0b0IC1KZtwDhl9h1Afx+SIEmAIEmChO+PwVWRpOsj2EgllBRDKy1EiJmhs5ztdaTnOAkEFBjQIGAdDiPJNq37bdu2nX9uDOGevQcR/SeQtNn+Aovh/vL2eF1FYR/cz9tNJKgHvf+4jseiYn59JAC38yqV8N57SDibw3OXzaQlyWKE3dPhtSzkshkiAttSHa4VLRXzqkqhogJIvVEjLbNWScIVeC3araaGoOqxeDk89z3rdphZzMITuF3mA/SJCFA2B9xPs9FkbKTsP8JcDtMhB7nQ747/CA==",
+		Yellow: "data:image/webp;base64,UklGRv4AAABXRUJQVlA4TPEAAAAvD8ADEFeBppGkTMdJQAKSkI0MSsoTgAhDkW1sG3VEF0EER06Mtm1jWBi4/68cNBJJykpiIHFUQNK/CQlIOO+Lr4fmLsUtio7rgkBiUAjszusVxAQkHiEB8xAnXoQwz5sOM4QYHEaSbVrnWf8/21b+GX6GsBvRfwJBCHHADPlLlGQhM0Qfif18v7HTj9/3mI7z4onp8Wrkj+t2ANg4+pEgdYZ5WTdwmQcnFWRF2w8zAPZtkQnCik3bAWhZMRRQAVDVrEoFCAWZoamkApKakQlSV4f2BnBTQRSYxgcGkQDx0zLfWM+PYwLPNml7iH//+A8AAA==",
 		onCreated(btn) {
-			btn.setAttribute("image", this.image);
+			btn.setAttribute("image", this.icon);
 			var doc = btn.ownerDocument;
-
 			btn.btn = true;
 			btn.domParent = null;
 			btn.popups = new btn.ownerGlobal.Array();
 			this.createPopup(doc, btn, "secondary", secondary);
 			if (glob.pref('network.proxy.type') == 2) btn.style.filter = "hue-rotate(270deg) brightness(95%)";
-
 			btn.linkedObject = this;
 			for(var type of ["contextmenu", "command"]) // "mousedown" "auxclick" события
 				btn.setAttribute("on" + type, `linkedObject.${type}(event)`);
@@ -226,7 +215,6 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 				}
 			}
 			if (!map) pref.set = set;
-
 			node = doc.createElementNS(I[4], "menu");
 			node.className = "menu-iconic";
 			img && node.setAttribute("image", img);
@@ -236,7 +224,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 				str.startsWith("B") && !pref.hasVals ? [[true, "true"], [false, "false"]] : obj.values,
 				node.appendChild(doc.createElementNS(I[4], "menupopup"))
 			);
-			if ("userChoice" in obj) pref.noAlt = !("userAlt" in obj);
+			if ("pDefGreen" in obj) pref.noAlt = !("pYellow" in obj);
 			return node;
 		},
 		regexpRefresh: /^(?:view-source:)?(?:https?|ftp)/,
@@ -261,18 +249,17 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 			hint += "\n" + pref.pref;
 			if (pref.hint) hint += "\n" + pref.hint;
 			node.tooltipText = hint; //+ текст
-
-			var img, alt = "userAlt" in pref && val == pref.userAlt, pro = "userPro" in pref && val == pref.userPro;
-			if (alt) img = this.UserAltImg;
-			if (pro) img = this.UserImg;
-			if ("userChoice" in pref)
-				if (val == pref.userChoice)
-					node.style.removeProperty("color"), img = this.UserChoiceImg;
+			var img, alt = "pYellow" in pref && val == pref.pYellow, pro = "pGray" in pref && val == pref.pGray;
+			if (alt) img = this.Yellow;
+			if (pro) img = this.Gray;
+			if ("pDefGreen" in pref)
+				if (val == pref.pDefGreen)
+					node.style.removeProperty("color"), img = this.defGreen;
 				else {
 					node.style.setProperty("color", "#702020", "important");
-					if (!alt && !pro) img = this.notChoiceImg;
+					if (!alt && !pro) img = this.Red;
 				}
-			node.setAttribute("image", img || this.UserImg); // серый значок, если нет userChoice
+			node.setAttribute("image", img || this.Gray); // серый значок, если нет pDefGreen
 			user
 				? node.style.setProperty("font-style", "italic", "important")
 				: node.style.removeProperty("font-style");

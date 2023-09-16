@@ -64,8 +64,7 @@
 }).init(this);
 
 
-// отображать FindBar на всех вкладках
-(noop => addEventListener("TabSelect", {
+(noop => addEventListener("TabSelect", { // отображать FindBar на всех вкладках
 	async handleEvent(e) {
 			var findbar = e.target._findBar;
 			var open = findbar && !findbar.hidden;
@@ -80,12 +79,6 @@
 							var inp = findbar._findField;
 							inp.value && findbar._enableFindButtons(true);
 					}
-					/*
-					var inp = findbar._findField;
-					var text = prev._findField.value;
-					if (inp.value != text) inp.value = text;
-					inp.dispatchEvent(this.e);
-					*/
 			}
 			else if (open) findbar.close(true);
 	},

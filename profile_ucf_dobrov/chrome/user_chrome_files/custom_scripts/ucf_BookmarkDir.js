@@ -1,13 +1,13 @@
-(async (id, sel) => { // расположение закладки в Избранном, Недавняя папка (F90+)
+(async (id, sel) => { // расположение закладки в Избранном, Недавняя папка Ff90+
 	var g = Cu.getGlobalForObject(Cu), stt = g[id];
 	if (!stt) {
 		var {obs, prefs} = Services, {bookmarks: bm, observers: pobs} = PlacesUtils;
 		stt = g[id] = {
-			bm, // клики и подсказки заданы в ucf_hookClicks.js
+			bm,
 			help_star: `(${Services.appinfo.OS == "Darwin" ? "⌘" : "Ctrl+"}D)\n
 Правый клик		➜ Быстрая закладка
 ◉ Колёсико	1-я строка Меню закладок
-◧ держать	Перевод сайт/выдел. текст\n`,
+◧ держать	Перевод сайт/выдел. текст\n`, //клики в ucf_hookClicks.js
 			pref: `ucf.${id}Guid`,
 
 			async init() {
@@ -105,4 +105,4 @@
 	if (ucf) ucf[id] = {destructor}, ucf.unloadlisteners.push(id);
 	else window.addEventListener("unload", destructor, {once: true});
 
-})("ucfBookmarksStarFTooltipHelper", "#star-button, #star-button-box, #context-bookmarkpage");
+})("ucfBookmarksStarFTooltipHelper", "#star-button, #star-button-box"); // #context-bookmarkpage
