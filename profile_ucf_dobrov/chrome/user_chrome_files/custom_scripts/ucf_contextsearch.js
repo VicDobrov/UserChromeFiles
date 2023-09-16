@@ -45,15 +45,24 @@
 		this.popup.addEventListener("popuphidden", this);
 		this.rebuild(menu);
 	},
+	getEngines() {
+		var args = "hideOneOffButton" in Services.search.defaultEngine
+			? [e => !e.hideOneOffButton]
+			: Object.defineProperty(
+				[function(e) {return !this.includes(e.name);}], "1", {
+					get: () => Services.prefs.getStringPref(this.hide)?.split(",") || []
+				}
+			);
+		return (this.getEngines = async () =>
+			(await Services.search.getVisibleEngines()).filter(...args)
+		)();
+	},
 	async rebuild(menu) {
 		var de = Services.search.defaultEngine;
 		de = de.wrappedJSObject || de;
 		this.setAttrs(menu, de, `Искать в ${de.name} или в ...`);
 		menu.ePopup.textContent = "";
-		var pref = Services.prefs.getStringPref("browser.search.hiddenOneOffs");
-		var hiddenList = pref ? pref.split(",") : [];
-		var engines = await Services.search.getVisibleEngines();
-		for (let engine of engines.filter(e => !hiddenList.includes(e.name))) {
+		for(let engine of await this.getEngines()) {
 			if (engine == de) continue;
 			var menuitem = document.createXULElement("menuitem");
 			menuitem.className = "menuitem-iconic";
