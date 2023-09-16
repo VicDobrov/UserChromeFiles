@@ -75,12 +75,12 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 			pref: ["network.cookie.cookieBehavior", "Получать куки",, "Персональные настройки посещённых сайтов"], pDefGreen: 3, pYellow: 0, pGray: 4, refresh: false,
 			values: [[0, "со всех сайтов"], [3, "посещённые сайты"], [4, "кроме трекеров"], [1, "кроме сторонних"], [2, "никогда"]]
 	},null,{
+			pref: ["browser.display.use_document_fonts", "Загружать шрифты страниц"], pDefGreen: 1, pGray: 0, refresh: true,
+			values: [[1, "Да"], [0, "Нет"]]
+	},{
 			pref: ["font.name.sans-serif.x-cyrillic", "Шрифт без засечек ",,"Также влияет на всплывающие подсказки\nСистемный: загрузка шрифтов документа"], pDefGreen: "", pYellow: "Roboto", pGray: "Arial", values: sans
 	},{
 			pref: ["font.name.serif.x-cyrillic", "Шрифт с засечками"], pDefGreen: "", pYellow: "Arial", values: serif
-	},{
-			pref: ["browser.display.use_document_fonts", "Загружать шрифты страниц"], pDefGreen: 1, pGray: 0, refresh: true,
-			values: [[1, "Да"], [0, "Нет"]]
 	},{
 			pref: ["gfx.webrender.force-disabled", "Ускорять отрисовку страниц", ,"gfx.webrender.compositor.force-enabled\ngfx.webrender.all\n\nАппаратная отрисовка страниц видеокартой.\nотключите при разных проблемах с графикой"],
 			pDefGreen: false, pYellow: true, pGray: undefined, restart: true, values: [

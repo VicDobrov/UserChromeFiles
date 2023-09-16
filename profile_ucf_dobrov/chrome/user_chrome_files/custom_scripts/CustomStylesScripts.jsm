@@ -35,7 +35,7 @@ var UcfStylesScripts = {
 		domload: [ // По событию "DOMContentLoaded"
 		{ path: "ucf_hookClicks.js", ucfobj: true, }, // используется скриптами, грузит attrsInspector.js
 		{ path: "ucf_QuickToggle.js", ucfobj: true, }, // нужен ucf_hookClicks
-		{ path: "ucf_mousedrag.js", ucfobj: true, }, // нужен ucf_hookClicks
+		{ path: "ucf_mousedrag.js", ucfobj: true, },
 		{ path: "ucf_contextsearch.js", ucfobj: true, },
 		{ path: "ucf_BookmarkDir.js", ucfobj: true, },
 		{ path: "ucf_cooks-pass.js", ucfobj: true, },
@@ -77,9 +77,11 @@ var UcfStylesScripts = {
 	/** ************************▲ Настройки ▲************************ */
 };
 
-var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm");
 var UcfSSS = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService),
-chfile = (f) => { f = Services.io.newURI('chrome://user_chrome_files/content/custom_styles/'+ f);
+chfile = (f) => {
+	if (typeof Services != "object")
+		var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm");
+	f = Services.io.newURI('chrome://user_chrome_files/content/custom_styles/'+ f);
 	if (Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).convertChromeURL(f).QueryInterface(Ci.nsIFileURL).file.exists())
 		return f; return false;
 },
