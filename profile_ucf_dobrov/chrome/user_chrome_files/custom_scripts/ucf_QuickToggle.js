@@ -19,9 +19,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 	"http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul","general.useragent.override",
 	"Linux; Android 9; Pixel 2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.88 Mobile Safari/537.36",
 	"Macintosh; Intel Mac OS X 10.15; rv:115.0) Gecko/20100101 Firefox/115.0","Mozilla/5.0 ("],
-	fonts = (font) => { return font.map(function(name) { //array с вложениями
-		return (name == font[font.length -1]) ? ["", name] : [name, name];});
-	},
+	fonts = font => font.map(name => [(name == font.at(-1) ? null : name), name]), //array с вложениями
 	serif = fonts("Arial|Cantarell|DejaVu Sans|Roboto|PT Serif|Segoe UI|Ubuntu|Cambria|Fira Sans|Georgia|Noto Sans|Calibri|Times|системный".split('|')), sans = [["PT Sans","PT Sans"], ...serif];
 
 	var hints = new Map([ //опция отсутствует ? выполнить код и вернуть строку
@@ -45,7 +43,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 				[`_Web||_Photo|0`, "_Web|_Photo/имя"],
 				[`_Web|1|_Pics|1`, "_Web/сайт|_Pics/…"],
 				[`_Web|0|_Pics|`, "_Web/имя|_Pics"],
-				[`_Web|1|_Images|0`, "_Web/сайт, _Images/имя"], // открыть указанную опцию about:config —
+				[`_Web|1|_Images|0`, "_Web/сайт, _Images/имя"], //открыть опцию about:config:
 				[`Сайт||Фото|`, "ввести свои пути",,"ключ в about:config",`glob.about_config("ucf.savedirs")`]]
 	},null,{
 			pref: ["network.proxy.autoconfig_url", "Прокси (VPN) URL", "п", "Переключение сетевых настроек",,`glob.mode_skin('')`],
@@ -58,7 +56,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 					`glob.pref('network.proxy.type', 2)`],
 				// ["https://git.io/ac-anticensority-pac", "ac-anticensority", "3"],
 				[glob.pref([I[2], "file:///etc/proxy.pac"]), "user .pac файл", "4", "about:config "+ I[2]], // нужен диалог выбора pac-файла
-				["", "сброшен",""]]
+				[null, "сброшен",""]]
 	},{
 			pref: ["network.proxy.type", "Режим прокси", "р",,,`glob.mode_skin('')`], pDefGreen: 5, pYellow: 2, pGray: 1, refresh: true, // mode_skin — отображать изменения любой опции
 			values: [ //фон кнопки Меню: серый, голубой, красный, жёлтый, зелёный
@@ -116,19 +114,19 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 			[I[3], `${I[3]/60e3 + " мин"}`], [15e3, "15 сек"], [6e4, "1 мин"], [3e5, "5 мин"], [9e5, "15 мин"], [18e5, "30 мин"]]
 	},{
 			pref: [I[5], "User Agent",,"Тип гаджета меняет вид сайта", [ua, "встроенный"]],
-			pDefGreen: ua, pYellow: I.at(-1) + I[6], pGray: I.at(-1) + I[7], refresh: true,
+			pDefGreen: ua, pYellow: I[7] + I[6], pGray: I[7] + I[7], refresh: true,
 			values: [ [ua, "По-умолчанию"],
-				[I.at(-1) + I[6], "Chrome 99 Android 9"], [I[7], "Firefox 115 MacOS 12"],
-				[I.at(-1) + "Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.98 Safari/537.36", "Chrome61 Win10"],
-				[I.at(-1) + "Windows; U; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)", "MSIE 6.0 Windows"],
-				[I.at(-1) + "Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.1 Safari/603.1.30", "Safari 6 MacOS"],
+				[I[7] + I[6], "Chrome 99 Android 9"], [I[7], "Firefox 115 MacOS 12"],
+				[I[7] + "Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.98 Safari/537.36", "Chrome61 Win10"],
+				[I[7] + "Windows; U; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)", "MSIE 6.0 Windows"],
+				[I[7] + "Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.1 Safari/603.1.30", "Safari 6 MacOS"],
 				["Opera/9.80 (Windows NT 6.2; Win64; x64) Presto/2.12 Version/12.16", "Opera12 W8"],
-				[I.at(-1) + "Linux; Android 5.1.1; SM-G928X Build/LMY47X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.83 Mobile Safari/537.36", "Samsung Galaxy S6"],
-				[I.at(-1) + "PlayStation 4 3.11) AppleWebKit/537.73 (KHTML, like Gecko)", "Playstation 4"],
+				[I[7] + "Linux; Android 5.1.1; SM-G928X Build/LMY47X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.83 Mobile Safari/537.36", "Samsung Galaxy S6"],
+				[I[7] + "PlayStation 4 3.11) AppleWebKit/537.73 (KHTML, like Gecko)", "Playstation 4"],
 				["Xbox (Xbox; Xbox One) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Mobile Safari/537.36 Edge/13.10586", "Xbox One (mobile)"],
-				[I.at(-1) + "compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; SAMSUNG; GT-I8350)", "Windows Phone"],
-				[I.at(-1) + "Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.143 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36", "Yandex OSX"],
-				[I.at(-1) + "compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "GoogleBot"]]
+				[I[7] + "compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; SAMSUNG; GT-I8350)", "Windows Phone"],
+				[I[7] + "Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.143 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36", "Yandex OSX"],
+				[I[7] + "compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "GoogleBot"]]
 		}];
 	return {
 		id: "ToggleButton", label: "Журнал, Меню опций", localized: false,

@@ -18,7 +18,7 @@ Tag = {"downloads-button":'{'+ //нужен SingleHTML.jsm, зависимый u
 
 ◨ прав. клик	⇲ Свернуть {︰` /*эксперт*/+ `
 ◨ + Alt		Сведения о системе}
-Ø ролик ↑	⤾ Вернуть вкладку`,'zoompage-we_dw-dev-browser-action':
+Ø ролик ↑	⤾ Вернуть вкладку`,"zoompage-we_dw-dev-browser-action":
 `
 ◉ + Shift		Закрыть вкладки слева
 ◉ колёсико +Alt	Закрыть справа`,"tabs-newtab-button":
@@ -46,8 +46,9 @@ Tag = {"downloads-button":'{'+ //нужен SingleHTML.jsm, зависимый u
 
 `Клик мыши	Чтение в ReaderView
 Колёсико	Простой режим чтения\n`,"reader-mode-button":
-
-`Правый клик	Адаптивный дизайн\nAlt + R		Выбор части страницы \n
+`
+Правый клик	Адаптивный дизайн
+Alt + R		Выбор части страницы\n
 Крутить ±	Яркость страниц `,"print-button":
 
 `Распечатать страницу (${Ff.Ctr()}P)\n
@@ -64,21 +65,18 @@ Tag = {"downloads-button":'{'+ //нужен SingleHTML.jsm, зависимый u
 ◧ лев + Shift		ServiceWorkers}`,"wheel-stop":
 
 `Колёсико:	Прервать обновления {︰
-◨ п.держать	Антизапрет ⇆ Без прокси}\n`,"Attributes-Inspector":
-
-`◧ лев. клик	Атрибут-Инспектор
-◧ держать	режим Эксперт ↔︎ Простой
-◨ прав.		Инструменты браузера\n
-◉ колёсико	Перезапустить, удалив кэш
-◧ + Alt		настройки User Chrome Files
-◧ + Shift	Настройки профайлера\n
-Alt + x		запустить скрипт User.js`,"titlebar-button.titlebar-close": //кроме Windows
+◨ п.держать	Антизапрет ⇆ Без прокси}\n`,"titlebar-button.titlebar-close": //кроме Windows
 
 `Закрыть Firefox ${Ff.ver}\n
 ◉ колёсико	вернуть вкладку
-◧ держать	краткая Справка\n◨ пр. клик	⇲ Свернуть`,"@": //тексты
+◧ держать	краткая Справка\n◨ пр. клик	⇲ Свернуть`,"Attributes-Inspector":
 
-`Очистить панель колёсиком мыши|Запрещённые сайты через АнтиЗапрет|☀ Яркость сайтов |💾 кэш, данные сайтов, куки занимают |Захват цвета в Буфер обмена (курсор двигает на 1 точку)|⚡️ Запрещено сохранять логины и пароли|◧ держать: about:config, ◨ пр. клик Сброс, ⟳ Обновить, ↯ Перезапуск|Долгий клик в строке меню: Править опцию │ Колёсико: Сервисы|Ошибка скрипта |↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|период сохранения сессий меняется в меню кнопки «Журнал»|SingleFile (Alt+Ctrl+S)\nСохранить страницу в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео`}; var T = Tag["@"].split('|'), B = [...Object.keys(Tag),"viewHistorySidebar"];
+`◧ лев. клик	Атрибут-Инспектор\n
+◧ держать	режим Эксперт ↔︎ Простой
+◧ + Alt		Инструменты браузера
+◧ + Shift	Настройки профайлера`,"@": //тексты
+
+`Очистить панель колёсиком мыши|Запрещённые сайты через АнтиЗапрет|☀ Яркость сайтов |💾 кэш, данные сайтов, куки занимают |Захват цвета в Буфер обмена (курсор двигает на 1 точку)|⚡️ Запрещено сохранять логины и пароли|◧ держать: about:config, ◨ пр. клик Сброс, ⟳ Обновить, ↯ Перезапуск|Долгий клик в строке меню: Править опцию │ Колёсико: Сервисы|Ошибка скрипта |↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|период сохранения сессий меняется в меню кнопки «Журнал»|SingleFile (Alt+Ctrl+S)\nСохранить страницу в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\n\n◨ пр. клик	настройки User Chrome Files\n◉ колёсико	Перезапустить, удалив кэш\nAlt + x		запустить скрипт User.js`}; var T = Tag["@"].split('|'), B = [...Object.keys(Tag),"viewHistorySidebar"];
 
 (async (id) => CustomizableUI.createWidget({ label:`Панели, Папки`,id: id,tooltiptext: Tag[id],
 onCreated(btn){btn.style.setProperty("list-style-image","url(chrome://devtools/skin/images/folder.svg)");}})
@@ -100,13 +98,14 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		2(trg, forward){ trg.value = ""}, //очистить
 	},
 	"tabbrowser-tabs": { //<> вкладки колёсиком
+		8(){},16(){},64(){},288(){}, //sel multiple
 		2(trg,forward){
 			gBrowser.tabContainer.advanceSelectedTab(forward ? -1 : 1,true);
 		},
 		128(btn){ // СМ
 			gBrowser.removeTab(TabAct(btn))}, // вкладка под мышью
 		136(btn){ TabsDel(1, TabAct(btn))}, // СМ + Alt закрыть вкладки справа
-		144(btn){ TabsDel(0, TabAct(btn))}, // СМ + Shift … слева
+		144(btn){ TabsDel(0, TabAct(btn))} // СМ + Shift … слева
 	},
 	"stop-button": {
 		128(){ // СМ
@@ -120,18 +119,18 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		128(){ switchTab(FavItem()) },
 		129(){ // СМ+д
 			switchTab(FavItem(false))	},
-		256(){ toFav()},
+		256(){ toFav()}
 	},
 	"appMenu-print-button2": { // Меню: Печать…
 		1(){ Help()}, 128(btn){Expert()},
-		256(){ Mouse[B[9]][256]()},
+		256(){ Mouse[B[9]][256]()}
 	},
 	"pageAction-urlbar-_2495d258-41e7-4cd5-bc7d-ac15981f064e_": { // ReaderView
 		2(trg,forward){bright(trg,forward,5)}, // яркость по wheel ±
 		128(btn){
 			btn.ownerDocument.getElementById("key_toggleReaderMode").doCommand() // штатный Режим чтения
 		},
-		256(btn){ Mouse[B[8]][256](btn)},
+		256(btn){ Mouse[B[8]][256](btn)}
 	},
 	[B[10]]: {
 		1(){ //д
@@ -139,16 +138,16 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		},
 		128(){ for ( var i = 0; i < gBrowser.tabs.length; i++) gBrowser.getBrowserAtIndex(i).stop()}, // СМ
 		256(){ BrowserReloadSkipCache()}, //ПМ
-		257(){ switchProxy()}, //дПМ
+		257(){ switchProxy()} //дПМ
 	},
 	[B[9]]: {
 		1(){ Help()}, //д
-		128(btn){ Expert()},
-		256(){ document.getElementById("menu_print").doCommand()}, //ПМ
+		128(){ Expert()},
+		256(){ document.getElementById("menu_print").doCommand()} //ПМ
 	},
 	[B[3]]: {
-		8(btn){ gBrowser.removeAllTabsBut(gBrowser.selectedTab)},
-		256(btn){ btn.ownerGlobal.undoCloseTab()},
+		8(){ gBrowser.removeAllTabsBut(gBrowser.selectedTab)},
+		256(btn){ btn.ownerGlobal.undoCloseTab()}
 	},
 	[B[0]]: { mousedownTarget: true, // не передавать нажатия дальше
 		1(){ //д
@@ -158,7 +157,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 			glob.pref(p, !n);
 			glob.toStatus(`Подтверждение загрузки ${n ? "√ разреш" : "✘ запрещ"}ено`,3e3);
 		},
-		16(btn){ // +Shift
+		16(){ // +Shift
 			var n = glob.pref(Ff.i) == 2; glob.pref(Ff.i, n ? 1 : 2);
 			glob.mode_skin(); BrowserReload();
 			glob.toStatus(`Загрузка изображений ${n ? "√ разреш" : "✘ запрещ"}ено`,3e3);
@@ -167,7 +166,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 			? saveSelToTxt() : //сохранить|выделен. как .txt
 			Downloads.getSystemDownloadsDirectory().then(path => FileUtils.File(path).launch(),Cu.reportError)
 		},
-		256(btn){ save()}, //web
+		256(){ save()} //web
 	},
 	[B[1]]: { mousedownTarget: true,
 		1(btn){ goQuitApplication(btn)}, //д
@@ -178,15 +177,15 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		136(){ this[129]()},// СМ +Alt
 		2(trg,forward){ // крутить +Закрыть вкладку -Восстановить
 			forward ? trg.ownerGlobal.undoCloseTab() : trg.ownerGlobal.BrowserCloseTabOrWindow() },
-		256(btn){ minimize()},
+		256(){ minimize()},
 		264(){ switchTab('about:support')}, // Alt+ ПМ
-		272(btn){ btn.ownerGlobal.PlacesCommandHook.showPlacesOrganizer("History")}, // ПМ + Shift
+		272(btn){ btn.ownerGlobal.PlacesCommandHook.showPlacesOrganizer("History")} // ПМ + Shift
 	},
 	[B[8]]: { //➿
 		2(trg,forward){bright(trg,forward,5)}, // яркость
 		256(btn){ // Mobile View
 			btn.ownerDocument.getElementById("key_responsiveDesignMode").doCommand(); //пункт меню с HotKey
-			if (gBrowser.selectedBrowser.browsingContext.inRDMPane) BrowserReload(); },
+			if (gBrowser.selectedBrowser.browsingContext.inRDMPane) BrowserReload();}
 	},
 	[B[4]]: { //замок
 		8(){		openProxyWin()}, //+Alt
@@ -196,9 +195,8 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		},
 		2(trg,forward){bright(trg,forward,5)}, //яркость
 		10(trg,forward){bright(trg,forward)},
-		256(btn){
-			gClipboard.write(gURLBar.value);
-			glob.flash(0,0,'rgba(240,176,0,0.5)',300,"в буфере: "+ gURLBar.value.slice(0,80)); },
+		256(){ gClipboard.write(gURLBar.value);
+			glob.flash(0,0,'rgba(240,176,0,0.5)',300,"в буфере: "+ gURLBar.value.slice(0,80));}
 	},
 	[B[11]]: {
 		1(){ Mouse[B[6]][136]()}, //д Шрифты
@@ -208,7 +206,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 			logins ? logins.click() : switchTab('about:logins');
 		},
 		16(){ switchTab()}, // +Shift
-		128(){switchTab('about:performance')}, // СМ
+		128(){switchTab('about:performance')} // СМ
 	},
 	[B[5]]: { // CustomizableUI в скрипте
 		0(btn){ btn.ownerGlobal.SidebarUI.toggle("viewBookmarksSidebar")}, //ЛМ
@@ -219,10 +217,16 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		136(){ // CM +Alt
 			glob.dirsvcget("UChrm","user_chrome_files",true) },
 		264(){ // ПМ +Alt
-			glob.dirsvcget("GreD",undefined,true) },
+			glob.dirsvcget("GreD",undefined,true)}
 	},
-	[B[13]]: { //AttrView
-		1(btn){Expert()}, //д
+	"unified-extensions-button": {mousedownTarget: true, 
+		1(){Expert()}, //д
+		128(){Mouse[B[14]][128]()},
+		256(){openDial()}
+	},
+	[B[14]]: { //AttrView
+		1(){Expert()}, //д
+		256(){openDial()}, //UCFprefs
 		128(){ // CM Clean Cache
 			var cancelQuit = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
 			Services.obs.notifyObservers(cancelQuit,"quit-application-requested","restart");
@@ -232,23 +236,21 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 			restart.quit(restart.eAttemptQuit | restart.eRestart);
 		},
 		16(){switchTab('about:profiling')}, //+Shift
-		256(){ //уд.отладка
+		8(){ //Л+Alt уд.отладка
 			var chr = "devtools.chrome.enabled",rem = "devtools.debugger.remote-enabled";
 			if (!glob.pref(chr) || !glob.pref(rem)) {
 				glob.pref(chr,true); glob.pref(rem,true);
 			}
 			var {BrowserToolboxLauncher} = ChromeUtils.import("resource://devtools/client/framework/browser-toolbox/Launcher.jsm");
-			BrowserToolboxLauncher.init();
-		},
-		8(btn){openDial()}, //click +Alt
+			BrowserToolboxLauncher.init();}
 	},
 	[B[2]]: {
-		2(trg,forward){zoom(forward)}, //wheel
+		2(trg,forward){zoom(forward)} //wheel
 	},
-	[B[14]]: {
+	[B[13]]: {
 		1(){Help()},
 		128(btn){	btn.ownerGlobal.undoCloseTab()},
-		256(){minimize()},
+		256(){minimize()}
 	},
 	[B[6]]: { mousedownTarget: true,
 		0(btn){ //ЛМ
@@ -271,12 +273,10 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 				glob.about_config(btn.pref.pref), //go параметр about:config
 				btn.parentNode.parentNode.secondaryPopup.hidePopup();
 		},
-		8(btn){ switchTab('chrome://browser/content/places/places.xhtml')}, //+ Alt
-		256(){0}, // lock ПМ
-		264(btn){ /* ПМ +Alt */ switchTab(FavItem(false))},
-		272(btn){ // ПМ +Shift
-			if (btn.id = B[6])
-				openDial()}, //UCF Prefs
+		8(){ switchTab('chrome://browser/content/places/places.xhtml')}, //+ Alt
+		256(){}, //lock ПМ
+		264(){ /* ПМ +Alt */ switchTab(FavItem(false))},
+		// 272(btn){ if (btn.id = B[6]) openDial()},
 		128(btn){ // СМ
 			if (btn.id == B[6])
 				switchTab("about:newtab", true)
@@ -287,10 +287,10 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		129(btn){ /* дCM */ userjs(btn,"")}, //консоль
 		136(){ // СМ +Alt
 			var n = "browser.display.use_document_fonts",f = glob.pref(n) ? 0 : 1;
-			glob.pref(n,f); zoom(0,0,0,(f > 0) ? " + Web-шрифты" : ""); BrowserReload(); },
+			glob.pref(n,f); zoom(0,0,0,(f > 0) ? " + Web-шрифты" : ""); BrowserReload();}
 	}}; var M = Object.keys(Mouse);
 
-(async (id) => CustomizableUI.createWidget({label:id.replace('-',' '), id:id, tooltiptext:Tag[id],
+(async (id) => CustomizableUI.createWidget({label:id.replace('-',' '), id:id,
 	onCreated(btn) {
 		btn.setAttribute("image","data:image/webp;base64,UklGRjwAAABXRUJQVlA4TC8AAAAvD8ADAAoGbSM5Ov6k774XCPFP/0/03/8JGPxzroIzuOW06Ih60Genn1S/gHe+BgA=");
 		btn.onmouseenter = btn.onmouseleave = this.onmouse;
@@ -300,11 +300,11 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 	get handleCommand() { delete this.handleCommand;
 		return this.handleCommand = btn => {(btn.handleCommand = new btn.ownerGlobal.Function(this.code).bind(btn))();}
 	},
-	get code() { delete this.code; var s = Ff.c +"custom_scripts/"+ B[13] +".js";
+	get code() { delete this.code; var s = Ff.c +"custom_scripts/"+ B[14] +".js";
 		try {id = 'this.focusedWindow && this.focusedWindow.focus();\n'+
 			Cu.readUTF8URI(Services.io.newURI(s))} catch {id = `glob.toStatus("${T[8]}${s}",7e3)`}
 		return this.code = id;}
-}))(B[13]);
+}))(B[14]);
 
 var {prefs} = Services,Over = { //modify Tooltips под мышью
 get [B[1]]() { // delete this[…];
@@ -334,7 +334,7 @@ get [M[0]]() { glob.toStatus(T[0],2500);
 },
 [B[9]]: Tag[B[9]],
 [M[4]]: Tag[B[9]],
-"titlebar-button titlebar-close": Tag[B[14]],
+"titlebar-button titlebar-close": Tag[B[13]],
 get [M[3]]() {
 	var txt = `${glob.pref("dom.disable_open_during_load") ? "Запрет" : "↯ Разреш"}ить всплывающие окна`;
 	if (!glob.pref("places.history.enabled")) txt = T[9];
@@ -344,7 +344,7 @@ get [M[3]]() {
 get [B[2]]() { //custom hint
 	return tooltip_x(window.event.target,"⩉ Ролик ±	Изменить масштаб");
 },
-get [B[13]]() { return tExp(B[13]);},
+get [B[14]]() {return Tag[B[14]] + T[14];},
 get "identity-icon-box"() {
 	return tooltip_x(window.event.target, tExp(B[4]) + br_val());
 },
@@ -369,12 +369,13 @@ get [B[6]]() { //FavMenu
 	else trg.tooltipText = "";
 },
 get [B[8]]() { //get может выполнять код
-	return GetDynamicShortcutTooltipText(B[8]) +"\n"+ tExp(B[8]) + br_val();
+	return GetDynamicShortcutTooltipText(B[8]) +"\n"+ Tag[B[8]] + br_val();
 },
 get [M[5]]() {
 	return Tag[B[7]] + Tag[B[8]] + br_val();
 },
 get "ucf_SessionManager"() { glob.toStatus(T[11]);},
+get "unified-extensions-button"(){ return "Расширения"+ T[14]},
 "_531906d3-e22f-4a6c-a102-8057b88a1a63_-browser-action": T[12], //SingleFile
 "_531906d3-e22f-4a6c-a102-8057b88a1a63_-BAP": T[12],
 "_b9db16a4-6edc-47ec-a1f4-b86292ed211d_-browser-action": T[13], //VDH
