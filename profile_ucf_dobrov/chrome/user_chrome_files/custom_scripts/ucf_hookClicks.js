@@ -98,7 +98,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		2(trg, forward){ trg.value = ""}, //очистить
 	},
 	"tabbrowser-tabs": { //<> вкладки колёсиком
-		8(){},16(){},64(){},288(){}, //sel multiple
+		8(){},16(){},64(){}, //выбор
 		2(trg,forward){
 			gBrowser.tabContainer.advanceSelectedTab(forward ? -1 : 1,true);
 		},
