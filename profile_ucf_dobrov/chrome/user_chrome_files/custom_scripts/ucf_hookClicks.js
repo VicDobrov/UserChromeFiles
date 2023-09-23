@@ -317,8 +317,8 @@ get [B[1]]() { // delete this[…];
 get [B[3]]() {
 	return GetDynamicShortcutTooltipText(B[3]) + Tag[B[3]];
 },
-get [B[0]]() {var dw = glob.dirsvcget("DfltDwnld","");
-	if (dw) glob.mode_skin(`${glob.pref(Ff.i) > 1 ? "\u{26A1} Графика отключена," : "💾 папка"} [Загрузки] `+ glob.crop(dw.path, 96,''));
+get [B[0]]() {var dw = glob.dirsvcget("");
+	if (dw) glob.mode_skin(`${glob.pref(Ff.i) > 1 ? "\u{26A1} Графика отключена," : "💾 папка"} [Загрузки] `+ glob.crop(dw, 96,''));
 	return GetDynamicShortcutTooltipText(B[0]) +"\n"+ tExp(B[0]);
 },
 get "tabbrowser-tab"() {var trg = window.event?.target;
