@@ -23,7 +23,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 	serif = fonts("Arial|Cantarell|DejaVu Sans|Roboto|PT Serif|Segoe UI|Ubuntu|Cambria|Fira Sans|Georgia|Noto Sans|Calibri|Times|системный".split('|')), sans = [["PT Sans","PT Sans"], ...serif];
 
 	var hints = new Map([ //опция отсутствует ? выполнить код и вернуть строку
-		["ucf.savedirs", `glob.crop(glob.dirsvcget("DfltDwnld").path, 34)`],
+		["ucf.savedirs", `glob.crop(glob.dirsvcget(""),34)`],
 		[I[5], `glob.ua()`] // текущий ЮзерАгент
 	]),
 	secondary = [{ // menu: [apref, lab, akey, hint, [undef, str], code] radio: [val, lab, str-val, add-hint, code]
