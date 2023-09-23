@@ -78,7 +78,7 @@ Alt + R		Выбор части страницы\n
 
 `Очистить панель колёсиком мыши|Запрещённые сайты через АнтиЗапрет|☀ Яркость сайтов |💾 кэш, данные сайтов, куки занимают |Захват цвета в Буфер обмена (курсор двигает на 1 точку)|⚡️ Запрещено сохранять логины и пароли|◧ держать: about:config, ◨ пр. клик Сброс, ⟳ Обновить, ↯ Перезапуск|Долгий клик в строке меню: Править опцию │ Колёсико: Сервисы|Ошибка скрипта |↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|период сохранения сессий меняется в меню кнопки «Журнал»|SingleFile (Alt+Ctrl+S)\nСохранить страницу в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\n\n◨ пр. клик	настройки User Chrome Files\n◉ колёсико	Перезапустить, удалив кэш\nAlt + x		запустить скрипт User.js`}; var T = Tag["@"].split('|'), B = [...Object.keys(Tag),"viewHistorySidebar"];
 
-(async (id) => CustomizableUI.createWidget({ label:`Панели, Папки`,id: id,tooltiptext: Tag[id],
+(async (id) => CustomizableUI.createWidget({label:`Панели, Папки`,id: id,tooltiptext: Tag[id],
 onCreated(btn){btn.style.setProperty("list-style-image","url(chrome://devtools/skin/images/folder.svg)");}})
 )(B[5]); // кнопки-подсказки-клики
 
@@ -95,7 +95,7 @@ klaBa = { //перехват-клавиш KeyA[_mod][_OS](e,t){код} и KeyB: 
 },
 Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 	"urlbar-input": { // CapsLock On: skip action mouse|keyboard
-		2(trg, forward){ trg.value = ""}, //очистить
+		2(trg, forward){trg.value = ""}, //очистить
 	},
 	"tabbrowser-tabs": { //<> вкладки колёсиком
 		8(){},16(){},64(){}, //выбор
@@ -104,52 +104,52 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		},
 		128(btn){ // СМ
 			gBrowser.removeTab(TabAct(btn))}, // вкладка под мышью
-		136(btn){ TabsDel(1, TabAct(btn))}, // СМ + Alt закрыть вкладки справа
-		144(btn){ TabsDel(0, TabAct(btn))} // СМ + Shift … слева
+		136(btn){TabsDel(1, TabAct(btn))}, // СМ + Alt закрыть вкладки справа
+		144(btn){TabsDel(0, TabAct(btn))} // СМ + Shift … слева
 	},
 	"stop-button": {
 		128(){ // СМ
 			for ( var i = 0; i < gBrowser.tabs.length; i++) gBrowser.getBrowserAtIndex(i).stop() },
-		257(){ switchProxy()},
+		257(){switchProxy()},
 	},
 	"star-button-box": {
-		1(){ translate()}, //держать
+		1(){translate()}, //держать
 		8(){ // ЛМ + Alt
 			window.PlacesCommandHook.showPlacesOrganizer("BookmarksToolbar") }, //библиотека
-		128(){ switchTab(FavItem()) },
+		128(){switchTab(FavItem()) },
 		129(){ // СМ+д
 			switchTab(FavItem(false))	},
-		256(){ toFav()}
+		256(){toFav()}
 	},
 	"appMenu-print-button2": { // Меню: Печать…
-		1(){ Help()}, 128(btn){Expert()},
-		256(){ Mouse[B[9]][256]()}
+		1(){Help()}, 128(btn){Expert()},
+		256(){Mouse[B[9]][256]()}
 	},
 	"pageAction-urlbar-_2495d258-41e7-4cd5-bc7d-ac15981f064e_": { // ReaderView
 		2(trg,forward){bright(trg,forward,5)}, // яркость по wheel ±
 		128(btn){
 			btn.ownerDocument.getElementById("key_toggleReaderMode").doCommand() // штатный Режим чтения
 		},
-		256(btn){ Mouse[B[8]][256](btn)}
+		256(btn){Mouse[B[8]][256](btn)}
 	},
 	[B[10]]: {
 		1(){ //д
 			with (gBrowser) selectAllTabs(),reloadMultiSelectedTabs(),clearMultiSelectedTabs();
 		},
-		128(){ for ( var i = 0; i < gBrowser.tabs.length; i++) gBrowser.getBrowserAtIndex(i).stop()}, // СМ
-		256(){ BrowserReloadSkipCache()}, //ПМ
-		257(){ switchProxy()} //дПМ
+		128(){for (var i = 0; i < gBrowser.tabs.length; i++) gBrowser.getBrowserAtIndex(i).stop()}, // СМ
+		256(){BrowserReloadSkipCache()}, //ПМ
+		257(){switchProxy()} //дПМ
 	},
 	[B[9]]: {
-		1(){ Help()}, //д
-		128(){ Expert()},
-		256(){ document.getElementById("menu_print").doCommand()} //ПМ
+		1(){Help()}, //д
+		128(){Expert()},
+		256(){document.getElementById("menu_print").doCommand()} //ПМ
 	},
 	[B[3]]: {
-		8(){ gBrowser.removeAllTabsBut(gBrowser.selectedTab)},
-		256(btn){ btn.ownerGlobal.undoCloseTab()}
+		8(){gBrowser.removeAllTabsBut(gBrowser.selectedTab)},
+		256(btn){btn.ownerGlobal.undoCloseTab()}
 	},
-	[B[0]]: { mousedownTarget: true, // не передавать нажатия дальше
+	[B[0]]: {mousedownTarget: true, // не передавать нажатия дальше
 		1(){ //д
 			Downloads.getSystemDownloadsDirectory().then(path => FileUtils.File(path).launch(),Cu.reportError)},
 		8(){ //+Alt
@@ -162,24 +162,24 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 			glob.mode_skin(); BrowserReload();
 			glob.toStatus(`Загрузка изображений ${n ? "√ разреш" : "✘ запрещ"}ено`,3e3);
 		},
-		128(){ Ff.Exp() //режим Простой/Эксперт: разные действия
+		128(){Ff.Exp() //режим Простой/Эксперт: разные действия
 			? saveSelToTxt() : //сохранить|выделен. как .txt
 			Downloads.getSystemDownloadsDirectory().then(path => FileUtils.File(path).launch(),Cu.reportError)
 		},
-		256(){ save()} //web
+		256(){save()} //web
 	},
-	[B[1]]: { mousedownTarget: true,
-		1(btn){ goQuitApplication(btn)}, //д
-		16(){ Help()}, // ЛМ + Shift
-		8(){ 	windowState != STATE_MAXIMIZED ? maximize() : restore()}, // ЛМ + Alt
-		128(){	windowState != STATE_MAXIMIZED ? maximize() : restore()},
-		129(){	BrowserFullScreen()}, // дСМ
-		136(){ this[129]()},// СМ +Alt
+	[B[1]]: {mousedownTarget: true,
+		1(btn){goQuitApplication(btn)}, //д
+		16(){Help()}, // ЛМ + Shift
+		8(){windowState != STATE_MAXIMIZED ? maximize() : restore()}, // ЛМ + Alt
+		128(){windowState != STATE_MAXIMIZED ? maximize() : restore()},
+		129(){BrowserFullScreen()}, // дСМ
+		136(){this[129]()},// СМ +Alt
 		2(trg,forward){ // крутить +Закрыть вкладку -Восстановить
 			forward ? trg.ownerGlobal.undoCloseTab() : trg.ownerGlobal.BrowserCloseTabOrWindow() },
-		256(){ minimize()},
-		264(){ switchTab('about:support')}, // Alt+ ПМ
-		272(btn){ btn.ownerGlobal.PlacesCommandHook.showPlacesOrganizer("History")} // ПМ + Shift
+		256(){minimize()},
+		264(){switchTab('about:support')}, // Alt+ ПМ
+		272(btn){btn.ownerGlobal.PlacesCommandHook.showPlacesOrganizer("History")} // ПМ + Shift
 	},
 	[B[8]]: { //➿
 		2(trg,forward){bright(trg,forward,5)}, // яркость
@@ -195,29 +195,29 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		},
 		2(trg,forward){bright(trg,forward,5)}, //яркость
 		10(trg,forward){bright(trg,forward)},
-		256(){ gClipboard.write(gURLBar.value);
+		256(){gClipboard.write(gURLBar.value);
 			glob.flash(0,0,'rgba(240,176,0,0.5)',300,"в буфере: "+ gURLBar.value.slice(0,80));}
 	},
 	[B[11]]: {
-		1(){ Mouse[B[6]][136]()}, //д Шрифты
+		1(){Mouse[B[6]][136]()}, //д Шрифты
 		2(trg,forward){bright(trg,forward)},
 		256(btn){ // ПМ
 			var logins = btn.ownerDocument.getElementById("ucf-logins-sitedata");
 			logins ? logins.click() : switchTab('about:logins');
 		},
-		16(){ switchTab()}, // +Shift
+		16(){switchTab()}, // +Shift
 		128(){switchTab('about:performance')} // СМ
 	},
 	[B[5]]: { // CustomizableUI в скрипте
-		0(btn){ btn.ownerGlobal.SidebarUI.toggle("viewBookmarksSidebar")}, //ЛМ
-		256(btn){ btn.ownerGlobal.SidebarUI.toggle(B.at(-1))},
-		8(){ glob.dirsvcget("Home",undefined,true)}, //+ Alt
+		0(btn){btn.ownerGlobal.SidebarUI.toggle("viewBookmarksSidebar")}, //ЛМ
+		256(btn){btn.ownerGlobal.SidebarUI.toggle(B.at(-1))},
+		8(){glob.dirsvcget("Home")}, //+ Alt
 		128(btn){
 			btn.ownerGlobal.PlacesCommandHook.showPlacesOrganizer("Downloads") },
 		136(){ // CM +Alt
-			glob.dirsvcget("UChrm","user_chrome_files",true) },
+			glob.dirsvcget("UChrm","user_chrome_files")},
 		264(){ // ПМ +Alt
-			glob.dirsvcget("GreD",undefined,true)}
+			glob.dirsvcget("GreD")}
 	},
 	"unified-extensions-button": {mousedownTarget: true, 
 		1(){Expert()}, //д
@@ -252,7 +252,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		128(btn){	btn.ownerGlobal.undoCloseTab()},
 		256(){minimize()}
 	},
-	[B[6]]: { mousedownTarget: true,
+	[B[6]]: {mousedownTarget: true,
 		0(btn){ //ЛМ
 			if (btn.id == B[6]) {
 				var bar = document.getElementById("ucf-additional-vertical-bar");
@@ -261,7 +261,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 			} else glob.mode_skin(); // меню кнопки
 		},
 		2(trg,forward){zoom(forward) }, // wheel
-		16(btn){ if (btn.id == B[6]) zoom(0,1)}, // ЛМ + Shift
+		16(btn){if (btn.id == B[6]) zoom(0,1)}, // ЛМ + Shift
 		1(btn){ //д
 			if (btn.id == B[6]){ //линза
 				glob.flash(0,0,'rgba(100,0,225,0.1)',500, T[4]);
@@ -273,10 +273,9 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 				glob.about_config(btn.pref.pref), //go параметр about:config
 				btn.parentNode.parentNode.secondaryPopup.hidePopup();
 		},
-		8(){ switchTab('chrome://browser/content/places/places.xhtml')}, //+ Alt
+		8(){switchTab('chrome://browser/content/places/places.xhtml')}, //+ Alt
 		256(){}, //lock ПМ
 		264(){ /* ПМ +Alt */ switchTab(FavItem(false))},
-		// 272(btn){ if (btn.id = B[6]) openDial()},
 		128(btn){ // СМ
 			if (btn.id == B[6])
 				switchTab("about:newtab", true)
@@ -297,10 +296,10 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		btn.setAttribute("oncommand","handleCommand(this)"); btn.handleCommand = this.handleCommand;
 	},
 	onmouse: e => e.target.focusedWindow = e.type.endsWith("r") && Services.wm.getMostRecentWindow(null),
-	get handleCommand() { delete this.handleCommand;
+	get handleCommand() {delete this.handleCommand;
 		return this.handleCommand = btn => {(btn.handleCommand = new btn.ownerGlobal.Function(this.code).bind(btn))();}
 	},
-	get code() { delete this.code; var s = Ff.c +"custom_scripts/"+ B[14] +".js";
+	get code() {delete this.code; var s = Ff.c +"custom_scripts/"+ B[14] +".js";
 		try {id = 'this.focusedWindow && this.focusedWindow.focus();\n'+
 			Cu.readUTF8URI(Services.io.newURI(s))} catch {id = `glob.toStatus("${T[8]}${s}",7e3)`}
 		return this.code = id;}
@@ -309,7 +308,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 var {prefs} = Services,Over = { //modify Tooltips под мышью
 get [B[1]]() { // delete this[…];
 	glob.mode_skin(); if (glob.pref("signon.rememberSignons"))
-		Services.cache2.asyncGetDiskConsumption({ onNetworkCacheDiskConsumption(bytes) {
+		Services.cache2.asyncGetDiskConsumption({onNetworkCacheDiskConsumption(bytes) {
 			glob.toStatus(T[3] + glob.formatBytes(bytes),3e3) // вывод объёма кэша
 		}, QueryInterface: ChromeUtils.generateQI(["nsISupportsWeakReference","nsICacheStorageConsumptionObserver"])})
 	else glob.toStatus(T[5],2e3); //не хранить пароли
@@ -318,19 +317,19 @@ get [B[1]]() { // delete this[…];
 get [B[3]]() {
 	return GetDynamicShortcutTooltipText(B[3]) + Tag[B[3]];
 },
-get [B[0]]() { var dw = glob.dirsvcget("DfltDwnld");
+get [B[0]]() {var dw = glob.dirsvcget("DfltDwnld","");
 	if (dw) glob.mode_skin(`${glob.pref(Ff.i) > 1 ? "\u{26A1} Графика отключена," : "💾 папка"} [Загрузки] `+ glob.crop(dw.path, 96,''));
 	return GetDynamicShortcutTooltipText(B[0]) +"\n"+ tExp(B[0]);
 },
-get "tabbrowser-tab"() { var trg = window.event?.target;
+get "tabbrowser-tab"() {var trg = window.event?.target;
 	trg.tooltipText = trg.label + Tag[B[2]];
 },
-get [B[10]]() { glob.mode_skin('');
+get [B[10]]() {glob.mode_skin('');
 	return GetDynamicShortcutTooltipText(B[10]) +"\n\n"+ Tag[B[10]] +"\n"+ tExp(B[12]);
 },
-get [M[2]]() { return GetDynamicShortcutTooltipText([M[2]]) +"\n"+ tExp(B[12]);
+get [M[2]]() {return GetDynamicShortcutTooltipText([M[2]]) +"\n"+ tExp(B[12]);
 },
-get [M[0]]() { glob.toStatus(T[0],2500);
+get [M[0]]() {glob.toStatus(T[0],2500);
 },
 [B[9]]: Tag[B[9]],
 [M[4]]: Tag[B[9]],
@@ -348,10 +347,10 @@ get [B[14]]() {return Tag[B[14]] + T[14];},
 get "identity-icon-box"() {
 	return tooltip_x(window.event.target, tExp(B[4]) + br_val());
 },
-get [B[4]]() { glob.toStatus(this.br_exp(),2500); //режим кнопок
+get [B[4]]() {glob.toStatus(this.br_exp(),2500); //режим кнопок
 	return tooltip_x(window.event.target, tExp(B[4]) + br_val());
 },
-get [B[11]]() { glob.toStatus(this.br_exp(),2500);
+get [B[11]]() {glob.toStatus(this.br_exp(),2500);
 	var trg = window.event?.target; //custom hint 2
 	return trg.id.endsWith("r") && trg.textContent +'\n'+ tExp(B[11]);
 },
@@ -374,8 +373,8 @@ get [B[8]]() { //get может выполнять код
 get [M[5]]() {
 	return Tag[B[7]] + Tag[B[8]] + br_val();
 },
-get "ucf_SessionManager"() { glob.toStatus(T[11]);},
-get "unified-extensions-button"(){ return "Расширения"+ T[14]},
+get "ucf_SessionManager"() {glob.toStatus(T[11]);},
+get "unified-extensions-button"(){return "Расширения"+ T[14]},
 "_531906d3-e22f-4a6c-a102-8057b88a1a63_-browser-action": T[12], //SingleFile
 "_531906d3-e22f-4a6c-a102-8057b88a1a63_-BAP": T[12],
 "_b9db16a4-6edc-47ec-a1f4-b86292ed211d_-browser-action": T[13], //VDH
@@ -399,11 +398,11 @@ window.glob = { //all [ChromeOnly]-scripts
 		ua = Cc["@mozilla.org/network/protocol;1?name=http"].getService(Ci.nsIHttpProtocolHandler).userAgent; // костыль
 		ttt && this.pref(ua_my,ttt); if (!ttt) ttt = ua; if (real) ttt = ua; return ttt;
 	},
-	dirsvcget(cat = "DfltDwnld",sub,open,dir) { // DfltDwnld GreD UChrm Home
-		try {dir = Services.dirsvc.get(cat,Ci.nsIFile);} catch {dir = Services.prefs.getComplexValue("browser.download.dir",Ci.nsIFile)}
-		sub && dir.append(sub);
-		if (open) dir.exists() && dir.launch()
-		else return dir; //объект|открыть папку
+	dirsvcget() { //константа пути + subdirs, если посл. опция = "" вернуть путь, иначе открыть
+		var f, d = [...arguments], r = (d.at(-1) == ""); (r) && d.pop();
+		try {f = Services.dirsvc.get(d[0] || "DfltDwnld",Ci.nsIFile);} catch {f = Services.prefs.getComplexValue("browser.download.dir",Ci.nsIFile)}
+		d.slice(1, d.length).forEach((c)=>f.append(c));
+		if (r) return f.path; f.exists() && f.launch();
 	},
 	crop(s,cut = 33,ch = '…\n') { //сократить/разбить строку
 		return s.substring(0,cut) +`${s.length > cut - 1 ? `${ch}…${s.substring(s.length - cut + ch.length,s.length)}`: ''}`;
@@ -438,7 +437,7 @@ window.glob = { //all [ChromeOnly]-scripts
 			id.style.removeProperty('filter'),id.style.removeProperty('background-color');},ms);
 		if (text) glob.toStatus(text,time);
 	},
-	mode_skin(text,p = this.pref('network.proxy.type'),t,s = 'unset',o = '',z) { with(glob){
+	mode_skin(text,p = this.pref('network.proxy.type'),t,s = 'unset',o = '',z) {with(glob){
 		if (pref("dom.security.https_only_mode"))
 			flash(B[10],"drop-shadow(0px 0.5px 0px #F8F)"),o = ', только HTTPS'
 		else flash(B[10],"none");
@@ -462,7 +461,7 @@ window.glob = { //all [ChromeOnly]-scripts
 	for(var d of del) delete klaBa[d]; //есть Key_OS ? удалить имена-клоны
 	for(var p in klaBa) if (reos.test(p))
 			klaBa[p.replace(reos,'')] = klaBa[p], delete klaBa[p]; //убрать имя вашей ОС из свойства
-	for(var p in klaBa) { var func = klaBa[p]; //(){…}, bool,num
+	for(var p in klaBa) {var func = klaBa[p]; //(){…}, bool,num
 		if (typeof func == "string") func = klaBa[func]; //ссылка на функцию
 		var [key,mod] = p.split("_"); mod = mod || "";
 		var upper = key[0].toUpperCase(); var prevent = key[0] == upper;
@@ -532,7 +531,7 @@ listener = { //действия мыши, перехват существующ�
 	find(sel) { //условия запуска ?
 		return data[sel][this] || data[sel][this + 1];
 	},
-	filter(sel) { return this.closest(sel);
+	filter(sel) {return this.closest(sel);
 	},
 	get selectors() {
 		this.onLongPress = (trg,obj,num) => {
@@ -603,10 +602,10 @@ var css_USER = (css) => { //локальные функции
 	var args = [style,sss.USER_SHEET]; // стиль: файл или CSS
 	(this.css = !this.css) ? sss.loadAndRegisterSheet(...args) : sss.unregisterSheet(...args);
 },
-gClipboard = { write(str,ch = Cc["@mozilla.org/widget/clipboardhelper;1"].getService(Ci.nsIClipboardHelper)) {
+gClipboard = {write(str,ch = Cc["@mozilla.org/widget/clipboardhelper;1"].getService(Ci.nsIClipboardHelper)) {
 		(this.write = str => ch.copyStringToClipboard(str,Services.clipboard.kGlobalClipboard))(str);}
 },
-TabAct = (e) => { return e.closest(".tabbrowser-tab");
+TabAct = (e) => {return e.closest(".tabbrowser-tab");
 },
 switchTab = (url = 'about:serviceworkers',go = false) => { //открыть вкладку | закрыть, если открыта | выбрать
 	for(var tab of gBrowser.visibleTabs)
@@ -641,14 +640,14 @@ Title = (max,title) => { //заголовок. без обрезки: max не �
 },
 save = () => { //функция из SingleHTML.jsm
 	var args = [glob.crop("√ страница записана: "+ Title(0),48,''),7e3];
-	try { Cu.getGlobalForObject(Cu)[Symbol.for("SingleHTML")](true,window);
+	try {Cu.getGlobalForObject(Cu)[Symbol.for("SingleHTML")](true,window);
 		gBrowser.selectedTab.textLabel.style.textDecoration = "overline"; // ^подчёркивание
 	} catch {args = ['☹ Ошибка функции SingleHTML',1e4]}
 	glob.toStatus(...args);
 },
 saveSelToTxt = async () => { //в .txt Всё или Выбранное
 	var {length} = saveURL, splice = length > 9, l11 = length == 11, msgName = id + ":Save:GetSelection"; //FIX FF103+
-	var receiver = msg => { var txt = "data:text/plain,"+ encodeURIComponent(gBrowser.currentURI.spec +"\n\n"+ msg.data);
+	var receiver = msg => {var txt = "data:text/plain,"+ encodeURIComponent(gBrowser.currentURI.spec +"\n\n"+ msg.data);
 		var args = [txt,Title(0) +'.txt',null,false,true,null,window.document];
 		splice && args.splice(5,0,null) && l11 && args.splice(1,0,null);
 		saveURL(...args);
@@ -699,7 +698,7 @@ Expert = (m = Boolean(Ff.Exp()),p = Ff.p +'expert') => {
 Help = (help = Ff.c +"help.html") => { //помощь
 	(FileExists(help)) ? switchTab(help) : switchTab('victor-dobrov.narod.ru/help-FF.html');
 },
-FileExists = (file) => { try { //файл|папка существует?
+FileExists = (file) => {try { //файл|папка существует?
 	if (!file.startsWith("chrome://"))
 		return FileUtils.File(String.raw`${file}`).exists()
 	else return Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).convertChromeURL(Services.io.newURI(file)).QueryInterface(Ci.nsIFileURL).file.exists();
@@ -726,7 +725,7 @@ openProxyWin = (_win = Services.wm.getMostRecentWindow("aTaB:ProxyWin")) => {
 		_win = openDial(["chrome://browser/content/preferences/dialogs/connection.xhtml","_blank","chrome,dialog=no,centerscreen,resizable"]);
 		_win.addEventListener("DOMContentLoaded",() => {
 			_win.document.documentElement.setAttribute("windowtype","aTaB:ProxyWin");
-		},{ once: true });
+		},{once: true});
 		_win.opener = window; _win.opener.gSubDialog = {_dialogs: []};}
 },
 FavItem = (first = true,def_url = 'ua.ru') => { //первый|посл. url Меню закладок
@@ -736,14 +735,14 @@ FavItem = (first = true,def_url = 'ua.ru') => { //первый|посл. url М�
 	var max = folder.childCount - 1, type = Ci.nsINavHistoryResultNode.RESULT_TYPE_URI, url;
 	if (first) for(var ind = 0; ind <= max; ind++) { // first
 		var node = folder.getChild(ind);
-		if (node.type == type) { url = node.uri; break;	}
+		if (node.type == type) {url = node.uri; break;}
 	} else		for(var ind = max; 0 <= ind; ind--) { // last
 		var node = folder.getChild(ind);
-		if (node.type == type) { url = node.uri; break;	}
+		if (node.type == type) {url = node.uri; break;}
 	}
 	if (!url) url = def_url; return url;
 },
-toFav = () => { with (PlacesUtils.bookmarks){ //без диалога
+toFav = () => {with (PlacesUtils.bookmarks){ //без диалога
 	var url = gBrowser.selectedBrowser.currentURI.spec;
 	search({url}).then(async array => {
 		if (array.length)
