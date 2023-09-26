@@ -9,13 +9,13 @@
 	},
 	observe(aWindow, aTopic, aData) {
 		Services.obs.removeObserver(this, "profile-after-change");
-		this.observe = (window, topic, data) => { 
-			try {if (!(window .isChromeWindow)) return;} // FF116+
-			catch {if (!(window instanceof Ci.nsIDOMChromeWindow)) return;}
+		this.observe = (window, topic, data, icw) => {
+			try {icw = (window .isChromeWindow);} //Ff116+
+			catch {icw = (window instanceof Ci.nsIDOMChromeWindow);}
+			if (!icw) return;
 			var docElementInserted = e => {
 				var win = e.target.defaultView;
-				try {if (win .isChromeWindow) user_chrome.initWindow(win);}
-				catch {if (win instanceof Ci.nsIDOMChromeWindow) user_chrome.initWindow(win);}
+				if (icw) user_chrome.initWindow(win);
 			};
 			window.windowRoot.addEventListener("DOMDocElementInserted", docElementInserted, true);
 			window.addEventListener("load", e => {
@@ -48,6 +48,6 @@
 user_chrome_files_sandbox.init();`, Cu.Sandbox(Cc["@mozilla.org/systemprincipal;1"].createInstance(Ci.nsIPrincipal), { wantComponents: true, sandboxName: "UserChromeFiles", wantGlobalProperties: ["ChromeUtils"],}));
 })();
 
-lockPref("extensions.experiments.enabled", true);
-lockPref("extensions.legacy.enabled", true);
-lockPref("xpinstall.signatures.required", false);
+// lockPref("extensions.experiments.enabled", true);
+// lockPref("extensions.legacy.enabled", true);
+// lockPref("xpinstall.signatures.required", false);

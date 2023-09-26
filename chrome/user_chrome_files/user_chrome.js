@@ -9,7 +9,7 @@ var user_chrome = {
 		branch.setBoolPref("vertical_enable", true);
 		branch.setBoolPref("top_enable", true);
 		branch.setBoolPref("top_next_navbar", true);
-		branch.setBoolPref("bottom_enable", true);
+		branch.setBoolPref("bottom_enable", false);
 		branch.setBoolPref("vertical_collapsed", false);
 		branch.setBoolPref("vertical_bar_start", true);
 		branch.setBoolPref("vertical_autohide", false);
@@ -17,14 +17,14 @@ var user_chrome = {
 		branch.setBoolPref("vertical_fullscreen", true);
 		branch.setIntPref("vertical_showdelay", 300);
 		branch.setIntPref("vertical_hidedelay", 2000);
-		branch.setBoolPref("top_collapsed", false);
+		branch.setBoolPref("top_collapsed", true);
 		branch.setBoolPref("bottom_collapsed", false);
-		branch.setBoolPref("custom_styles_all", false);
-		branch.setBoolPref("custom_styles_chrome", false);
-		branch.setBoolPref("custom_scripts_background", false);
-		branch.setBoolPref("custom_scripts_chrome", false);
-		branch.setBoolPref("custom_scripts_all_chrome", false);
-		branch.setBoolPref("custom_styles_scripts_child", false);
+		branch.setBoolPref("custom_styles_all", true);
+		branch.setBoolPref("custom_styles_chrome", true);
+		branch.setBoolPref("custom_scripts_background", true);
+		branch.setBoolPref("custom_scripts_chrome", true);
+		branch.setBoolPref("custom_scripts_all_chrome", true);
+		branch.setBoolPref("custom_styles_scripts_child", true);
 		branch.setStringPref("custom_styles_scripts_groups", "[\"browsers\"]");
 		branch.setBoolPref("custom_safemode", true);
 		branch.setBoolPref("winbuttons", false);
@@ -149,7 +149,7 @@ var user_chrome = {
 				try {
 					CustomizableUI.registerArea("ucf-additional-top-bar", {
 						type: CustomizableUI.TYPE_TOOLBAR,
-						defaultPlacements: ["ucf-open-directories-button", "ucf-open-about-config-button", "ucf-additional-top-spring", "ucf-restart-app"],
+						defaultPlacements: ["ucf-open-directories-button", "ucf-additional-top-spring", "ucf-restart-app"],
 						defaultCollapsed: false
 					});
 				} catch(e) {}
@@ -178,6 +178,7 @@ var user_chrome = {
 				label: "Настройки UserChromeFiles",
 				tooltiptext: "ЛКМ: Открыть настройки UserChromeFiles в окне\nСКМ: Открыть about:config\nПКМ: Открыть настройки UserChromeFiles во вкладке",
 				localized: false,
+				defaultArea: CustomizableUI.AREA_NAVBAR,
 				onBuild(doc) {
 					var win = doc.defaultView;
 					var prefsInfo = "chrome://user_chrome_files/content/options/prefs.xhtml";
