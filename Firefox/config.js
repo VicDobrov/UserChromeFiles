@@ -1,8 +1,8 @@
 // UserChromeFiles Vitaliy V. http://forum.mozilla-russia.org/viewtopic.php?id=76642
 (async () => { Cu.evalInSandbox(`
-	if (typeof Services != "object")
-  	var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm");
-	var user_chrome_files_sandbox = {
+if (typeof Services != "object")
+	var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm");
+var user_chrome_files_sandbox = {
 	init() {
 		Services.obs.addObserver(this, "domwindowopened");
 		Services.obs.addObserver(this, "profile-after-change");
