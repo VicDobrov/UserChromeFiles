@@ -40,6 +40,9 @@ tooltip[hasbeenopened="true"] :is(description,label) {
 #navigator-toolbox { /* фон заголовка */
 	background-color: var(--navbar-background) !important;
 }
+#ucf-additional-vertical-box {
+	background: var(--navbar-background) !important;
+}
 .tab-icon-image {min-height: 18px !important; margin-top: 1px !important; }
 #context-bookmarkpage .menu-iconic-icon { fill: #FF69e0 !important;} /* context-menu цвет: Назад, Обновить, Звёздочка */
 #context-back .menu-iconic-icon, #context-forward .menu-iconic-icon { fill: #00b800 !important;}

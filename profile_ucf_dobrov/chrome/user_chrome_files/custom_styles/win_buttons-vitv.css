@@ -83,7 +83,8 @@
 .titlebar-buttonbox > :-moz-any(.titlebar-min,.titlebar-max,.titlebar-restore,.titlebar-close) > .toolbarbutton-icon,
 :-moz-any(#minimize-button,#restore-button,#close-button) > .toolbarbutton-icon {
 	filter: var(--v-svg-filter-fill) !important;
-	fill: currentColor !important;
+	/*fill: currentColor !important;*/
+	fill: dark !important;
 	color: inherit !important;
 	margin: 0 !important;
 	padding: 0 !important;

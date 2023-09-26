@@ -1,5 +1,3 @@
-// http://infocatcher.ucoz.net/js/cb/attrsInspector.js
-// https://forum.mozilla-russia.org/viewtopic.php?id=56041
 // https://github.com/Infocatcher/Custom_Buttons/tree/master/Attributes_Inspector
 
 // (c) Infocatcher 2010-2019, 2023 FIX

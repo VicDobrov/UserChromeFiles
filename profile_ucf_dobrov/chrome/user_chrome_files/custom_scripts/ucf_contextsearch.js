@@ -1,4 +1,4 @@
-(this.contextsearch = { // https://forum.mozilla-russia.org/viewtopic.php?pid=780283#p780283
+(this.contextsearch = { // forum.mozilla-russia.org/viewtopic.php?pid=806042#p806042
 	topic: "browser-search-engine-modified", hide: "browser.search.hiddenOneOffs",
 	defaultImg: "chrome://browser/skin/search-engine-placeholder.png",
 	searchSelect: null, popup: null,
@@ -45,14 +45,11 @@
 		this.popup.addEventListener("popuphidden", this);
 		this.rebuild(menu);
 	},
-	getEngines() {
-		var args = "hideOneOffButton" in Services.search.defaultEngine
-			? [e => !e.hideOneOffButton]
-			: Object.defineProperty(
-				[function(e) {return !this.includes(e.name);}], "1", {
-					get: () => Services.prefs.getStringPref(this.hide)?.split(",") || []
-				}
-			);
+	getEngines() { var args = "hideOneOffButton" in Services.search.defaultEngine
+		? [e => !e.hideOneOffButton] : Object.defineProperty(
+			[function(e) {return !this.includes(e.name);}], "1", {
+				get: () => Services.prefs.getStringPref(this.hide)?.split(",") || []}
+		);
 		return (this.getEngines = async () =>
 			(await Services.search.getVisibleEngines()).filter(...args)
 		)();
