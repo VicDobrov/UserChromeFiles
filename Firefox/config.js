@@ -1,7 +1,7 @@
 // UserChromeFiles Vitaliy V. http://forum.mozilla-russia.org/viewtopic.php?id=76642
 (async () => { Cu.evalInSandbox(`
 if (typeof Services != "object")
-	var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm");
+ 	var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm");
 var user_chrome_files_sandbox = {
 	init() {
 		Services.obs.addObserver(this, "domwindowopened");
@@ -10,8 +10,7 @@ var user_chrome_files_sandbox = {
 	observe(aWindow, aTopic, aData) {
 		Services.obs.removeObserver(this, "profile-after-change");
 		this.observe = (window, topic, data, icw) => {
-			try {icw = (window .isChromeWindow);} //Ff116+
-			catch {icw = (window instanceof Ci.nsIDOMChromeWindow);}
+			try {icw = (window instanceof Ci.nsIDOMChromeWindow);} catch {icw = (window .isChromeWindow)} //Ff116+
 			if (!icw) return;
 			var docElementInserted = e => {
 				var win = e.target.defaultView;
@@ -48,6 +47,9 @@ var user_chrome_files_sandbox = {
 user_chrome_files_sandbox.init();`, Cu.Sandbox(Cc["@mozilla.org/systemprincipal;1"].createInstance(Ci.nsIPrincipal), { wantComponents: true, sandboxName: "UserChromeFiles", wantGlobalProperties: ["ChromeUtils"],}));
 })();
 
-// lockPref("extensions.experiments.enabled", true);
-// lockPref("extensions.legacy.enabled", true);
-// lockPref("xpinstall.signatures.required", false);
+lockPref("extensions.experiments.enabled", true);
+lockPref("extensions.legacy.enabled", true);
+lockPref("xpinstall.signatures.required", false);
+lockPref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
+lockPref("browser.newtabpage.activity-stream.feeds.telemetry", false); // FIX для about:newtab
+lockPref("devtools.chrome.enabled", true);

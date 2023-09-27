@@ -34,7 +34,7 @@ user-select: none !important;
 div.columns {
 display: flex !important;
 flex-direction: row !important;
-align-items: start !important;
+align-items: flex-start !important;
 flex-wrap: nowrap !important;
 }
 div.columns > div:not(.columnend) {
@@ -45,7 +45,7 @@ margin-inline: 3px !important;
 }
 #header {
 display: flex !important;
-align-items: end !important;
+align-items: flex-end !important;
 justify-content: space-between !important;
 flex-wrap: nowrap !important;
 margin-bottom: 1em !important;

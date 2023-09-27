@@ -1,5 +1,6 @@
-var EXPORTED_SYMBOLS = ["UcfStylesScripts"];
-var UcfStylesScripts = {
+var EXPORTED_SYMBOLS = ["UcfStylesScripts"],
+jsmImport = (s, e = /\.mjs$/i.test(s) ? "ESModule" : "") => `ChromeUtils.import${e}("chrome://user_chrome_files/content/custom_scripts/${s}")`,
+UcfStylesScripts = {
 	/** ************************▼ Настройки ▼************************ */
 	/**
 	* Настройки стилей:
@@ -41,29 +42,34 @@ var UcfStylesScripts = {
 	},
 	scriptsbackground: [ // В фоне [System Principal]
 		{ path: "custom_script.js", },
+		// { func: jsmImport("SingleHTML.jsm"), },
 	],
 	/** ************************▲ Настройки ▲************************ */
 };
 
-if (typeof Services != "object") var Services = globalThis.Services;
-var UcfSSS = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
-var preloadSheet = (obj, func) => {
+var UcfSSS = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService),
+chfile = (f) => {
+	if (typeof Services != "object")
+		try{var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm")} catch{var {Services} = globalThis}
+	f = Services.io.newURI('chrome://user_chrome_files/content/custom_styles/'+ f);
+	if (Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).convertChromeURL(f).QueryInterface(Ci.nsIFileURL).file.exists())
+		return f; return false;
+},
+preloadSheet = (obj, func) => {
 	try {
-		let uri = Services.io.newURI(`chrome://user_chrome_files/content/custom_styles/${obj.path}`);
+		let uri = chfile(obj.path); if (!uri) return;
 		let type = UcfSSS[obj.type];
 		let preload = UcfSSS.preloadSheet(uri, type);
 		(obj.sheet = f => {
-			try {
-				f(preload, type);
-			} catch (e) {}
+			try { f(preload, type);} catch (e) {}
 		})(func);
 	} catch (e) {
 		obj.sheet = () => {};
 	}
-};
-var registerSheet = async obj => {
+},
+registerSheet = async obj => {
 	try {
-		let uri = Services.io.newURI(`chrome://user_chrome_files/content/custom_styles/${obj.path}`);
+		let uri = chfile(obj.path); if (!uri) return;
 		let type = UcfSSS[obj.type];
 		if (!UcfSSS.sheetRegistered(uri, type))
 			UcfSSS.loadAndRegisterSheet(uri, type);
