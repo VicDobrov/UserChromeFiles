@@ -4,7 +4,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 30 скрытых настроек. Ctrl+Click или Правый: сброс опции по-умолчанию
 клик по параметру с Shift блокирует авто-закрытие меню
 ⟳ Обновить страницу, ↯ Перезапуск браузера
-строки с pYellow = шрифт italic, цвет = ключ, пусто:Red 
+строки с pYellow = шрифт italic, цвет = ключ, пусто:Red
 	refresh: false - reload current tab,	true - reload skip cache
 	restart: false - restart browser,	true - restart with confirm */
 
@@ -19,9 +19,8 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 	"http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul","general.useragent.override",
 	"Linux; Android 9; Pixel 2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.88 Mobile Safari/537.36",
 	"Macintosh; Intel Mac OS X 10.15; rv:115.0) Gecko/20100101 Firefox/115.0","Mozilla/5.0 ("],
-	fonts = font => font.map(name => [(name == font.at(-1) ? null : name), name]), //array с вложениями
+	fonts = arr => arr.map(n => [(n == arr[arr.length-1] ? null : n), n]), //array с вложениями
 	serif = fonts("Arial|Cantarell|DejaVu Sans|Roboto|PT Serif|Segoe UI|Ubuntu|Cambria|Fira Sans|Georgia|Noto Sans|Calibri|Times|системный".split('|')), sans = [["PT Sans","PT Sans"], ...serif];
-
 	var hints = new Map([ //опция отсутствует ? выполнить код и вернуть строку
 		["ucf.savedirs", `glob.crop(glob.dirsvcget(""),34)`],
 		[I[5], `glob.ua()`] // текущий ЮзерАгент
@@ -130,6 +129,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 		}];
 	return {
 		id: "ToggleButton", label: "Журнал, Меню опций", localized: false,
+		defaultArea: CustomizableUI.AREA_NAVBAR,
 		icon: "data:image/webp;base64,UklGRkYCAABXRUJQVlA4WAoAAAAQAAAAFwAAFwAAQUxQSJcAAAANcGJr25S8mH4SNGxAgsguPCZ0BcMOiDSNRpvVaCTa3AI2qm2e2ofz7OuwgIiYgMzb4kVjGvegnQFAwXgFVnvcOmtnMJtutAa3Vo4mhRMDpWq8AjfU+yQoYf1/oTkTIdUrknKswNQ5yAdDzqgr4CYbsJWQfEyEU5QNEl2eKFM2AAIbjmSIMjwXPGyEdj6Bdn4mj9KO63sAAFZQOCCIAQAAdAgAnQEqGAAYAD6dRppKgoCqgAE4lsAKwgisgG27uzPePSvBIu/Pr0HJqW+AfoAIHl2DrAnRo/G3JBpTx8yE7L6LFQyD+yUNvuRYAAD+7mwmpaoBcsJ1hVKsMI2ucqid8qndm+WEvH4l4il6lA8FPscgnrRHrnSjjyNcfUV21+TkfqOWKou2UvVsZSl1z+jKs760Vij5XCWF9Uo6TZAhKfrJpeILyQYwq2Ee/g1uyEH/dJMI/91DsVpI6i2vV/Jqpd4/KniJtTm1woLvaotA2ikt3eeBaqlHf8WPe++lSWS7fETjgvzzbflp0Rj+v23kbb9e/VjUcPaD83shRuwzEo6CAO/AGxE+Zwbvv9NDsQT6T+S4CCDOFTuMRVv9/0E4P+uK+Vc3bMfQQD05gY/fes+ZX6ZHkvFdMn7zX8LMVvI59p7F806HPD2lBjs4lWWhQ5ckJDNflZL49370shr3/Q9uMJN9i/NVCu4OT7K3+4+/RkAMnjuY09u+3i4y4CldQG789iIAAAA=",
 		defGreen: "data:image/webp;base64,UklGRgoBAABXRUJQVlA4TP0AAAAvD8ADEI9hpG2kwpf60h8+nBQkbSSp/tW9hIMPFw5E0kaSKuP9q3kJDx8ePDjQSCQp2z8RkhhIHBVAEdD9J4JYEkEUJSiDD0EIEcFgBSIspCAcbdlyRzfeYpwnDotGYFHIfXe6pdToDwUE2bZNRzds24qTx9b8h+chHET0fwLiX3vNO6jyh5aWbwMaqX3Ttu/j0VDG+5ZB9nQ2nYwBUGepB8vqYH9v+qrpnsESzDcnh9i3DZ4oB3cfPD0+kmSTuyCucHH+8dXwLphnt5+6vgQlz3KwrB90f3drUFqXYE/zJz9KsufsQbatX741WnxtabN4hjds8X2veQdVxr8CAA==",
 		Gray: "data:image/webp;base64,UklGRsgAAABXRUJQVlA4TLsAAAAvD8ADEFW4rbVtaVj67ViCCWhDSugiHSSVle7uMoJnhO973wgztW2IIZo4RvFEMdqu2rZtGJfNqWfYX0SisXgaGvkBFK5k4EEDTtS7Q31XN3ei94VeQuI61k6unuRaB86CMExsYWnFt+imhRgmCMMWJmYWliTRJgrYIAzfJfUMSCK7hDdji3VQkkTjE9hMrsCmNheZy9gzEqlhndwlMoJ5NSqr+KCIfPuDUm+Uoz7+FEmkmIjg/Pcf/6EBAA==",

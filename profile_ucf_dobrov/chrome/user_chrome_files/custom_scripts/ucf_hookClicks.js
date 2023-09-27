@@ -210,7 +210,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 	},
 	[B[5]]: { // CustomizableUI в скрипте
 		0(btn){btn.ownerGlobal.SidebarUI.toggle("viewBookmarksSidebar")}, //ЛМ
-		256(btn){btn.ownerGlobal.SidebarUI.toggle(B.at(-1))},
+		256(btn){btn.ownerGlobal.SidebarUI.toggle(B[B.length-1])},
 		8(){glob.dirsvcget("Home")}, //+ Alt
 		128(btn){
 			btn.ownerGlobal.PlacesCommandHook.showPlacesOrganizer("Downloads") },
@@ -219,7 +219,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		264(){ // ПМ +Alt
 			glob.dirsvcget("GreD")}
 	},
-	"unified-extensions-button": {mousedownTarget: true, 
+	"unified-extensions-button": {mousedownTarget: true,
 		1(){Expert()}, //д
 		128(){Mouse[B[14]][128]()},
 		256(){openDial()}
@@ -257,7 +257,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 			if (btn.id == B[6]) {
 				var bar = document.getElementById("ucf-additional-vertical-bar");
 				if (bar) window.setToolbarVisibility(bar,document.getElementById("sidebar-box").hidden);
-				window.SidebarUI.toggle(B.at(-1));
+				window.SidebarUI.toggle(B[B.length-1]);
 			} else glob.mode_skin(); // меню кнопки
 		},
 		2(trg,forward){zoom(forward) }, // wheel
@@ -289,7 +289,8 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 			glob.pref(n,f); zoom(0,0,0,(f > 0) ? " + Web-шрифты" : ""); BrowserReload();}
 	}}; var M = Object.keys(Mouse);
 
-(async (id) => CustomizableUI.createWidget({label:id.replace('-',' '), id:id,
+(async (id) => CustomizableUI.createWidget({ label:id.replace('-',' '), id:id,
+	defaultArea: CustomizableUI.AREA_NAVBAR, localized: false,
 	onCreated(btn) {
 		btn.setAttribute("image","data:image/webp;base64,UklGRjwAAABXRUJQVlA4TC8AAAAvD8ADAAoGbSM5Ov6k774XCPFP/0/03/8JGPxzroIzuOW06Ih60Genn1S/gHe+BgA=");
 		btn.onmouseenter = btn.onmouseleave = this.onmouse;
@@ -399,7 +400,7 @@ window.glob = { //all [ChromeOnly]-scripts
 		ttt && this.pref(ua_my,ttt); if (!ttt) ttt = ua; if (real) ttt = ua; return ttt;
 	},
 	dirsvcget() { //константа пути + subdirs, если посл. опция = "" вернуть путь, иначе открыть
-		var f, d = [...arguments], r = (d.at(-1) == ""); (r) && d.pop();
+		var f, d = [...arguments], r = (d[d.length-1] == ""); (r) && d.pop();
 		try {f = Services.dirsvc.get(d[0] || "DfltDwnld",Ci.nsIFile);} catch {f = Services.prefs.getComplexValue("browser.download.dir",Ci.nsIFile)}
 		d.slice(1, d.length).forEach((c)=>f.append(c));
 		if (r) return f.path; f.exists() && f.launch();
