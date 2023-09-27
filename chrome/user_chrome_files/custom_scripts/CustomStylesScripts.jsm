@@ -47,17 +47,12 @@ UcfStylesScripts = {
 	/** ************************▲ Настройки ▲************************ */
 };
 
-var UcfSSS = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService),
-chfile = (f) => {
-	if (typeof Services != "object")
-		try{var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm")} catch{var {Services} = globalThis}
-	f = Services.io.newURI('chrome://user_chrome_files/content/custom_styles/'+ f);
-	if (Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).convertChromeURL(f).QueryInterface(Ci.nsIFileURL).file.exists())
-		return f; return false;
-},
+var Services = globalThis.Services || ChromeUtils.import("resource://gre/modules/Services.jsm").Services;
+var UcfSSS = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
+var chfile = f => Services.io.newURI('chrome://user_chrome_files/content/custom_styles/'+ f),
 preloadSheet = (obj, func) => {
 	try {
-		let uri = chfile(obj.path); if (!uri) return;
+		let uri = chfile(obj.path);
 		let type = UcfSSS[obj.type];
 		let preload = UcfSSS.preloadSheet(uri, type);
 		(obj.sheet = f => {
@@ -69,7 +64,7 @@ preloadSheet = (obj, func) => {
 },
 registerSheet = async obj => {
 	try {
-		let uri = chfile(obj.path); if (!uri) return;
+		let uri = chfile(obj.path);
 		let type = UcfSSS[obj.type];
 		if (!UcfSSS.sheetRegistered(uri, type))
 			UcfSSS.loadAndRegisterSheet(uri, type);

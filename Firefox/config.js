@@ -10,7 +10,7 @@ var user_chrome_files_sandbox = {
 	observe(aWindow, aTopic, aData) {
 		Services.obs.removeObserver(this, "profile-after-change");
 		this.observe = (window, topic, data, icw) => {
-			try {icw = (window instanceof Ci.nsIDOMChromeWindow);} catch {icw = (window .isChromeWindow)} //Ff116+
+			icw = window.isChromeWindow ? window.isChromeWindow : Ci.nsIDOMChromeWindow; //Ff116+
 			if (!icw) return;
 			var docElementInserted = e => {
 				var win = e.target.defaultView;

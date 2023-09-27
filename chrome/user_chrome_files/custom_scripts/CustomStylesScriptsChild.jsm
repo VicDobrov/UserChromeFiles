@@ -30,8 +30,7 @@ var UcfStylesScripts = {
 	/** ************************▲ Настройки ▲************************ */
 };
 
-if (typeof Services != "object")
-	try{var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm");} catch{var {Services} = globalThis}
+var Services = globalThis.Services || ChromeUtils.import("resource://gre/modules/Services.jsm").Services;
 var UcfSSS = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
 var preloadSheet = async (obj, func) => {
 	try {
