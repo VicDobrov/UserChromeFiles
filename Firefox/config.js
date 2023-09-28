@@ -53,5 +53,3 @@ lockPref("extensions.experiments.enabled", true);
 
 lockPref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
 lockPref("browser.newtabpage.activity-stream.feeds.telemetry", false); // FIX для about:newtab
-lockPref("devtools.chrome.enabled", true);
-lockPref("browser.warnOnQuitShortcut", false);
