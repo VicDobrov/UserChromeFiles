@@ -141,8 +141,7 @@ try {(() => {
 					muim_2.removeAttribute("hidden");
 				for (let item of mupp_0.querySelectorAll(":scope > :is(menuitem:not(.ucf-menuitem), menuseparator:not(.ucf-menuseparator))"))
 					item.remove();
-				var sSgCTC;
-				try{sSgCTC = sessionStore.getClosedTabCountForWindow(win);} catch(e){sSgCTC = sessionStore.getClosedTabCount(win)}
+				try{var sSgCTC = sessionStore.getClosedTabCountForWindow(win);} catch(e){var sSgCTC = sessionStore.getClosedTabCount(win)}
 				if (win == Services.appShell.hiddenDOMWindow || sSgCTC == 0) {
 					musr_1.setAttribute("hidden", "true");
 					muim_4.setAttribute("hidden", "true");
@@ -162,5 +161,4 @@ try {(() => {
 			return trim;
 		}
 	});
-})();} catch(e) {}
-
+})()} catch(e){}
