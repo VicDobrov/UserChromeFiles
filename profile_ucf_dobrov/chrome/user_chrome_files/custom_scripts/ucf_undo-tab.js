@@ -1,7 +1,7 @@
 try {(() => {
 	var id = "ucf-undo-tab", label = "Восстановить",
 	tooltiptext = "ЛКМ: Восстановить вкладку\nПКМ: Восстановить окно",
-	tooltiptextbtnmenu = "ЛКМ: Открыть меню\nПКМ: Восстановить вкладку\nСКМ: Показать весь журнал",
+	tooltiptextbtnmenu = "ЛКМ: Открыть меню\nПКМ: Восстановить вкладку\nСКМ: Показать весь журнал";
 	CustomizableUI.createWidget({
 		id: id,
 		type: "custom",
