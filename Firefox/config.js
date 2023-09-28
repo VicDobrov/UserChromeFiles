@@ -47,8 +47,11 @@ var user_chrome_files_sandbox = {
 user_chrome_files_sandbox.init();`, Cu.Sandbox(Cc["@mozilla.org/systemprincipal;1"].createInstance(Ci.nsIPrincipal), { wantComponents: true, sandboxName: "UserChromeFiles", wantGlobalProperties: ["ChromeUtils"],}));
 })();
 
-// lockPref("extensions.experiments.enabled", true);
+lockPref("extensions.experiments.enabled", true);
 // lockPref("extensions.legacy.enabled", true);
 // lockPref("xpinstall.signatures.required", false);
+
 lockPref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
 lockPref("browser.newtabpage.activity-stream.feeds.telemetry", false); // FIX для about:newtab
+lockPref("devtools.chrome.enabled", true);
+lockPref("browser.warnOnQuitShortcut", false);
