@@ -1,7 +1,7 @@
-// UserChromeFiles Vitaliy V. http://forum.mozilla-russia.org/viewtopic.php?id=76642
+// UserChromeFiles forum.mozilla-russia.org/viewtopic.php?id=76642
 (async () => { Cu.evalInSandbox(`
 if (typeof Services != "object")
- 	var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm");
+	var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm");
 var user_chrome_files_sandbox = {
 	init() {
 		Services.obs.addObserver(this, "domwindowopened");
@@ -9,18 +9,18 @@ var user_chrome_files_sandbox = {
 	},
 	observe(aWindow, aTopic, aData) {
 		Services.obs.removeObserver(this, "profile-after-change");
-		this.observe = (window, topic, data, icw) => {
-			icw = window.isChromeWindow ? window.isChromeWindow : Ci.nsIDOMChromeWindow; //Ff116+
-			if (!icw) return;
+		this.observe = (window, topic, data) => {
+			if (!(window .isChromeWindow)) return;
 			var docElementInserted = e => {
 				var win = e.target.defaultView;
-				if (icw) user_chrome.initWindow(win);
+				if (win .isChromeWindow)
+					user_chrome.initWindow(win);
 			};
 			window.windowRoot.addEventListener("DOMDocElementInserted", docElementInserted, true);
 			window.addEventListener("load", e => {
 				window.addEventListener("unload", e => {
 					window.windowRoot.removeEventListener("DOMDocElementInserted", docElementInserted, true);
-				}, { once: true });
+				}, {once: true});
 			}, { once: true });
 		};
 		var file = Services.dirsvc.get("UChrm", Ci.nsIFile);
@@ -47,9 +47,8 @@ var user_chrome_files_sandbox = {
 user_chrome_files_sandbox.init();`, Cu.Sandbox(Cc["@mozilla.org/systemprincipal;1"].createInstance(Ci.nsIPrincipal), { wantComponents: true, sandboxName: "UserChromeFiles", wantGlobalProperties: ["ChromeUtils"],}));
 })();
 
-lockPref("extensions.experiments.enabled", true);
-lockPref("extensions.legacy.enabled", true);
-lockPref("xpinstall.signatures.required", false);
+// lockPref("extensions.experiments.enabled", true);
+// lockPref("extensions.legacy.enabled", true);
+// lockPref("xpinstall.signatures.required", false);
 lockPref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
 lockPref("browser.newtabpage.activity-stream.feeds.telemetry", false); // FIX для about:newtab
-lockPref("devtools.chrome.enabled", true);
