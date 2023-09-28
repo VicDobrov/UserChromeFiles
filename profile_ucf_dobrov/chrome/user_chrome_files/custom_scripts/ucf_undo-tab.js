@@ -1,11 +1,7 @@
 try {(() => {
-	var id = "ucf-undo-tab",
-	label = "Восстановить",
+	var id = "ucf-undo-tab", label = "Восстановить",
 	tooltiptext = "ЛКМ: Восстановить вкладку\nПКМ: Восстановить окно",
-	tooltiptextbtnmenu = "ЛКМ: Открыть меню\nПКМ: Показать весь журнал",
-	img = "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' height='16' width='16' viewBox='0 0 48 48'><g><rect x='0' y='0' width='48' height='48' rx='3' ry='3' style='fill:rgb(0, 120, 173);'/><path style='opacity:0.25;fill:black;' d='M 16,12 C 16,12 3,27 3,26.81 L 24.2,48 H 45 C 46.7,48 48,46.7 48,45 V 17.3 L 40,9.3 Z'/><path style='fill:white;' d='M 27.68,3.93 C 26.7,3.93 25.66,3.992 24.58,4.138 19.23,5.17 13.74,8.472 10.22,12.78 3.018,5.815 7.525,10.29 3.021,5.815 L 3,26.81 H 24.18 L 17.03,19.7 C 20.44,14.7 30.87,6.752 38.32,19.08 40.69,25.69 40.58,36.52 35.69,44 40.97,38.26 45.35,30.55 44.98,21.33 44.59,14.08 39.37,3.992 27.68,3.93' /></g></svg>",
-	imgmenu = "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' height='16' width='16' viewBox='0 0 48 48'><g><circle cy='24' cx='24' style='fill:rgb(0, 120, 173);' r='20'/><path style='opacity:0.25;fill:black;' d='M 33,41.8 22.3,31.1 36.7,17.9 44,25.2 C 43.5,30.6 41,37.7 33,41.8 Z'/><path style='fill:white;stroke:white;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;' d='M 35,19 H 13 L 24,30 35,19' /></g></svg>";
-
+	tooltiptextbtnmenu = "ЛКМ: Открыть меню\nПКМ: Восстановить вкладку\nСКМ: Показать весь журнал",
 	CustomizableUI.createWidget({
 		id: id,
 		type: "custom",
@@ -18,34 +14,21 @@ try {(() => {
 			trim.className = "toolbaritem-combined-buttons ucf-toolbaritem-combined-buttons chromeclass-toolbar-additional";
 			trim.setAttribute("label", label);
 			trim.setAttribute("type", "custom");
-			var trbn_0 = doc.createXULElement("toolbarbutton");
-			trbn_0.id = `${id}-button`;
-			trbn_0.className = "toolbarbutton-1 ucf-toolbarbutton-combined-buttons-toolbarbutton";
-			trbn_0.setAttribute("label", label);
-			trbn_0.setAttribute("tooltiptext", tooltiptext);
-			trbn_0.setAttribute("context", "");
-			trbn_0.addEventListener("click", e => {
-				if (e.button == 0)
-					win.undoCloseTab();
-				else if (e.button == 2) {
-					e.preventDefault();
-					e.stopPropagation();
-					win.undoCloseWindow();
-				}
-			});
-			trim.append(trbn_0);
+			trim.style.setProperty("margin-inline","0");
 			var trbn_1 = doc.createXULElement("toolbarbutton");
 			trbn_1.id = `${id}-button-menu`;
-			trbn_1.className = "toolbarbutton-1 ucf-toolbarbutton-combined-buttons-dropmarker";
+			trbn_1.className = "toolbarbutton-1 ucf-toolbarbutton-combined-buttons-toolbarbutton";
 			trbn_1.setAttribute("type", "menu");
 			trbn_1.setAttribute("label", "");
+			trbn_1.setAttribute("image", "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' height='16' width='16' viewBox='0 0 48 48'><g><rect x='0' y='0' width='48' height='48' rx='3' ry='3' style='fill:rgb(0, 120, 173);'/><path style='opacity:0.25;fill:black;' d='M 16,12 C 16,12 3,27 3,26.81 L 24.2,48 H 45 C 46.7,48 48,46.7 48,45 V 17.3 L 40,9.3 Z'/><path style='fill:white;' d='M 27.68,3.93 C 26.7,3.93 25.66,3.992 24.58,4.138 19.23,5.17 13.74,8.472 10.22,12.78 3.018,5.815 7.525,10.29 3.021,5.815 L 3,26.81 H 24.18 L 17.03,19.7 C 20.44,14.7 30.87,6.752 38.32,19.08 40.69,25.69 40.58,36.52 35.69,44 40.97,38.26 45.35,30.55 44.98,21.33 44.59,14.08 39.37,3.992 27.68,3.93' /></g></svg>");
 			trbn_1.setAttribute("tooltiptext", tooltiptextbtnmenu);
 			trbn_1.setAttribute("context", "");
 			trbn_1.addEventListener("click", e => {
-				if (e.button == 2) {
-					e.preventDefault();
-					e.stopPropagation();
+				if (e.button == 1)
 					win.PlacesCommandHook.showPlacesOrganizer("History");
+				else if (e.button == 2) {
+					e.preventDefault(); e.stopPropagation();
+					win.undoCloseTab();
 				}
 			});
 			var mupp_0 = doc.createXULElement("menupopup");
@@ -140,7 +123,7 @@ try {(() => {
 			muim_4.addEventListener("command", e => {
 				e.stopPropagation();
 				var sessionStore = win.SessionStore;
-				var count = sessionStore.getClosedTabCount(win);
+				var count = sessionStore.getClosedTabCountForWindow(win);
 				while(count--)
 					sessionStore.forgetClosedTab(win, 0);
 			});
@@ -162,7 +145,7 @@ try {(() => {
 					muim_2.removeAttribute("hidden");
 				for (let item of mupp_0.querySelectorAll(":scope > :is(menuitem:not(.ucf-menuitem), menuseparator:not(.ucf-menuseparator))"))
 					item.remove();
-				if (win == Services.appShell.hiddenDOMWindow || sessionStore.getClosedTabCount(win) == 0) {
+				if (win == Services.appShell.hiddenDOMWindow || sessionStore.getClosedTabCountForWindow(win) == 0) {
 					musr_1.setAttribute("hidden", "true");
 					muim_4.setAttribute("hidden", "true");
 					musr_2.setAttribute("hidden", "true");
@@ -178,48 +161,6 @@ try {(() => {
 			});
 			trbn_1.append(mupp_0);
 			trim.append(trbn_1);
-			var btnstyle = "data:text/css;charset=utf-8," + encodeURIComponent(`
-				#${id}-button {
-					list-style-image: url("${img}") !important;
-				}
-				#${id}-button-menu {
-					list-style-image: url("${imgmenu}") !important;
-				}
-				toolbarpaletteitem[place="palette"] .ucf-toolbarbutton-combined-buttons-dropmarker,
-				.ucf-toolbarbutton-combined-buttons-dropmarker dropmarker {
-					display: none !important;
-				}
-				.ucf-toolbaritem-combined-buttons {
-					margin-inline: 0 !important;
-					padding-inline: 0 !important;
-				}
-				toolbar .ucf-toolbaritem-combined-buttons > .toolbarbutton-1 {
-					padding-inline: var(--toolbarbutton-outer-padding, 1px) !important;
-				}
-				toolbar .ucf-toolbaritem-combined-buttons > .ucf-toolbarbutton-combined-buttons-toolbarbutton {
-					margin-inline-end: 0 !important;
-					padding-inline-end: 0 !important;
-				}
-				toolbar .ucf-toolbaritem-combined-buttons > .ucf-toolbarbutton-combined-buttons-dropmarker {
-					margin-inline-start: 0 !important;
-					padding-inline-start: 0 !important;
-				}
-				.widget-overflow-list .ucf-toolbarbutton-combined-buttons-dropmarker {
-					-moz-box-flex: 0 !important;
-				}
-				.ucf-toolbarbutton-combined-buttons-dropmarker > .toolbarbutton-icon {
-					min-width: 0 !important;
-					max-width: none !important;
-					width: 16px !important;
-					padding-inline: 0 !important;
-				}
-				.ucf-toolbarbutton-combined-buttons-dropmarker > .toolbarbutton-text {
-					display: none !important;
-				}
-			`);
-			try {
-				win.windowUtils.loadSheetUsingURIString(btnstyle, win.windowUtils.USER_SHEET);
-			} catch (e) {}
 			return trim;
 		}
 	});

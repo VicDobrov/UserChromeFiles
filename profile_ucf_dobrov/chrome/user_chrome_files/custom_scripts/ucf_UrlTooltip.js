@@ -1,4 +1,4 @@
-// Тултипы с URL. В фоне [System Principal] https://forum.mozilla-russia.org/viewtopic.php?pid=783765#p783765
+// Тултипы с URL. В фоне [System Principal] forum.mozilla-russia.org/viewtopic.php?pid=783765#p783765
 
 try {CustomizableUI.createWidget(({
 	label: "Ссылки в подсказках", localized: false,

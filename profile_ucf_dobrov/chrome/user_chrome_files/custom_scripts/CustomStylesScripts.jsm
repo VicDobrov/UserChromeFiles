@@ -2,7 +2,7 @@ var EXPORTED_SYMBOLS = ["UcfStylesScripts"];
 const {AppConstants} = ChromeUtils.import("resource://gre/modules/AppConstants.jsm");
 var os = name => `${name.replace(/\.[^.$]+$/,'')}_${AppConstants.platform}${name.lastIndexOf('.') > 0 ? "."+ name.split('.').pop() : ""}`, //linux win macosx
 osonly = (name, oss = []) => oss.includes(AppConstants.platform) ? name : "", //для указанных OS
-jsmImport = (s, e = /\.mjs$/i.test(s) ? "ESModule" : "") => `ChromeUtils.import${e}("chrome://user_chrome_files/content/custom_scripts/${s}")`;
+mjsmLoad = (s, e = /\.mjs$/i.test(s) ? "ESModule" : "") => `ChromeUtils.import${e}("chrome://user_chrome_files/content/custom_scripts/${s}")`;
 
 var UcfStylesScripts = {
 	/** ************************▼ Настройки ▼************************ */
@@ -12,8 +12,8 @@ var UcfStylesScripts = {
 	*   type: права стиля AGENT_SHEET,  AUTHOR_SHEET или USER_SHEET
 	*/
 	styleschrome: [ // Для докум. всех окон [ChromeOnly]
-		{ path: "custom_styles_chrome_author.css", type: "AUTHOR_SHEET", sheet(f) { preloadSheet(this, f); }, },
-		{ path: "custom_styles_chrome_user.css", type: "USER_SHEET", sheet(f) { preloadSheet(this, f); }, },
+		// { path: "custom_styles_chrome_author.css", type: "AUTHOR_SHEET", sheet(f) { preloadSheet(this, f); }, },
+		// { path: "custom_styles_chrome_user.css", type: "USER_SHEET", sheet(f) { preloadSheet(this, f); }, },
 		// { path: "special_widget.css", type: "USER_SHEET", sheet(f) { preloadSheet(this, f); }, }, // <-- Special Widgets
 		// { path: "auto_hide_sidebar.css", type: "USER_SHEET", sheet(f) { preloadSheet(this, f); }, }, // <-- Auto Hide Sidebar
 	],
@@ -70,9 +70,9 @@ var UcfStylesScripts = {
 		{ path: "ucf_SessionManager.js", },
 		{ path: "ucf-loads-favicons.js", },
 		{ path: "ucf_fav-export-html.js", },
-		{ func: jsmImport("SingleHTML.jsm"), },
-		{ func: jsmImport("ClickPicSave.jsm"), }, // нужен SingleHTML
-		{ func: `${jsmImport("UCFTitleChangedChild.jsm")}.registerUCFTitleChanged();`, },
+		{ func: mjsmLoad("SingleHTML.jsm"), },
+		{ func: mjsmLoad("ClickPicSave.jsm"), }, // нужен SingleHTML
+		{ func: `${mjsmLoad("UCFTitleChangedChild.jsm")}.registerUCFTitleChanged();`, },
 	],
 	/** ************************▲ Настройки ▲************************ */
 };

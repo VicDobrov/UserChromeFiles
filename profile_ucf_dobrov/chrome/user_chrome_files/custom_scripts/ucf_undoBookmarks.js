@@ -1,4 +1,4 @@
-(async sep => { // Dumby: https://forum.mozilla-russia.org/viewtopic.php?pid=801497#p801497
+(async sep => { // forum.mozilla-russia.org/viewtopic.php?pid=801497#p801497
 	if (!sep) return;
 	var key = "hasRemoveTransaction";
 	var g = Cu.import("resource://gre/modules/PlacesTransactions.jsm", {});
