@@ -1,13 +1,9 @@
 try {(() => {
 	var id = "ucf-undo-tab", label = "Восстановить",
 	tooltiptext = "ЛКМ: Восстановить вкладку\nПКМ: Восстановить окно",
-	tooltiptextbtnmenu = "ЛКМ: Открыть меню\nПКМ: Восстановить вкладку\nСКМ: Показать весь журнал",
+	tooltiptextbtnmenu = "ЛКМ: Открыть меню\nПКМ: Восстановить вкладку\nСКМ: Показать весь журнал";
 	CustomizableUI.createWidget({
-		id: id,
-		type: "custom",
-		label: label,
-		tooltiptext: tooltiptext,
-		localized: false,
+		id: id, label: label, type: "custom", localized: false,
 		onBuild(doc) {
 			var win = doc.defaultView, trim = doc.createXULElement("toolbaritem");
 			trim.id = id;
@@ -122,8 +118,8 @@ try {(() => {
 			muim_4.setAttribute("label", "Забыть закрытые вкладки");
 			muim_4.addEventListener("command", e => {
 				e.stopPropagation();
-				var sessionStore = win.SessionStore;
-				var count = sessionStore.getClosedTabCountForWindow(win);
+				var sessionStore = win.SessionStore, count;
+				try{count = sessionStore.getClosedTabCountForWindow(win);} catch(e){count = sessionStore.getClosedTabCount(win)}
 				while(count--)
 					sessionStore.forgetClosedTab(win, 0);
 			});
@@ -145,7 +141,9 @@ try {(() => {
 					muim_2.removeAttribute("hidden");
 				for (let item of mupp_0.querySelectorAll(":scope > :is(menuitem:not(.ucf-menuitem), menuseparator:not(.ucf-menuseparator))"))
 					item.remove();
-				if (win == Services.appShell.hiddenDOMWindow || sessionStore.getClosedTabCountForWindow(win) == 0) {
+				var sSgCTC;
+				try{sSgCTC = sessionStore.getClosedTabCountForWindow(win);} catch(e){sSgCTC = sessionStore.getClosedTabCount(win)}
+				if (win == Services.appShell.hiddenDOMWindow || sSgCTC == 0) {
 					musr_1.setAttribute("hidden", "true");
 					muim_4.setAttribute("hidden", "true");
 					musr_2.setAttribute("hidden", "true");
@@ -165,3 +163,4 @@ try {(() => {
 		}
 	});
 })();} catch(e) {}
+
