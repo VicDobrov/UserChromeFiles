@@ -28,7 +28,7 @@ UcfStylesScripts = {
 		domload: [ // По событию "DOMContentLoaded"
 		],
 		load: [ // По событию "load"
-			// { path: "special_widgets.js", ucfobj: true, }, // <-- Special Widgets
+			{ path: "special_widgets.js", ucfobj: true, }, // <-- Special Widgets
 			// { path: "auto_hide_sidebar.js", ucfobj: true, }, // <-- Auto Hide Sidebar
 		],
 	},
