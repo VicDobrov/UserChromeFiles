@@ -1,21 +1,11 @@
 try {(() => {
-	var id = "ucf-undo-tab", label = "Восстановить",
-	tooltiptext = "ЛКМ: Восстановить вкладку\nПКМ: Восстановить окно",
+	var id = "ucf-undo-tab", label = "Закрытые вкладки/окна",
 	tooltiptextbtnmenu = "ЛКМ: Открыть меню\nПКМ: Восстановить вкладку\nСКМ: Показать весь журнал";
 	CustomizableUI.createWidget({
-		id: id, label: label, type: "custom", localized: false,
-		onBuild(doc) {
-			var win = doc.defaultView, trim = doc.createXULElement("toolbaritem");
-			trim.id = id;
-			trim.className = "toolbaritem-combined-buttons ucf-toolbaritem-combined-buttons chromeclass-toolbar-additional";
-			trim.setAttribute("label", label);
-			trim.setAttribute("type", "custom");
-			trim.style.setProperty("margin-inline","0");
-			var trbn_1 = doc.createXULElement("toolbarbutton");
-			trbn_1.id = `${id}-button-menu`;
-			trbn_1.className = "toolbarbutton-1 ucf-toolbarbutton-combined-buttons-toolbarbutton";
+		id, label, localized: false, defaultArea: CustomizableUI.AREA_NAVBAR,
+		onCreated(trbn_1) {
+			var win = trbn_1.ownerGlobal, doc = win.document;
 			trbn_1.setAttribute("type", "menu");
-			trbn_1.setAttribute("label", "");
 			trbn_1.setAttribute("image", "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' height='16' width='16' viewBox='0 0 48 48'><g><rect x='0' y='0' width='48' height='48' rx='3' ry='3' style='fill:rgb(0, 120, 173);'/><path style='opacity:0.25;fill:black;' d='M 16,12 C 16,12 3,27 3,26.81 L 24.2,48 H 45 C 46.7,48 48,46.7 48,45 V 17.3 L 40,9.3 Z'/><path style='fill:white;' d='M 27.68,3.93 C 26.7,3.93 25.66,3.992 24.58,4.138 19.23,5.17 13.74,8.472 10.22,12.78 3.018,5.815 7.525,10.29 3.021,5.815 L 3,26.81 H 24.18 L 17.03,19.7 C 20.44,14.7 30.87,6.752 38.32,19.08 40.69,25.69 40.58,36.52 35.69,44 40.97,38.26 45.35,30.55 44.98,21.33 44.59,14.08 39.37,3.992 27.68,3.93' /></g></svg>");
 			trbn_1.setAttribute("tooltiptext", tooltiptextbtnmenu);
 			trbn_1.setAttribute("context", "");
@@ -157,8 +147,6 @@ try {(() => {
 				}
 			});
 			trbn_1.append(mupp_0);
-			trim.append(trbn_1);
-			return trim;
 		}
 	});
 })()} catch(e){}
