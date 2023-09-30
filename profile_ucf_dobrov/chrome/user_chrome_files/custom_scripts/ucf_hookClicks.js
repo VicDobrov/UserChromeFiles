@@ -76,7 +76,7 @@ Alt + R		Выбор части страницы\n
 ◧ + Alt		Инструменты браузера
 ◧ + Shift	Настройки профайлера`,"@": //тексты
 
-`Очистить панель колёсиком мыши|Запрещённые сайты через АнтиЗапрет|☀ Яркость сайтов |💾 кэш, данные сайтов, куки занимают |Захват цвета в Буфер обмена (курсор двигает на 1 точку)|⚡️ Запрещено сохранять логины и пароли|◧ держать: about:config, ◨ пр. клик Сброс, ⟳ Обновить, ↯ Перезапуск|Долгий клик в строке меню: Править опцию │ Колёсико: Сервисы|Ошибка скрипта |↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|период сохранения сессий меняется в меню кнопки «Журнал»|SingleFile (Alt+Ctrl+S)\nСохранить страницу в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\n\n◨ пр. клик	настройки User Chrome Files\n◉ колёсико	Перезапустить, удалив кэш\nAlt + x		запустить скрипт User.js`}; var T = Tag["@"].split('|'), B = [...Object.keys(Tag),"viewHistorySidebar"];
+`Очистить панель колёсиком мыши|Запрещённые сайты через АнтиЗапрет|☀ Яркость сайтов |💾 кэш, данные сайтов, куки занимают |Захват цвета в Буфер обмена (курсор двигает на 1 точку)|⚡️ Запрещено сохранять логины и пароли|◧ держать: about:config, ◨ пр. клик Сброс, ⟳ Обновить, ↯ Перезапуск|Долгий клик в строке меню: Править опцию │ Колёсико: Сервисы|Ошибка скрипта |↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|период сохранения сессий меняется в меню кнопки «Журнал»|SingleFile (Alt+Ctrl+S)\nСохранить страницу в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\n\n◨ пр. клик	настройки User Chrome Files\n◉ колёсико	Перезапустить, удалив кэш\nAlt + x		запустить скрипт User.js|\n◨ правый клик: Без запроса`}; var T = Tag["@"].split('|'), B = [...Object.keys(Tag),"viewHistorySidebar"];
 
 (async (id) => CustomizableUI.createWidget({label:`Панели, Папки`,id: id,tooltiptext: Tag[id],
 onCreated(btn){btn.style.setProperty("list-style-image","url(chrome://devtools/skin/images/folder.svg)");}})
@@ -327,7 +327,7 @@ get "tabbrowser-tab"() {var trg = window.event?.target; //get исполняет
 get [B[10]]() {glob.mode_skin('');
 	return GetDynamicShortcutTooltipText(B[10]) +"\n\n"+ Tag[B[10]] +"\n"+ tExp(B[12]);
 },
-get [M[2]]() {return GetDynamicShortcutTooltipText([M[2]]) +"\n"+ tExp(B[12]); //stop
+get [M[2]]() {return GetDynamicShortcutTooltipText(M[2]) +"\n"+ tExp(B[12]); //stop
 },
 get [M[0]]() {glob.toStatus(T[0],2500); //tab
 },
@@ -338,6 +338,8 @@ get [M[3]]() { //star
 	if (!glob.pref("places.history.enabled")) txt = T[9];
 	if (glob.pref("privacy.sanitize.sanitizeOnShutdown")) txt = T[10];
 	glob.toStatus(txt,3e3);
+	var hint = document.getElementById(M[3]).tooltipText;
+	return hint.indexOf(T[15]) == -1 ? hint + T[15] : hint;
 },
 get [B[2]]() { //custom hint
 	return tooltip_x(window.event.target,"⩉ Ролик ±	Изменить масштаб");
@@ -382,7 +384,7 @@ br_exp(t = T[2] + br_val()){
 	return t +` ${Ff.Exp() ? "Экспертный" : "Простой"} режим кнопок`}
 };
 
-window.glob = { //all [ChromeOnly]-scripts
+window.glob = { //all ChromeOnly-scripts
 	pref(key,set, pt = {b:"Bool",n:"Int",s:"String"}) { //или key = [key,default]
 		if (typeof key != "object") key = [key];
 		var t = Services.prefs.getPrefType(key[0]);
@@ -390,7 +392,8 @@ window.glob = { //all [ChromeOnly]-scripts
 		if (!t) t = pt[set != undefined ? (typeof set)[0] : (typeof key[1])[0]];
 		if (!t) return; if (set != undefined)
 			Services.prefs[`set${t}Pref`](key[0],set)
-		else set = Services.prefs[`get${t}Pref`](...key); return set;
+		else set = Services.prefs[`get${t}Pref`](...key);
+		return set;
 	},
 	ua(real = false,ua_my = "general.useragent.override") { //текущий или вшитый ЮзерАгент
 		ttt = this.pref(ua_my); Services.prefs.clearUserPref(ua_my);
@@ -580,7 +583,8 @@ with (document) getElementById(B[11]).removeAttribute("tooltip"),
 	getElementById("nav-bar").tooltip = id; //флаг успешной загрузки
 
 glob.mode_skin(); //подсветка кнопок и подсказки отображают настройки браузера
-glob.pref('ui.prefersReducedMotion',0);	//DownloadButton animation FIX
+[['ui.prefersReducedMotion',0],['browser.download.alwaysOpenPanel',false],['browser.download.autohideButton',false] //DownloadButton FIX
+].forEach((p)=>glob.pref(...p)); //lockPref опций
 var tabr = Ff.p +"opacity",url = `resource://${tabr}/`, //bright tabs
 getIntPref = (p) => Services.prefs.getIntPref(p,100),
 sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService),
