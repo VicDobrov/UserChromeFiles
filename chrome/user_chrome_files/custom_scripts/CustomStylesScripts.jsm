@@ -1,6 +1,6 @@
-var EXPORTED_SYMBOLS = ["UcfStylesScripts"],
-jsmImport = (s, e = /\.mjs$/i.test(s) ? "ESModule" : "") => `ChromeUtils.import${e}("chrome://user_chrome_files/content/custom_scripts/${s}")`,
-UcfStylesScripts = {
+var EXPORTED_SYMBOLS = ["UcfStylesScripts"];
+var mjsmLoad = (s, e = /\.mjs$/i.test(s) ? "ESModule" : "") => `ChromeUtils.import${e}("chrome://user_chrome_files/content/custom_scripts/${s}")`;
+var UcfStylesScripts = {
 	/** ************************▼ Настройки ▼************************ */
 	/**
 	* Настройки стилей:
@@ -8,8 +8,8 @@ UcfStylesScripts = {
 	*   type: права стиля AGENT_SHEET,  AUTHOR_SHEET или USER_SHEET
 	*/
 	styleschrome: [ // Для докум. всех окон [ChromeOnly]
-		{ path: "custom_styles_chrome_author.css", type: "AUTHOR_SHEET", sheet(f) { preloadSheet(this, f); }, },
-		{ path: "custom_styles_chrome_user.css", type: "USER_SHEET", sheet(f) { preloadSheet(this, f); }, },
+		// { path: "custom_styles_chrome_author.css", type: "AUTHOR_SHEET", sheet(f) { preloadSheet(this, f); }, },
+		// { path: "custom_styles_chrome_user.css", type: "USER_SHEET", sheet(f) { preloadSheet(this, f); }, },
 		// { path: "special_widget.css", type: "USER_SHEET", sheet(f) { preloadSheet(this, f); }, }, // <-- Special Widgets
 		// { path: "auto_hide_sidebar.css", type: "USER_SHEET", sheet(f) { preloadSheet(this, f); }, }, // <-- Auto Hide Sidebar
 	],
@@ -42,7 +42,7 @@ UcfStylesScripts = {
 	},
 	scriptsbackground: [ // В фоне [System Principal]
 		{ path: "custom_script.js", },
-		// { func: jsmImport("SingleHTML.jsm"), },
+		// { func: mjsmLoad("SingleHTML.jsm"), },
 	],
 	/** ************************▲ Настройки ▲************************ */
 };
