@@ -48,7 +48,7 @@ var UcfStylesScripts = {
 		{ path: osonly("menubarVisibilityChance.js", ["linux","win"]), ucfobj: true, }, //кроме MacOS
 		],
 		load: [ // По событию "load"
-			// { path: "special_widgets.js", ucfobj: true, }, // <-- Special Widgets
+			{ path: "special_widgets.js", ucfobj: true, }, // <-- Special Widgets
 			// { path: "auto_hide_sidebar.js", ucfobj: true, }, // <-- Auto Hide Sidebar
 		{ path: "ucf_findbarclose.js", ucfobj: true, },
 		{ func: osonly("ucf_custom_script_win.menubarvisibilitychance.settoolbarvisibility();", ["linux","win"])},
