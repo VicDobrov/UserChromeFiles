@@ -108,8 +108,8 @@ try {(() => {
 			muim_4.setAttribute("label", "Забыть закрытые вкладки");
 			muim_4.addEventListener("command", e => {
 				e.stopPropagation();
-				var sessionStore = win.SessionStore, count;
-				try{count = sessionStore.getClosedTabCountForWindow(win);} catch(e){count = sessionStore.getClosedTabCount(win)}
+				var sessionStore = win.SessionStore;
+				var count = sessionStore.getClosedTabCountForWindow || sessionStore.getClosedTabCount;
 				while(count--)
 					sessionStore.forgetClosedTab(win, 0);
 			});
@@ -131,8 +131,7 @@ try {(() => {
 					muim_2.removeAttribute("hidden");
 				for (let item of mupp_0.querySelectorAll(":scope > :is(menuitem:not(.ucf-menuitem), menuseparator:not(.ucf-menuseparator))"))
 					item.remove();
-				try{var sSgCTC = sessionStore.getClosedTabCountForWindow(win);} catch(e){var sSgCTC = sessionStore.getClosedTabCount(win)}
-				if (win == Services.appShell.hiddenDOMWindow || sSgCTC == 0) {
+				if (win == Services.appShell.hiddenDOMWindow || (sessionStore.getClosedTabCountForWindow || sessionStore.getClosedTabCount) == 0) {
 					musr_1.setAttribute("hidden", "true");
 					muim_4.setAttribute("hidden", "true");
 					musr_2.setAttribute("hidden", "true");
