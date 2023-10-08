@@ -45,16 +45,7 @@
 #PanelUI-menu-button .toolbarbutton-icon { min-width: 28px !important; min-height: 28px !important; padding: 0 !important;}
 .toolbarbutton-icon { min-width: 18px !important; min-height: 18px !important;}
 
-.tabbrowser-tab:not([selected="true"]) .tab-close-button { /* значок Закрыть только на текущей вкладке */
-	visibility: collapse !important;
-}
-#tabbrowser-tabs .tabbrowser-tab:not([pinned])[selected="true"] .tab-close-button {
-	visibility: visible !important; display: block !important;
-}
-#TabsToolbar #tabbrowser-tabs .tabbrowser-tab:not([pinned]):not([selected="true"]) .tab-close-button, #TabsToolbar #tabbrowser-tabs .tabbrowser-tab[pinned]:not([selected="true"]) .tab-close-button {
-	visibility: collapse !important; display: none !important;
-}
-#sidebar-header{ padding-top: 0px !important; padding-bottom: 0px !important;} /* компактный заголовок боковой панели */
+#sidebar-header{ padding-top: 0px !important; padding-bottom: 0px !important;}
 
 #navigator-toolbox[fullscreenShouldAnimate] {transition: none !important;}
 
@@ -78,27 +69,7 @@
 #urlbar .search-panel-header {display: none !important;}
 #urlbar .search-one-offs { padding-block: 0 !important;}
 
-/* размеры кнопок */ /*#favorites-dobrov .toolbarbutton-icon{ padding: 2px !important; }*/
 #ToggleButton .toolbarbutton-icon, #print-button .toolbarbutton-icon, #ucf_Reader .toolbarbutton-icon { padding: 4px !important;}
-
-/* Значок указанной папки Избранного (пустое имя), жёлтый цвет звёздочки, синий: rect=(top, right, bottom, left) */
-.bookmark-item[label=""] > .toolbarbutton-icon {
-	filter: invert(15%) sepia(300%) saturate(500%) !important;
-	height: 20px !important;
-}
-.bookmark-item[label=""]:hover {
-	cursor: pointer;
-}
-/* подсветка при наведении */
-/*#ucf-additional-vertical-bar *:hover { filter: invert(15%) sepia(200%) !important;} */
-
-.bookmark-item[label="‌"] > .toolbarbutton-icon { /* значок для папки = U+200C */
-	list-style-image: url("data:image/webp;base64,UklGRnIDAABXRUJQVlA4TGUDAAAvF8AFEA2Yadtm2a4p5U+4JCL6PwH2Jk4dFXWBVwUHiiJJaoYg4J488a/uMkhB00hS5h8q8grwLwc11FcoattI8hxAlj+ahTDPeS6CVf8DgwPQLmBA/FZfg5IyZSY9+QGf1FuOp8TCf6WndLf/OnZzEQMMPIucbduOyXkWsW3bNto59g+ks23bVmXbtlnZtu1k+L3PXbwz2fkJd1QuqziyY9s2bav3sa5tfRrh31xuErbe23dOqLVtu1bWPve9/38FoLC5DZrARUcDFJNzpgcUDaBQSaN/PGcjiCQlSz6SEIASBNAixqGLEyAQDPum2/cfjh1Hj20Bi7k2UAgSRiHjCAuZRAIAeXJnvuXlsWL5qEeWTSt63iBigMFRkCTpRIlJgVRBjbxdfXF77UXRMh7eelOuChJyvBY0rCSphIDJEKTHkekfO05OW3ZuPapVheW7FO4pzQzSSAs0K+TjWtIGabfyYFZSdsCc2LmtO2kBQ2pBkqQCERPsaY20pJlmU3T2z8iPI4wEO7duPN26RKQgzbOlosCCBvCDEQVfY+j7rmhhxkIhwAikkSgsusb4493cgHe2wLLi+C4Zcl6wZe1aZDX5RTSA6C16ipFIdeBKjyGTxBLP/9cJTYKcSBpFwEzkws6ZX06k89OhTOCyyDyDTjVU8gU6Bm/J+dMh1aJBRIEnsVbKY4ZyCJbTej/tm7x9QoAOUeVO2+oy13bY+oiMNVH7ZUyKEhB0K6manTstguQnFOVbWuEg0YCRoCjBUTIkBARtJYlBsADiVvJ3GAOETwFtfgyi85I0mJN4AUwV+GaKCAcoonRIMAMbBKeF+Rtyi84DDfufKx8yibtanGOBhR4kjXBikcJ0+qsG2mfaBHnC2LidYzuFitTgo0KSF5CyBnchE4G2umBS3KD/3baDSuWIAD9omxAtoiz5kcwINB41lftvngW8D/7+Ah0BBEmxBb+r1ttU1gZn7lk6x8BL7Y9PXAdvQC7lvbIbqzDJ8ZGyGZRiOsFAEiCNKQbLMmBSSB2JGqOK1yKFsqeQe2p2xNLSoQ0WRDSe/0JnRpJITaJ0ITXiVgLg7oQnKxbZPQWGot0RwO+wgYGCRP6BNEAA6JFAyAhwagPVHzsAhgK0AmIbjLYO7DmwTwpupk2A1bRLCgTDDAA=") !important; -moz-image-region: auto !important; height: 20px !important;
-}
-#personal-toolbar-empty-description, #PersonalToolbar .toolbarbutton-1, toolbarbutton.bookmark-item:not(.subviewbutton) {
-	padding: var(--bookmark-block-padding) 0px;
-	font-size: 125%; font-family: 'Noto Sans', 'Arial Narrow'; font-stretch: condensed;
-}
 
 #star-button { filter: invert(40%) sepia(100%) saturate(500%) !important;}
 
@@ -107,12 +78,6 @@
 	list-style-image: url("data:image/webp;base64,UklGRgICAABXRUJQVlA4TPYBAAAvF8AFELVItba9cSNBwR8K/nDgQMOBhoaBhoaGuYRAw8BAw8DAwMBcQmBPDIdtmbLtBv49U/Zz71VaBYVsWznY/lcTPgw/fgzD8CPjtm0kp/iz9l6X1raHTTFY/DEYHA6HvYRhMFgs5hJ6CcFisFgMBofDYjH0fhMgf2QLM1yEmHKFy2B2wzjMswxFIYDZ0pgVQJkx1zyKwRyw80QT09xgamHnaQFRIaJ9wYlGESHRJGhE9HsccSEgphFVIWaTCB+xSGqDJSLIBMSZ0sJbzfCS2x/sJMFEFPKDBZiUqBGS24QOlqeLbZYgThFp4i3swRrqOm3NVHuwsDsRZgWghwDijnglLPEHpgAmIgV4cNlxd+K6ovEDRLtiDnlPxoLZZmr3KBRTRFDLIDSN9xjkk3vIT/gBQwdWOFWudNO1Yngmov3CveaW967XgdTKPeaXX7k1DLFNQ+/GIB/+NZdO5W0FipD4v8Bn6f1qMkWH3qGh14j38Cdf3lSAuEQKjBKuwoz5ovXDDZJWq3hPF51g2EVG+LdZrYbu7AHbv5pHo35HnDHIJ3d/gocQ8hEZYla4Ms6ovW1hYpRBQ90b/YqLxh5EFRExVOyX/YpdASaLdHGGA1AAEK2BJUKMaMACMJRznGISkYDE/DRi7rrLLKnD+pNQQA9I8icC") !important;
 }
 #pageAction-urlbar-_2495d258-41e7-4cd5-bc7d-ac15981f064e_:not(:hover){filter: contrast(80%) opacity(70%); !important;}
-
-/* переместить пункт меню */
-#context-openlinkinusercontext-menu {
- -moz-box-ordinal-group: 10;
-}
-#context-searchselect-ucf { -moz-box-ordinal-group: 0 !important;}
 
 @-moz-document url-prefix("chrome:"), url("about:downloads") {
 	richlistbox > richlistitem.download-state[state="0"] > .downloadPauseResumeButton {

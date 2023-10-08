@@ -384,13 +384,8 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 				menu.pref.set(menu.pref.pref, newVal), this.maybeRe(menu, true);
 			menu.pref.code && eval(menu.pref.code); //run
 		},
-		contextmenu(e) { // RMB на кнопке
-			var trg = e.target, win = e.view;
-			if ((trg.btn) && !(e.ctrlKey || e.altKey || e.shiftKey))
-				if (trg.mstate != "open") {
-				trg.mstate = AppConstants.platform == "macosx" ? "open" : null;
-				this.openPopup(trg.secondaryPopup);
-			} else trg.mstate = null;
+		contextmenu(e) { //openPopup в ucf_hookClicks.js
+			var trg = e.target;
 			if ("pref" in trg) {
 				this.maybeClosePopup(e, trg);
 				if (trg.pref.user)

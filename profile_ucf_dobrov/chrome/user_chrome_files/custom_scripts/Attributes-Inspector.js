@@ -1,7 +1,9 @@
+// http://infocatcher.ucoz.net/js/cb/attrsInspector.js
+// https://forum.mozilla-russia.org/viewtopic.php?id=56041
 // https://github.com/Infocatcher/Custom_Buttons/tree/master/Attributes_Inspector
 
-// (c) Infocatcher 2010-2019, 2023 FIX
-// version 0.6.5pre2 - 2019-07-31
+// (c) Infocatcher 2010-2022
+// version 0.6.5pre3 - 2022-05-11
 
 //===================
 // Attributes Inspector button for Custom Buttons
@@ -18,6 +20,11 @@
 //   Ctrl+Left, Ctrl+Right - navigate to previous/next sibling node
 //   Ctrl+Shift+C          - copy tooltip's contents
 //   Ctrl+Shift+W          - inspect node's window object in DOM Inspector
+
+// For more developer tools see Extensions Developer Tools button:
+//   http://infocatcher.ucoz.net/js/cb/extDevTools.js
+//   https://forum.mozilla-russia.org/viewtopic.php?id=57296
+//   https://github.com/Infocatcher/Custom_Buttons/tree/master/Extensions_Developer_Tools
 
 // Icon: http://www.iconsearch.ru/detailed/278/2/
 //===================
@@ -479,8 +486,9 @@ function init() {
 			if(_showNamespaceURI/* && node.nodeName.indexOf(":") == -1*/)
 				df.appendChild(this.getItem("namespaceURI", this.getNS(nodeNS), this.colon));
 
-			var win = node.ownerDocument.defaultView;
 			if(_showMargins && node instanceof Element) {
+				var win = node.ownerDocument.defaultView || node.ownerGlobal;
+
 				var cs = win.getComputedStyle(node, null);
 				var dirs = ["Top", "Right", "Bottom", "Left"];
 				var getMargins = function(prop, propAdd) {
@@ -590,7 +598,7 @@ function init() {
 			return this.getScreenRect(node, 1);
 		},
 		getScreenRect: function(node, scale) {
-			var win = node.ownerDocument.defaultView;
+			var win = node.ownerDocument.defaultView || node.ownerGlobal;
 			if(!scale) try {
 				var dwu = "windowUtils" in win && win.windowUtils instanceof Components.interfaces.nsIDOMWindowUtils
 					? win.windowUtils // Firefox 63+
@@ -1192,6 +1200,10 @@ function init() {
 		navigateUp: function() {
 			var nodes = this._nodes;
 			var node = nodes.length && this.getParentNode(nodes[0]);
+
+			if(node && String(node) == "[object ShadowRoot]")
+				node = node.host;
+
 			if(node) {
 				nodes.unshift(node);
 				this.handleNode(node);
@@ -1211,7 +1223,7 @@ function init() {
 				var child;
 				for(var i = 0, l = childs.length; i < l; ++i) {
 					var ch = childs[i];
-					if(!_excludeChildTextNodes || ch instanceof Element) {
+					if(!_excludeChildTextNodes || ch instanceof Element || ch.nodeType == ch.DOCUMENT_FRAGMENT_NODE) {
 						child = ch;
 						break;
 					}
@@ -1293,7 +1305,7 @@ function init() {
 		},
 		getParentNode: function(node) {
 			try {
-				var pn = this.domUtils.getParentForNode(node, true);
+				var pn = node.flattenedTreeParentNode || this.domUtils.getParentForNode(node, true);
 			}
 			catch(e) {
 				if(("" + e).indexOf("NS_ERROR_XPC_CANT_PASS_CPOW_TO_NATIVE") == -1)
@@ -1301,17 +1313,20 @@ function init() {
 				pn = node.parentNode;
 			}
 			if(!pn && node.nodeType == Node.DOCUMENT_NODE) { // Firefox 1.5?
-				pn = node.defaultView.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-					.getInterface(Components.interfaces.nsIWebNavigation)
-					.QueryInterface(Components.interfaces.nsIDocShell)
-					.chromeEventHandler;
+				try {
+					var obj = node.docShell || node.ownerGlobal.docShell;
+				} catch(ex) {
+					var obj = node.defaultView.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+						.getInterface(Components.interfaces.nsIWebNavigation)
+				}
+				pn = obj instanceof Components.interfaces.nsIDocShell && obj.chromeEventHandler;
 			}
 			return pn;
 		},
 		getTopWindow: function(node) {
 			var win = node.ownerDocument && node.ownerDocument.defaultView
-				|| node.defaultView
-				|| node;
+				|| node.ownerGlobal || node.defaultView || node;
+
 			//for(;;) {
 			//	var browser = this.domUtils.getParentForNode(win.document, true);
 			//	if(!browser)
@@ -1342,7 +1357,19 @@ function init() {
 			}
 			var du = this.domUtils;
 			if("getChildrenForNode" in du) try { // Gecko 7.0+
-				return du.getChildrenForNode(node, true);
+
+				if(du.getChildrenForNode.length == 2)
+					return du.getChildrenForNode(node, true);
+
+				// Fx 114+
+				var arr = du.getChildrenForNode(node, true, true);
+				var df = arr[0];
+				var isDoc = Document.isInstance(df);
+				if(isDoc || DocumentFragment.isInstance(df))
+					return isDoc || HTMLTemplateElement.isInstance(node)
+						? arr.concat(Array.from(node.childNodes)) // #document[-fragment] + childNodes
+						: this.getChildNodes(df); // ShadowRoot childNodes
+				return arr;
 			}
 			catch(e) {
 				if(("" + e).indexOf("NS_ERROR_XPC_CANT_PASS_CPOW_TO_NATIVE") == -1)
@@ -1384,7 +1411,10 @@ function init() {
 			_log("DOM Inspector not installed!");
 			var label = this.context.button && this.context.button.label
 				|| "Attributes Inspector";
-			Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+			(
+				Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+				|| Cc["@mozilla.org/prompter;1"]
+			)
 				.getService(Components.interfaces.nsIPromptService)
 				.alert(null, label, "DOM Inspector not found!");
 			return false;
@@ -1597,6 +1627,7 @@ function init() {
 			var html = Array.prototype.map.call(_tt.childNodes, function(node) {
 				return new XMLSerializer().serializeToString(node);
 			}).join("\n");
+
 			var data = {
 				"text/html": html.replace(/\r\n?|\n/g, this.lineBreak)
 			};
@@ -1662,6 +1693,12 @@ function init() {
 					&& "hidePopup" in node
 				)
 					return node;
+
+				try { // node in WebExtensions (in parent process) panel browser
+					var popup = node.ownerGlobal.browsingContext.top.embedderElement.closest("panel");
+					return popup;
+				} catch(ex) {}
+
 			return null;
 		},
 		lockPopup: function(node) {

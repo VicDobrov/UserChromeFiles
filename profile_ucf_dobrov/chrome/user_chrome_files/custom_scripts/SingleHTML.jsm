@@ -56,13 +56,19 @@ ChromeUtils.domProcessChild.childID || ({
 		to[1] = (to[1] == "0") ? fname : (to[1] == "1") ? host : "";
 		try {var dir = prefs.getComplexValue("browser.download.dir",Ci.nsIFile);} catch {var dir = dirsvc.get("DfltDwnld",Ci.nsIFile);}
 		var map = val => win.DownloadPaths.sanitize(val); //FIX имён filesystem
-		to.map(map).forEach(dir.append); dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);
+		to.map(map).forEach(dir.append);
+		dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);
 		fname += "_"+ new Date().toLocaleDateString('ru', {day: 'numeric',month: 'numeric',year: '2-digit'}) +'-'+ new Date().toLocaleTimeString('en-GB').replace(/:/g,"։"); //дата-часы
 		to = dir.path; dir.append(fname +'.html'); return [dir.path, to, s, h, host];
 	}, //savepath, dwdir/имя|домен, имя, URL, домен
-	async Succes(win, dir, {setTimeout} = ChromeUtils.import("resource://gre/modules/Timer.jsm")) {
-		var d = await win.Downloads.createDownload({source: "about:blank",target: win.FileUtils.File(dir)}); (await win.Downloads.getList(win.Downloads.ALL)).add(d); await d.refresh(d.succeeded = true); //flash DWButton
-		d = win.document.getElementById('urlbar-input-container'); d.style.background = 'rgba(0,200,0,0.3)'; setTimeout(() => {d.style.removeProperty('background-color')}, 350);
+	async Succes(win, dir, dw = true, bg) {
+		var {setTimeout} = ChromeUtils.import("resource://gre/modules/Timer.jsm");
+		var d = await win.Downloads.createDownload({source: "about:blank",target: win.FileUtils.File(dir)});
+		(await win.Downloads.getList(win.Downloads.ALL)).add(d);
+		if (dw) await d.refresh(d.succeeded = true); //flash DWButton
+		d = win.document.getElementById('urlbar-input-container');
+		d.style.background = dw ? 'rgba(0,200,0,0.3)' : 'rgba(250,0,0,0.2)';
+		setTimeout(() => {d.style.removeProperty('background-color')}, 350);
 	},
 	async saveHTML(to, win = this.ownerGlobal) {
 		var br = win.gBrowser.selectedBrowser;
@@ -127,7 +133,7 @@ var htmlAndName = async mainWin => { //frameКод SingleHTML by Alex не со�
 	},
 	toSrc = function (obj) {
 		var strToSrc = function (str) {
-			var chr, ret = '', i = 0, meta = {'\b': '\\b', '\t': '\\t', '\n': '\\n', '\f': '\\f', '\r': '\\r', '\x22' : '\\\x22', '\\': '\\\\'};
+			var chr, ret = '', i = 0, meta = {'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','\x22':'\\\x22','\\':'\\\\'};
 			while (chr = str.charAt(i++)) {
 				ret += meta[chr] || chr;
 			};

@@ -1,4 +1,4 @@
-(async () => { // https://forum.mozilla-russia.org/viewtopic.php?pid=794944#p794944
+(async () => { // forum.mozilla-russia.org/viewtopic.php?pid=794944#p794944
 	var id = "ucf-loads-favicons",
 	label = "Восстановить фавиконки",
 	tooltiptext = "Восстановить фавиконки закладок",
