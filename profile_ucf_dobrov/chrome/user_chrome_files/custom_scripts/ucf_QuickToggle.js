@@ -45,7 +45,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 				[`_Web|1|_Images|0`, "_Web/сайт, _Images/имя"], //открыть опцию about:config:
 				[`Сайт||Фото|`, "ввести свои пути",,"ключ в about:config",`glob.about_config("ucf.savedirs")`]]
 	},null,{
-			pref: ["network.proxy.autoconfig_url", "Прокси (VPN) URL", "п", "Переключение сетевых настроек",,`glob.mode_skin('')`],
+			pref: ["network.proxy.autoconfig_url", "Прокси (VPN) URL", "п", "Переключение сетевых настроек"],
 			pDefGreen: "localhost", pYellow: I[1], pGray: "", refresh: true,
 			values: [
 				["localhost", "системный", "0",, `glob.pref('network.proxy.type', 0)`],
@@ -57,7 +57,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 				[glob.pref([I[2], "file:///etc/proxy.pac"]), "user .pac файл", "4", "about:config "+ I[2]], // нужен диалог выбора pac-файла
 				[null, "сброшен",""]]
 	},{
-			pref: ["network.proxy.type", "Режим прокси", "р",,,`glob.mode_skin('')`], pDefGreen: 5, pYellow: 2, pGray: 1, refresh: true, // mode_skin — отображать изменения любой опции
+			pref: ["network.proxy.type", "Режим прокси", "р"], pDefGreen: 5, pYellow: 2, pGray: 1, refresh: true,
 			values: [ //фон кнопки Меню: серый, голубой, красный, жёлтый, зелёный
 				[0, "Без прокси", "0", "по-умолчанию"],
 				[5, "Системный (из IE)", "5"],
@@ -142,7 +142,6 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 			btn.domParent = null;
 			btn.popups = new btn.ownerGlobal.Array();
 			this.createPopup(doc, btn, "secondary", secondary);
-			if (glob.pref('network.proxy.type') == 2) btn.style.filter = "hue-rotate(270deg) brightness(95%)";
 			btn.linkedObject = this;
 			for(var type of ["contextmenu", "command"]) // "mousedown" "auxclick" события
 				btn.setAttribute("on" + type, `linkedObject.${type}(event)`);

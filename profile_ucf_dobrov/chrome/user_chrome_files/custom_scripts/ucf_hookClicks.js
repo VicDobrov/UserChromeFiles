@@ -261,8 +261,8 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 			} else if (btn.className == "menu-iconic") { //меню кнопки
 				Node.hidePopup();
 				glob.about_config(btn.pref.pref); //go параметр about:config 
-				glob.mode_skin();
 			}
+			else glob.mode_skin();
 		},
 		2(trg,forward){zoom(forward) }, // wheel
 		16(btn){if (btn.id == B[6]) zoom(0,1)}, // ЛМ + Shift
@@ -276,12 +276,13 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		},
 		8(){switchTab('chrome://browser/content/places/places.xhtml')}, //+ Alt
 		256(btn){ //для ucf_QuickToggle
-			if (btn.id != B[6]) return;
+			if (btn.id == B[6]) {
 			if (btn.mstate != "open")
 			  btn.secondaryPopup.openPopup(btn, "before_start")
 			else
 			  btn.secondaryPopup.hidePopup();
 			setTimeout(()=> btn.mstate = btn.secondaryPopup.state, 100);
+			} else glob.mode_skin();
 		},
 		264(){ /* ПМ +Alt */ switchTab(FavItem(false))},
 		128(btn){ // СМ
@@ -446,22 +447,24 @@ window.glob = { //all ChromeOnly-scripts
 			id.style.removeProperty('filter'),id.style.removeProperty('background-color');},ms);
 		if (text) glob.toStatus(text,time);
 	},
-	mode_skin(text,p = this.pref('network.proxy.type'),t,s = 'unset',o = '',z) {with(glob){
+	mode_skin(text,p,t,s = 'unset',o = '',z) {
+	setTimeout(()=> {with(glob){ //подсветка кнопок и подсказки отображают настройки браузера
 		if (pref("dom.security.https_only_mode"))
 			flash(B[10],"drop-shadow(0px 0.5px 0px #F8F)"),o = ', только HTTPS'
 		else flash(B[10],"none");
 		if (ua() && (ua() != ua(true))) o = o +', чужой ЮзерАгент';
 		z = pref("network.proxy.no_proxies_on") == "" ? "" : ", Есть сайты-исключения";
+		p = p || this.pref('network.proxy.type');
 		if (p == 1) t = ['sepia(100%) saturate(150%) brightness(0.9)', 'Ручная настройка прокси'+ z];
 		else if (p == 2) t = ['hue-rotate(120deg) saturate(70%)',T[1] + z],s = 'hue-rotate(270deg) brightness(95%)';
 		else if (p == 4) t = ['hue-rotate(250deg) brightness(0.95) saturate(150%)','Сеть - автонастройка прокси'+ z];
-		else if (p == 0) t = ['saturate(0%) brightness(0.95)','Настройки сети - системные'+ z]
+		else if (p == 0) t = ['saturate(0%) brightness(0.95)','Настройки сети - системные'+ z];
 		else t = [s,'Сеть работает без прокси']; // серый фон кнопки
 		flash(B[0],pref(Ff.i) > 1 ? "hue-rotate(180deg) drop-shadow(0px 0.5px 0px #F68)" : "none");
 		flash(B[6],s); flash(B[1],t[0]);
 		z = typeof(text); if (z == 'string')
-			toStatus(text ? text : "\u{26A1}"+ t[1] + o,5e3); // символ Внимание
-	}}
+			toStatus(text ? text : "\u{26A1}"+ t[1] + o,5e3); //светофор
+	}}, 250);}
 };
 ((obj,del,re,reos) => { // парсинг блока клавиш ускоряет обработку нажатий
 	var num = -Ff.os.length - 1;
