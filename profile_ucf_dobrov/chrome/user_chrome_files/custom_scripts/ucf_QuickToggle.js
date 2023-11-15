@@ -1,132 +1,133 @@
-/* Быстрое переключение опций about:config для окна [ChromeOnly] http://forum.mozilla-russia.org/viewtopic.php?pid=789824#p789824
-BUG мышь неподвижна: скрытое по Escape меню открывается на второй клик
+/* Быстрое переключение опций about:config для окна [ChromeOnly] © Dumby
 
 30 скрытых настроек. Ctrl+Click или Правый: сброс опции по-умолчанию
-клик по параметру с Shift блокирует авто-закрытие меню
+клик по параметру с Shift или колёсиком блокирует авто-закрытие меню
 ⟳ Обновить страницу, ↯ Перезапуск браузера
 строки с pYellow = шрифт italic, цвет = ключ, пусто:Red
 	refresh: false - reload current tab,	true - reload skip cache
 	restart: false - restart browser,	true - restart with confirm */
 
-(async (name, func) => { // mod by Dobrov нужен скрипт ucf_hookClicks.js
+(async (name, func) => { // mod by Dobrov, нужен ucf_hookClicks.js
 	return CustomizableUI.createWidget(func()); //only UCF
 })(this.constructor.name, () => {
 
 	var {prefs} = Services, db = prefs.getDefaultBranch(""), ua = glob.ua(true), //real ЮзерАгент
-	I = [Services.appinfo.OS == "Darwin" ? '#e8e8e8' : '#124', //текст под курсором, без Aero '#fff'
+	I = [AppConstants.platform == "win" ? '#124' : '#e8e8e8', //текст под курсором, без Aero '#fff'
 	"https://antizapret.prostovpn.org/proxy.pac", "user.pacfile",
 	glob.pref(['browser.sessionstore.interval', 15e3]),
-	"http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul","general.useragent.override",
-	"Linux; Android 9; Pixel 2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.88 Mobile Safari/537.36",
-	"Macintosh; Intel Mac OS X 10.15; rv:115.0) Gecko/20100101 Firefox/115.0","Mozilla/5.0 ("],
+	parseInt(Services.appinfo.version),"general.useragent.override",
+	"Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+	"Android 12.0; Mobile; rv:109.0) Gecko/97.0 Firefox/97.0","Mozilla/5.0 ("],
 	fonts = arr => arr.map(n => [(n == arr[arr.length-1] ? null : n), n]), //array с вложениями
-	serif = fonts("Arial|Cantarell|DejaVu Sans|Roboto|PT Serif|Segoe UI|Ubuntu|Cambria|Fira Sans|Georgia|Noto Sans|Calibri|Times|системный".split('|')), sans = [["PT Sans","PT Sans"], ...serif];
-	var hints = new Map([ //опция отсутствует ? выполнить код и вернуть строку
-		["ucf.savedirs", `glob.crop(glob.dirsvcget(""),34)`],
-		[I[5], `glob.ua()`] // текущий ЮзерАгент
-	]),
+	serif = fonts("Arial|Cantarell|DejaVu Sans|Roboto|PT Serif|Segoe UI|Ubuntu|Cambria|Fira Sans|Georgia|Noto Sans|Calibri|Times|системный".split('|')), sans = [["PT Sans","PT Sans"], ...serif]
+	hints = new Map([ //опция отсутствует ? выполнить код и вернуть строку
+		["ucf.savedirs", `glob.crop(glob.dirsvcget(""),34)`], [I[5], `glob.ua()`]]), //текущий ЮзерАгент
 	secondary = [{ // menu: [apref, lab, akey, hint, [undef, str], code] radio: [val, lab, str-val, add-hint, code]
-			pref: ["dom.disable_open_during_load", "Всплывающие окна"], pDefGreen: 2, pYellow: true, values: [[true, "Блокировать"], [false, "Разрешить"]]
+		pref: ["dom.disable_open_during_load", "Всплывающие окна"], pDefGreen: 2, pYellow: true,
+		values: [[true, "Блокировать"], [false, "Разрешить"]]
 	},{
-			pref: ["javascript.enabled", "Выполнять скрипты Java",,"Поддержка интерактивных сайтов, рекламы\nтакже разрешает действия горячих клавиш"], pDefGreen: true, refresh: true,
-			values: [[true, "Да"], [false, "Нет"]]
+		pref: ["javascript.enabled", "Выполнять скрипты Java",,"Поддержка интерактивных сайтов, рекламы\nтакже разрешает действия горячих клавиш"], pDefGreen: true, refresh: true,
+		values: [[true, "Да"], [false, "Нет"]]
 	},{
-			pref: ["browser.safebrowsing.downloads.remote.block_dangerous", "Опасные файлы, сайты",,"browser.safebrowsing.downloads.remote.block_dangerous_host"], pDefGreen: true, pYellow: false,
-			values: [[true, "Запрет",,,`glob.pref('browser.safebrowsing.downloads.remote.block_dangerous_host',true)`], [false, "Открыть",,,`glob.pref('browser.safebrowsing.downloads.remote.block_dangerous_host',false)`]]
+		pref: ["browser.safebrowsing.downloads.remote.block_dangerous", "Опасные файлы, сайты",,"browser.safebrowsing.downloads.remote.block_dangerous_host"], pDefGreen: true, pYellow: false,
+		values: [[true, "Запрет",,,`glob.pref('browser.safebrowsing.downloads.remote.block_dangerous_host',true)`], [false, "Открыть",,,`glob.pref('browser.safebrowsing.downloads.remote.block_dangerous_host',false)`]]
 	},{
-			pref: ["ucf.savedirs", "Загрузки",,'Пути сохранения Страниц и Графики\nСинтаксис «_Html/subdir|_Pics/subdir»\nsubdir: пусто | 0 заголовок | 1 домен',
-				["", "всё в общей папке"]], pDefGreen: "_Сайты||_Фото|0", pYellow: "_Web|1|_Images|0", pGray: "",
-			values: [ // сохранение Html/Pics. [Загрузки]/"_Html/subdir|_Pics/subdir" subdir: пусто | 0 заголовок | 1 домен
-				["", "всё в общую папку"],
-				[`_Сайты||_Фото|0`, "_Сайты|_Фото/имя…"],
-				[`_Web||_Photo|0`, "_Web|_Photo/имя"],
-				[`_Web|1|_Pics|1`, "_Web/сайт|_Pics/…"],
-				[`_Web|0|_Pics|`, "_Web/имя|_Pics"],
-				[`_Web|1|_Images|0`, "_Web/сайт, _Images/имя"], //открыть опцию about:config:
-				[`Сайт||Фото|`, "ввести свои пути",,"ключ в about:config",`glob.about_config("ucf.savedirs")`]]
+		pref: ["ucf.savedirs", "Загрузки",,'Пути сохранения Страниц и Графики\nСинтаксис «_Html/subdir|_Pics/subdir»\nsubdir: пусто | 0 заголовок | 1 домен',
+			["", "всё в общей папке"]], pDefGreen: "_Сайты||_Фото|0", pYellow: "_Web|1|_Images|0", pGray: "",
+		values: [ // сохранение Html/Pics. [Загрузки]/"_Html/subdir|_Pics/subdir" subdir: пусто | 0 заголовок | 1 домен
+			["", "всё в общую папку"],
+			[`_Сайты||_Фото|0`, "_Сайты|_Фото/имя…"],
+			[`_Web||_Photo|0`, "_Web|_Photo/имя"],
+			[`_Web|1|_Pics|1`, "_Web/сайт|_Pics/…"],
+			[`_Web|0|_Pics|`, "_Web/имя|_Pics"],
+			[`_Web|1|_Images|0`, "_Web/сайт, _Images/имя"], //открыть опцию about:config:
+			[`Сайт||Фото|`, "ввести свои пути",,"ключ в about:config",`glob.about_config("ucf.savedirs")`]]
 	},null,{
-			pref: ["network.proxy.autoconfig_url", "Прокси (VPN) URL", "п", "Переключение сетевых настроек"],
-			pDefGreen: "localhost", pYellow: I[1], pGray: "", refresh: true,
-			values: [
-				["localhost", "системный", "0",, `glob.pref('network.proxy.type', 0)`],
-				["127.0.0.1", "Tor или Opera", "1", "Необходим сервис tor или opera-proxy",
-					`glob.pref('network.proxy.type', 1)`],
-				[I[1], "АнтиЗапрет", "2", "Надёжный доступ на заблокированные сайты\n«Режим прокси» меняется на 2",
-					`glob.pref('network.proxy.type', 2)`],
-				// ["https://git.io/ac-anticensority-pac", "ac-anticensority", "3"],
-				[glob.pref([I[2], "file:///etc/proxy.pac"]), "user .pac файл", "4", "about:config "+ I[2]], // нужен диалог выбора pac-файла
-				[null, "сброшен",""]]
+		pref: ["network.proxy.autoconfig_url", "Прокси (VPN)", "п", "network.proxy.type\n\nПереключение сетевых настроек"],
+		pDefGreen: "localhost", pYellow: I[1], pGray: "", refresh: true,
+		values: [ //фон кнопки Меню: серый, голубой, красный, жёлтый, зелёный
+			["localhost", "системный", "0",, `glob.pref('network.proxy.type', 0)`],
+			["127.0.0.1", "Tor или Opera", "1", "Необходим сервис tor или opera-proxy",
+				`glob.pref('network.proxy.type', 1)`],
+			[I[1], "АнтиЗапрет", "2", "Надёжный доступ на заблокированные сайты\n«Режим прокси» меняется на 2",
+				`glob.pref('network.proxy.type', 2)`],
+			// ["https://git.io/ac-anticensority-pac", "ac-anticensority", "3"],
+			[glob.pref([I[2], "file:///etc/proxy.pac"]), "user .pac файл", "4", "about:config "+ I[2]], // нужен диалог выбора pac-файла
+			[null, "сброшен",""]]
 	},{
-			pref: ["network.proxy.type", "Режим прокси", "р"], pDefGreen: 5, pYellow: 2, pGray: 1, refresh: true,
-			values: [ //фон кнопки Меню: серый, голубой, красный, жёлтый, зелёный
-				[0, "Без прокси", "0", "по-умолчанию"],
-				[5, "Системный (из IE)", "5"],
-				[2, "Автонастройка", "2", "about:config "+ I[2]],
-				[1, "Ручная настройка", "1", "Используется network.proxy.autoconfig_url"],
-				[4, "Автоопределение", "4"] ]
+		pref: ["network.proxy.type", "Режим прокси", "р"], pDefGreen: 5, pYellow: 2, pGray: 1, refresh: true,
+		values: [
+			[5, "системный", "5"],
+			[0, "Без прокси", "0", "по-умолчанию"],
+			[2, "Автонастройка", "2", "about:config "+ I[2]],
+			[1, "Ручная настройка", "1", "Используется network.proxy.autoconfig_url"],
+			[4, "Автоопределение", "4"] ]
 	},{
-			pref: ["network.trr.mode", "DNS поверх HttpS",, "Шифрование DNS-трафика для\nзащиты персональных данных"], pDefGreen: 0, pYellow: 2, pGray: 5, refresh: true,
-			values: [
-				[0, "по-умолчанию", "0"], [1, "автоматически", "1", "используется DNS или DoH, в зависимости от того, что быстрее"], [2, "DoH, затем DNS", "2"], [3, "только DoH", "3"], [4, "DNS и DoH", "4"], [5, "отключить DoH", "5"] ]
+		pref: ["network.trr.mode", "DNS поверх HttpS",, "Шифрование DNS-трафика для\nзащиты персональных данных"], pDefGreen: 0, pYellow: 2, pGray: 5, refresh: true,
+		values: [
+			[0, "по-умолчанию", "0"], [1, "автоматически", "1", "используется DNS или DoH, в зависимости от того, что быстрее"], [2, "DoH, затем DNS", "2"], [3, "только DoH", "3"], [4, "DNS и DoH", "4"], [5, "отключить DoH", "5"] ]
 	},{
-			pref: ["network.cookie.cookieBehavior", "Получать куки",, "Персональные настройки посещённых сайтов"], pDefGreen: 3, pYellow: 0, pGray: 4, refresh: false,
-			values: [[0, "со всех сайтов"], [3, "посещённые сайты"], [4, "кроме трекеров"], [1, "кроме сторонних"], [2, "никогда"]]
+		pref: ["network.cookie.cookieBehavior", "Получать куки",, "Персональные настройки посещённых сайтов"], pDefGreen: 3, pYellow: 0, pGray: 4,
+		values: [[0, "со всех сайтов"], [3, "посещённые сайты"], [4, "кроме трекеров"], [1, "кроме сторонних"], [2, "никогда"]]
 	},null,{
-			pref: ["browser.display.use_document_fonts", "Загружать шрифты страниц"], pDefGreen: 1, pGray: 0, refresh: true,
-			values: [[1, "Да"], [0, "Нет"]]
+		pref: ["browser.display.use_document_fonts", "Загружать шрифты страниц"], pDefGreen: 1, pGray: 0, refresh: true,
+		values: [[1, "Да"], [0, "Нет"]]
 	},{
-			pref: ["font.name.sans-serif.x-cyrillic", "Шрифт без засечек ",,"Также влияет на всплывающие подсказки\nСистемный: загрузка шрифтов документа"], pDefGreen: "", pYellow: "Roboto", pGray: "Arial", values: sans
+		pref: ["font.name.sans-serif.x-cyrillic", "Шрифт без засечек ",,"Также влияет на всплывающие подсказки\nСистемный: загрузка шрифтов документа"], pDefGreen: "", pYellow: "Roboto", pGray: "Arial", values: sans
 	},{
-			pref: ["font.name.serif.x-cyrillic", "Шрифт с засечками"], pDefGreen: "", pYellow: "Arial", values: serif
+		pref: ["font.name.serif.x-cyrillic", "Шрифт с засечками"], pDefGreen: "", pYellow: "Arial", values: serif
 	},{
-			pref: ["gfx.webrender.force-disabled", "Ускорять отрисовку страниц", ,"gfx.webrender.compositor.force-enabled\ngfx.webrender.all\n\nАппаратная отрисовка страниц видеокартой.\nотключите при разных проблемах с графикой"],
-			pDefGreen: false, pYellow: true, pGray: undefined, restart: true, values: [
-			[true, "Нет",,,`[["gfx.webrender.compositor.force-enabled", false], ["gfx.webrender.all", false]].map((a) =>{glob.pref(...a)})`],
-			[false, "Да",,,`[["gfx.webrender.compositor.force-enabled", true], ["gfx.webrender.all", true]].map((a) =>{glob.pref(...a)})`]]
+		pref: ["gfx.webrender.force-disabled", "Ускорять отрисовку страниц", ,"gfx.webrender.compositor.force-enabled\ngfx.webrender.all\n\nАппаратная отрисовка страниц видеокартой.\nотключите при разных проблемах с графикой"],
+		pDefGreen: false, pYellow: true, pGray: undefined, restart: true, values: [
+		[true, "Нет",,,`[["gfx.webrender.compositor.force-enabled", false], ["gfx.webrender.all", false]].map((a) =>{glob.pref(...a)})`],
+		[false, "Да",,,`[["gfx.webrender.compositor.force-enabled", true], ["gfx.webrender.all", true]].map((a) =>{glob.pref(...a)})`]]
 	},null,{
-			pref: ["media.autoplay.default", "Авто-play аудио/видео"], pDefGreen: 0, pYellow: 2, pGray: 5, refresh: true,
-			values: [
-				[0, "Разрешить", "0"], [2, "Спрашивать", "2"], [1, "Запретить", "1"], [5, "Блокировать", "5"]]
+		pref: ["media.autoplay.default", "Авто-play аудио/видео"], pDefGreen: 0, pYellow: 2, pGray: 5, refresh: true,
+		values: [
+			[0, "Разрешить", "0"], [2, "Спрашивать", "2"], [1, "Запретить", "1"], [5, "Блокировать", "5"]]
 	},{
-			pref: ["dom.storage.enabled", "Локальное хранилище",, "Сохранение персональных данных, по\nкоторым вас можно идентифицировать"],
-			pDefGreen: false, pYellow: true,
-			values: [[true, "Разрешить"], [false, "Запретить"]]
+		pref: ["dom.storage.enabled", "Локальное хранилище",, "Сохранение персональных данных, по\nкоторым вас можно идентифицировать"],
+		pDefGreen: false, pYellow: true,
+		values: [[true, "Разрешить"], [false, "Запретить"]]
 	},{
-			pref: ["privacy.resistFingerprinting", "Изоляция Firstparty-Fingerprint", ,"privacy.firstparty.isolate\n\nЗащита данных пользователя также\nзапрещает запоминать размер окна"], pDefGreen: false,
-			values: [[true, "Да", , "Защита от слежки",`glob.pref('privacy.firstparty.isolate', true)`], [false, "Нет", , "Защита от слежки",`glob.pref('privacy.firstparty.isolate', false)`]]
+		pref: ["privacy.resistFingerprinting", "Изоляция Firstparty-Fingerprint", ,"privacy.firstparty.isolate\n\nЗащита данных пользователя также\nзапрещает запоминать размер окна"], pDefGreen: false,
+		values: [[true, "Да", , "Защита от слежки",`glob.pref('privacy.firstparty.isolate', true)`], [false, "Нет", , "Защита от слежки",`glob.pref('privacy.firstparty.isolate', false)`]]
+	},(()=>{
+	if (I[4] > 114) return { //опции зависят от версии FF
+		pref: ["browser.translations.enable", "Встроенный перевод сайтов"], pDefGreen: true, pGray: false, refresh: true,
+		values: [[true, "Да"], [false, "Откл",,,`glob.toStatus("Перевод отключен для новых вкладок")`]]
+		}; else return {
+		pref: ["media.peerconnection.enabled", "WebRTC ваш реальный IP"], pDefGreen: false,
+		values: [[true, "Выдать"], [false, "Скрыть"]]
+		}
+	})(),null,{
+		pref: ["network.http.sendRefererHeader", "Referer: для чего"], pDefGreen: 2, pYellow: 1,
+		values: [[0, "Ни для чего", "0"], [1, "Только ссылки", "1"], [2, "Ссылки, графика", "2"]]
 	},{
-			pref: ["media.peerconnection.enabled", "WebRTC ваш реальный IP"], pDefGreen: false,
-			values: [[true, "Выдать"], [false, "Скрыть"]]
-	},null,{
-			pref: ["network.http.sendRefererHeader", "Referer: для чего"], pDefGreen: 2, pYellow: 1,
-			values: [[0, "Ни для чего", "0"], [1, "Только ссылки", "1"], [2, "Ссылки, графика", "2"]]
+		pref: ["browser.cache.disk.capacity", "Кэш браузера",,"\ncache.memory.max_entry_size:\nДиск и память: 5120\nтолько Память: -1"], pDefGreen: 1048576, pYellow: 0, pGray: 256e3,
+		values: [
+		[256e3, "По-умолчанию"],
+		[1048576, "Диск и Память",,,`[["browser.cache.memory.enable", true], ["browser.cache.disk.enable", true], ["browser.cache.memory.max_entry_size", 5120]].map((a) =>{glob.pref(...a)})`],
+		[0, "только Память",,,`[["browser.cache.memory.enable", true], ["browser.cache.disk.enable", false], ["browser.cache.memory.max_entry_size", -1]].map((a) =>{glob.pref(...a)})`],
+		[2097152, "только Диск",,,`[["browser.cache.memory.enable", false], ["browser.cache.disk.enable", true]].map((a) =>{glob.pref(...a)})`]]
 	},{
-			pref: ["browser.cache.disk.capacity", "Кэш браузера",,"\ncache.memory.max_entry_size:\nДиск и память: 5120\nтолько Память: -1"], pDefGreen: 1048576, pYellow: 0, pGray: 256e3,
-			values: [
-			[256e3, "По-умолчанию"],
-			[1048576, "Диск и Память",,,`[["browser.cache.memory.enable", true], ["browser.cache.disk.enable", true], ["browser.cache.memory.max_entry_size", 5120]].map((a) =>{glob.pref(...a)})`],
-			[0, "только Память",,,`[["browser.cache.memory.enable", true], ["browser.cache.disk.enable", false], ["browser.cache.memory.max_entry_size", -1]].map((a) =>{glob.pref(...a)})`],
-			[2097152, "только Диск",,,`[["browser.cache.memory.enable", false], ["browser.cache.disk.enable", true]].map((a) =>{glob.pref(...a)})`]]
+		pref: ["browser.sessionstore.interval", "Резервирование сессий",,"Браузер резервирует сессии на\nслучай сбоя, снижая ресурс SSD"], pDefGreen: 3e5, pYellow: I[3], pGray: 15e3,
+		values: [
+		[I[3], `${I[3]/60e3 + " мин"}`], [15e3, "15 сек"], [6e4, "1 мин"], [3e5, "5 мин"], [9e5, "15 мин"], [18e5, "30 мин"]]
 	},{
-			pref: ["browser.sessionstore.interval", "Резервирование сессий",,"Браузер резервирует сессии на\nслучай сбоя, снижая ресурс SSD"], pDefGreen: 3e5, pYellow: I[3], pGray: 15e3,
-			values: [
-			[I[3], `${I[3]/60e3 + " мин"}`], [15e3, "15 сек"], [6e4, "1 мин"], [3e5, "5 мин"], [9e5, "15 мин"], [18e5, "30 мин"]]
-	},{
-			pref: [I[5], "User Agent",,"Тип гаджета меняет вид сайта", [ua, "встроенный"]],
-			pDefGreen: ua, pYellow: I[7] + I[6], pGray: I[7] + I[7], refresh: true,
-			values: [ [ua, "По-умолчанию"],
-				[I[7] + I[6], "Chrome 99 Android 9"], [I[7], "Firefox 115 MacOS 12"],
-				[I[7] + "Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.98 Safari/537.36", "Chrome61 Win10"],
-				[I[7] + "Windows; U; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)", "MSIE 6.0 Windows"],
-				[I[7] + "Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.1 Safari/603.1.30", "Safari 6 MacOS"],
-				["Opera/9.80 (Windows NT 6.2; Win64; x64) Presto/2.12 Version/12.16", "Opera12 W8"],
-				[I[7] + "Linux; Android 5.1.1; SM-G928X Build/LMY47X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.83 Mobile Safari/537.36", "Samsung Galaxy S6"],
-				[I[7] + "PlayStation 4 3.11) AppleWebKit/537.73 (KHTML, like Gecko)", "Playstation 4"],
-				["Xbox (Xbox; Xbox One) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Mobile Safari/537.36 Edge/13.10586", "Xbox One (mobile)"],
-				[I[7] + "compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; SAMSUNG; GT-I8350)", "Windows Phone"],
-				[I[7] + "Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.143 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36", "Yandex OSX"],
-				[I[7] + "compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "GoogleBot"]]
-		}];
+		pref: [I[5], "User Agent",,"Тип гаджета меняет вид сайта", [ua, "встроенный"]],
+		pDefGreen: ua, pYellow: I[8] + I[6], pGray: I[8] + I[7], refresh: true,
+		values: [ [ua, "По-умолчанию"],
+			[I[8] + I[6], "Chrome 118 Win10"], [I[8] + I[7], "Firefox 97 Android 12"],
+			[I[8] + "Windows; U; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)", "MSIE 6.0 Windows"],
+			["Opera/9.80 (Windows NT 6.2; Win64; x64) Presto/2.12 Version/12.16", "Opera12 W8"],
+			[I[8] + "Linux; Android 5.1.1; SM-G928X Build/LMY47X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.83 Mobile Safari/537.36", "Samsung Galaxy S6"],
+			[I[8] + "PlayStation 4 3.11) AppleWebKit/537.73 (KHTML, like Gecko)", "Playstation 4"],
+			["Windows NT 10.0; Win64; x64; Xbox; Xbox One) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edge/44.18363.8131", "Edge 44 Xbox One"],
+			[I[8] + "compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; SAMSUNG; GT-I8350)", "Windows Phone"],
+			[I[8] + "Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.143 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36", "Yandex OSX"],
+			[I[8] + "compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "GoogleBot"]]
+	}];
 	return {
 		id: "ToggleButton", label: "Журнал, Меню опций", localized: false,
 		defaultArea: CustomizableUI.AREA_NAVBAR,
@@ -138,7 +139,6 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 		onCreated(btn) {
 			btn.setAttribute("image", this.icon);
 			var doc = btn.ownerDocument;
-			btn.btn = true;
 			btn.domParent = null;
 			btn.popups = new btn.ownerGlobal.Array();
 			this.createPopup(doc, btn, "secondary", secondary);
@@ -147,7 +147,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 				btn.setAttribute("on" + type, `linkedObject.${type}(event)`);
 			this.addSheet(btn);
 		},
-		addSheet(btn) {
+		addSheet(btn) { //текст под курсором
 			var cb = Array.isArray(btn._destructors);
 			var id = cb ? btn.id : "ToggleButton";
 			var css = `#${id} menu[_moz-menuactive] {
@@ -167,7 +167,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 			})(btn);
 		},
 		createPopup(doc, btn, name, data) {
-			var popup = doc.createElementNS(I[4], "menupopup");
+			var popup = doc.createXULElement("menupopup");
 			var prop = name + "Popup";
 			btn.popups.push(btn[prop] = popup);
 			popup.id = this.id + "-" + prop;
@@ -178,7 +178,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 		},
 		map: {b: "Bool", n: "Int", s: "String"},
 		createElement(doc, obj) { // pref
-			if (!obj) return doc.createElementNS(I[4], "menuseparator");
+			if (!obj) return doc.createXULElement("menuseparator");
 			var pref = doc.ownerGlobal.Object.create(null), node, img, bool;
 			for(var [key, val] of Object.entries(obj)) {
 				if (key == "pref") {
@@ -212,14 +212,14 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 				}
 			}
 			if (!map) pref.set = set;
-			node = doc.createElementNS(I[4], "menu");
+			node = doc.createXULElement("menu");
 			node.className = "menu-iconic";
 			img && node.setAttribute("image", img);
 			akey && node.setAttribute("accesskey", akey);
 			(node.pref = pref).vals = doc.ownerGlobal.Object.create(null);
 			this.createRadios(doc,
 				str.startsWith("B") && !pref.hasVals ? [[true, "true"], [false, "false"]] : obj.values,
-				node.appendChild(doc.createElementNS(I[4], "menupopup"))
+				node.appendChild(doc.createXULElement("menupopup"))
 			);
 			if ("pDefGreen" in obj) pref.noAlt = !("pYellow" in obj);
 			return node;
@@ -272,17 +272,10 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 		},
 		createRadios(doc, vals, popup) {
 			for(var arr of vals) {
-				if (!arr) {
-					popup.append(doc.createElementNS(I[4], "menuseparator"));
-					continue;
-				}
 				var [val, lab, key, hint] = arr;
-				var menuitem = doc.createElementNS(I[4], "menuitem");
+				var menuitem = doc.createXULElement("menuitem");
 				with (menuitem)
-					setAttribute("type", "radio"), setAttribute("closemenu", "none"),
-					style.setProperty("font-style", "italic", "important"),
-					setAttribute("label", popup.parentNode.pref.vals[val] = lab);
-				key && menuitem.setAttribute("accesskey", key);
+					setAttribute("type","radio"), setAttribute("closemenu","none"), setAttribute("label", popup.parentNode.pref.vals[val] = lab), key && setAttribute("accesskey", key);
 				var tip = menuitem.val = val === "" ? "[ пустая строка ]" : val;
 				if (hint) tip += "\n" + hint;
 				menuitem.tooltipText = `${tip != undefined ? tip + "\n\n" : ""}клик с Shift блокирует авто-закрытие`;
@@ -325,7 +318,7 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 					? win.BrowserReloadSkipCache() : win.BrowserReload();}
 		},
 		maybeClosePopup(e, trg) {
-			!e.shiftKey && trg.parentNode.hidePopup();
+			(e.shiftKey || e.button == 1) || trg.parentNode.hidePopup();
 		},
 		popupshowing(e, trg = e.target) {
 			if (trg.state == "closed") return;
@@ -369,22 +362,20 @@ BUG мышь неподвижна: скрытое по Escape меню откр�
 					else break;}
 			}
 		},
-		click(e) { //строки меню
+		click(e, trg = e.target) { //строки меню
 			if (e.button) return;
-			var trg = e.target, {pref} = trg;
+			var {pref} = trg;
 			if (!pref) return;
 		},
-		command(e) { // LMB на кнопке
-			var trg = e.target, win = e.view; trg.mstate = null;
-			if (trg.btn) return; // LMB
-			var menu = trg.closest("menu"), newVal = trg.val;
+		command(e, trg = e.target) { // LMB на кнопке
+			var newVal = trg.val, menu = trg.closest("menu");
+			if (!menu) return;
 			this.maybeClosePopup(e, menu);
 			if (newVal != menu.pref.val)
 				menu.pref.set(menu.pref.pref, newVal), this.maybeRe(menu, true);
 			menu.pref.code && eval(menu.pref.code); //run
 		},
-		contextmenu(e) { //openPopup в ucf_hookClicks.js
-			var trg = e.target;
+		contextmenu(e, trg = e.target) {
 			if ("pref" in trg) {
 				this.maybeClosePopup(e, trg);
 				if (trg.pref.user)
