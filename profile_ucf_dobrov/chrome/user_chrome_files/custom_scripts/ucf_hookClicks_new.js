@@ -34,16 +34,16 @@ Tag = {"downloads-button":'{'+ //нужен SingleHTML.jsm
 `Левый клик	★ Закладки\n◧ + Alt		Домашняя папка
 Правый		⟳ История\n◨ + Alt		Папка установки\n
 ◉ колёсико	⬇︎ Загрузки
-◉ ролик +Alt	UserChromeFiles`,"ToggleButton": //◨ + Alt посл.закладка меню
+◉ ролик +Alt	UserChromeFiles`,"QuickToggle": //◨ + Alt посл.закладка меню
 
-`левая кнопка ◧ меню Действия\n
-◧ лев.+ Alt	Библиотека
-◧ держать	Новая вкладка (${Ff.Ctr()}T)\n
-◉ колёсико	боковая панель
-◨ правая	Быстрые настройки{︰
+`левая кнопка ◧ мыши «Журнал»\n
+◉ колёсико	меню «Действия»
+◨ правая	Быстрые настройки
 ◨ держать	Пипетка цвета, линза\n
+◧ лев. + Alt	Библиотека
+◧ держать	Новая вкладка (${Ff.Ctr()}T){︰\n
 Ø Ролик ±	масштаб Страницы
-◧ + Shift	масштаб Текст / Всё}`,"ReaderView":
+◧ + Shift		масштаб Текст / Всё}`,"ReaderView":
 
 `Клик мыши	Чтение в ReaderView
 Колёсико	Простой режим чтения\n`,"reader-mode-button":
@@ -78,7 +78,8 @@ Alt + R		Выбор части страницы\n
 `Очистить панель колёсиком мыши|Запрещённые сайты через АнтиЗапрет|☀ Яркость сайтов |💾 кэш, данные сайтов, куки занимают |Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|⚡️ Запрещено сохранять логины и пароли|◧ about:config, ◨ пр. клик Сброс, ⟳ Обновить, ↯ Перезапуск|Долгий клик в строке меню: Править опцию │ Колёсико: Сервисы|Ошибка скрипта |↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|период сохранения сессий меняется в меню кнопки «Журнал»|SingleFile (Alt+Ctrl+S)\nСохранить страницу в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\n\n◨ пр. клик	настройки UCF\n◨ держать	Перезапустить, удалив кэш\nAlt + x		запустить скрипт User.js|\n◨ правый клик: Без запроса|zoompage-we_dw-dev-|_531906d3-e22f-4a6c-a102-8057b88a1a63_-|_b9db16a4-6edc-47ec-a1f4-b86292ed211d_-`}; init();
 
 Menu = [{ //подсказки, меню команд, горячие клавиши, клики мыши…
-		lab: "страницу в единый HTML",
+		lab: "экспорт сайта в единый HTML",
+		inf: "используя SingleHTML.jsm\nили расширение SingleFile",
 		cmd(){ glob.HTML()},
 		img: "chrome://devtools/skin/images/globe.svg"
 	},{
@@ -277,12 +278,16 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		128(btn){	btn.ownerGlobal.undoCloseTab()},
 		256(){minimize()}
 	},
-	[B[6]]: {mousedownTarget: true, //ToggleButton
+	[B[6]]: {mousedownTarget: true,
 		0(btn){ //L
-			if (btn.id != B[6]) return;
-			var bar = document.getElementById("ucf-additional-vertical-bar");
-			if (bar) window.setToolbarVisibility(bar,document.getElementById("sidebar-box").hidden);
-			window.SidebarUI.toggle(B[2]);
+			if (btn.id == B[6]) {
+				var bar = document.getElementById("ucf-additional-vertical-bar");
+				if (bar) window.setToolbarVisibility(bar,document.getElementById("sidebar-box").hidden);
+				window.SidebarUI.toggle(B[2]);
+			} else if (btn.className == "menu-iconic") {
+				Node.hidePopup();
+				glob.about_config(btn.pref.pref); //go параметр about:config
+			} else glob.mode_skin();
 		},
 		2(trg,forward){zoom(forward)}, // wheel
 		1(btn){ //д
@@ -292,24 +297,22 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		264(){ //R+Alt
 			switchTab(FavItem(false))},
 		16(btn){if (btn.id == B[6]) zoom(0,1)}, //L+Shift
-		128(btn){ //C Menu-1
-			if (btn.id == B[6])
-				btn.menupopup.openPopup(btn, "before_start")
-			else if (btn.className == "menu-iconic") { //меню кнопки
-				Node.hidePopup();
-				glob.about_config(btn.pref.pref); //go параметр about:config
+		128(btn, trg){ //C Menu-1
+			if (btn.id == B[6] || trg){
+			console.log(trg);
+			trg ||= btn;
+			btn.menupopup.openPopup(trg, "before_start");
 			}
-			else glob.mode_skin();
 		},
 		129(btn){userjs(btn,"")}, //дC консоль
 		256(btn){ //about Menu
-			if (btn.id == B[6]) { setTimeout(()=> {
+			if (btn.id != B[6]) return;
+			setTimeout(()=> {
 				if (btn.config.state != "open")
 				  btn.config.openPopup(btn, "before_start")
 				else
 				  btn.config.hidePopup();
-			}, 50)
-			} else glob.mode_skin();
+			},50);
 		},
 		257(btn){ //дR
 			if (btn.id != B[6]) return; //линза
@@ -844,12 +847,13 @@ CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 		for(var o of arr) if (o) {
 			var sub = Array.isArray(o); //подменю?
 			var name = sub ? "menu" : "menuitem";
-			var {lab, cmd, img} = sub ? o.shift() : o;
+			var {lab, inf, cmd, img} = sub ? o.shift() : o;
 			var item = this.m(name);
 			item.setAttribute("label", lab);
 			if (img)
-				item.className = name + "-iconic",
-				item.setAttribute("image", img);
+				item.image = img, item.className = name +"-iconic";
+			if (inf)
+				item.tooltipText = inf;
 			sub || cmd && item.setAttribute("oncommand", cmd.toString().replace(/cmd\(.*?\)/,''));
 			popup.append(item);
 			sub && o.length && this.fill(o, item.appendChild(this.m("menupopup")));
@@ -858,7 +862,7 @@ CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 	},
 	addSheet(btn) { //текст под курсором
 		var cb = Array.isArray(btn._destructors);
-		var id = cb ? btn.id : "ToggleButton";
+		var id = cb ? btn.id : B[6];
 		var css = `#${id} menu[_moz-menuactive] {
 			color: ${I[0]} !important;
 		}`;
@@ -947,7 +951,7 @@ CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 		var exists = def || user;
 		if (!exists && pref.undef) // опция не найдена ? вернуть default
 			val = pref.undef[0];
-		var hint = eval(hints.get(pref.pref));
+		var hint = hints.get(pref.pref);
 		if (!hint) hint = val != undefined ? val : "Эта опция не указана";
 		if (hint === "") hint = "[ пустая строка ]";
 		hint += "\n" + pref.pref;
@@ -1137,7 +1141,7 @@ window.glob = { //all ChromeOnly-scripts
 		let i = Math.log2(b)/10|0; return parseFloat((b/1024**(i=i<=0?0:i)).toFixed(d))+`${i>0?'KMGT'[i-1]:''}b`;
 	},
 	about_config(filter){ //на опцию
-		if (gURLBar.value.startsWith("about:config")) newTab(gURLBar.value);
+		if (gURLBar.value.startsWith("about:config")) switchTab(gURLBar.value);
 		var setFilter = (e,input = (e?.target || window.content.document).getElementById("about-config-search")) => {	try {
 			if (e || input.value != filter) input.setUserInput(filter);} catch{}
 		},
@@ -1201,14 +1205,16 @@ window.glob = { //all ChromeOnly-scripts
 		if (!/^file:\/\//.test(host)) host = host.replace(/^.*url=|https?:\/\/|www\.|\/.*/g,'').replace(/^ru\.|^m\.|forum\./,'').replace(/^club\.dns/,'dns');
 		return host;
 	},
-	HTML(){ //функция из SingleHTML.jsm
-		var args = [this.crop("√ страница записана: "+ this.Title(0),48,''),7e3];
+	HTML(){ //SingleHTML.jsm или расширение SingleFile
+		var inf = [this.crop("√ страница записана: "+ this.Title(0),48,''),7e3], sfile = document.getElementById(B[18]);
 		try {Cu.getGlobalForObject(Cu)[Symbol.for("SingleHTML")](true,window);
-			gBrowser.selectedTab.textLabel.style.textDecoration = "overline"; // ^подчёркивание
-		} catch {args = ['☹ Ошибка функции SingleHTML',1e4]}
-		this.toStatus(...args);
+			gBrowser.selectedTab.textLabel.style.textDecoration = "overline"; //^отметка
+		} catch {if (sfile) sfile.click(), inf = ''
+			else inf = ['☹ Ошибка SingleHTML.jsm',1e4];
+		}
+		this.toStatus(...inf);
 	}
-}, {prefs} = Services,
+}, {prefs} = Services, ua = glob.ua(true), db = prefs.getDefaultBranch(""), //real ЮзерАгент
 tExp = (name,m = Ff.Exp(), t,z)=>{ //… {Общий︰Эксперт (m = 1)[︰…]}
 	t = Tag[name]; z = t.match(/(\{)([\s\S]*?)(\})/gm);
 	if (z) z.forEach((k,h) =>{ //текст зависит от режима
@@ -1216,7 +1222,6 @@ tExp = (name,m = Ff.Exp(), t,z)=>{ //… {Общий︰Эксперт (m = 1)[�
 			t = t.replace(k,h[m].replace(/\{|\}/g,''));})
 	return t;
 },
-ua = glob.ua(true), db = prefs.getDefaultBranch(""), //real ЮзерАгент
 I = [AppConstants.platform == "win" ? '#124' : '#e8e8e8', //текст под курсором, без Aero '#fff'
 	"https://antizapret.prostovpn.org/proxy.pac", "user.pacfile",
 	glob.pref(['browser.sessionstore.interval', 15e3]),
@@ -1225,6 +1230,6 @@ I = [AppConstants.platform == "win" ? '#124' : '#e8e8e8', //текст под к
 	"Android 12.0; Mobile; rv:109.0) Gecko/97.0 Firefox/97.0","Mozilla/5.0 ("],
 fonts = arr => arr.map(n => [(n == arr[arr.length-1] ? null : n), n]), //array с вложениями
 serif = fonts("Arial|Cantarell|DejaVu Sans|Roboto|PT Serif|Segoe UI|Ubuntu|Cambria|Fira Sans|Georgia|Noto Sans|Calibri|Times|системный".split('|')), sans = [["PT Sans","PT Sans"], ...serif]
-hints = new Map([ //опция отсутствует ? выполнить код и вернуть строку
-	["ucf.savedirs", "glob.crop(glob.dirsvcget(''),34)"], [I[5], "glob.ua()"]]);
+hints = new Map([ //опция отсутствует ? вернуть строку
+	["ucf.savedirs", glob.crop(glob.dirsvcget(''),34)], [I[5], glob.ua()]]);
 });
