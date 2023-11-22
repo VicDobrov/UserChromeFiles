@@ -34,7 +34,6 @@ var UcfStylesScripts = {
 	scriptschrome: { // Для докум. окна браузера [ChromeOnly]
 		domload: [ // По событию "DOMContentLoaded"
 		{ path: "ucf_hookClicks.js", ucfobj: true, }, // используется скриптами, грузит attrsInspector.js
-		{ path: "ucf_QuickToggle.js", ucfobj: true, }, // нужен ucf_hookClicks
 		{ path: "ucf_mousedrag.js", ucfobj: true, },
 		{ path: "ucf_contextsearch.js", ucfobj: true, },
 		{ path: "ucf_BookmarkDir.js", ucfobj: true, },
