@@ -1,6 +1,6 @@
-/* SingleHtml by Лекс, правка: Dumby, mod Dobrov
-вызов: Cu.getGlobalForObject(Cu)[Symbol.for("SingleHTML")](to, window)
-scriptsbackground: В фоне [System Principal], «to» пуст: выбор пути */
+/* SingleHtml © Лекс, правка Dumby, mod Dobrov
+Cu.getGlobalForObject(Cu)[Symbol.for("SingleHTML")](to,window)
+scriptsbackground [System Principal], «to» пуст: выбор пути */
 
 var self, name = "SingleHTML", EXPORTED_SYMBOLS = [name + "Child"];
 var {io, focus, obs, prefs, dirsvc} = globalThis.Services || ChromeUtils.import("resource://gre/modules/Services.jsm").Services;
@@ -21,8 +21,8 @@ ChromeUtils.domProcessChild.childID || ({
 			obs.removeObserver(self, topic);
 		}, "quit-application-granted");
 		this.handleEvent = e => this[e.type](e);
-		globalThis[Symbol.for(name)] = this.saveHTML; //общие функции
-		globalThis[Symbol.for('saveFilePath')] = this.saveFilePath;
+		globalThis[Symbol.for(name)] = this.SingleHTML; //общие функции
+		globalThis[Symbol.for('TitlePath')] = this.TitlePath;
 	},
 	observe(win) {
 		win.document.getElementById("appMenu-popup").addEventListener("popupshowing", this);
@@ -36,8 +36,8 @@ ChromeUtils.domProcessChild.childID || ({
 		btn.setAttribute("label", "Всё или выбранное в единый HTML");
 		var before = "appMenu-save-file-button2", subviewbutton = "subviewbutton";
 		btn.className = subviewbutton;
-		btn.setAttribute("oncommand", "saveHTML();");
-		btn.saveHTML = this.saveHTML;
+		btn.setAttribute("oncommand", "SingleHTML();");
+		btn.SingleHTML = this.SingleHTML;
 		popup.querySelector('toolbarbutton[id^="'+ before +'"]').before(btn);
 	},
 	unload(e) {
@@ -45,22 +45,22 @@ ChromeUtils.domProcessChild.childID || ({
 		win.removeEventListener("unload", this);
 		win.document.getElementById("appMenu-popup").removeEventListener("popupshowing", this);
 	},
-	saveFilePath(win, to, fname, host, s = 0, h = 99) { // массив путей сохранения
-		if(parseInt(to) >0) [s,to] = [to,s]; if(parseInt(to) <0) h = Math.abs(to);
+	TitlePath(win, to, f, u, n = 0, h = 99, dir) { //global
+		if(parseInt(to) > 0) [n,to] = [to,n]; if(parseInt(to) < 0) h = Math.abs(to);
 		if (typeof(to) != 'string' || !/.*\|/.test(to)) to = prefs.getStringPref("ucf.savedirs","_Web||_Pic|0");
-		to = to.split('|').slice(0 + s, 2 + s); //Dir/Sub|[empty|0 title|1 host]
-		if (!fname) fname = win.gBrowser.selectedTab.label;
-		fname = fname.replace(/\s+/g,' ').replace(/[\\\/?*\"'`]+/g,'').replace(/[|<>]+/g,'_').replace(/:/g,'։').slice(0,h).trim();
-		if (!host) host = decodeURIComponent(win.gURLBar.value); s = fname, h = host;
-		host = /^file:\/\//.test(host) ? 'file' : host.replace(/^.*url=|https?:\/\/|www\.|\/.*/g,'').replace(/^ru\.|^m\./,'').replace(/\/.*/,'');
-		to[1] = (to[1] == "0") ? fname : (to[1] == "1") ? host : "";
-		try {var dir = prefs.getComplexValue("browser.download.dir",Ci.nsIFile);} catch {var dir = dirsvc.get("DfltDwnld",Ci.nsIFile);}
-		var map = val => win.DownloadPaths.sanitize(val); //FIX имён filesystem
+		to = to.split('|').slice(0 + n, 2 + n); //Dir/Sub|[empty|0 title|1 url]
+		f ||= win.gBrowser.selectedTab.label;
+		f = f.replace(/\s+/g,' ').replace(/[\\\/?*\"'`]+/g,'').replace(/[|<>]+/g,'_').replace(/:/g,'։').slice(0,h).trim();
+		u ||= decodeURIComponent(win.gURLBar.value); n = f, h = u;
+		u = /^file:\/\//.test(u) ? 'file' : u.replace(/^.*u=|https?:\/\/|www\.|\/.*/g,'').replace(/^ru\.|^m\./,'').replace(/\/.*/,'');
+		to[1] = (to[1] == "0") ? f : (to[1] == "1") ? u : "";
+		f += "_"+ new Date().toLocaleDateString('ru', {day: 'numeric',month: 'numeric',year: '2-digit'}) +'-'+ new Date().toLocaleTimeString('en-GB').replace(/:/g,"։"); //дата-часы
+		try {dir = dirsvc.get("DfltDwnld",Ci.nsIFile);} catch {dir = prefs.getComplexValue("browser.download.dir",Ci.nsIFile)}
+		var map = l => win.DownloadPaths.sanitize(l); //FIX имён
 		to.map(map).forEach(dir.append);
-		dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);
-		fname += "_"+ new Date().toLocaleDateString('ru', {day: 'numeric',month: 'numeric',year: '2-digit'}) +'-'+ new Date().toLocaleTimeString('en-GB').replace(/:/g,"։"); //дата-часы
-		to = dir.path; dir.append(fname +'.html'); return [dir.path, to, s, h, host];
-	}, //savepath, dwdir/имя|домен, имя, URL, домен
+		var s = dir.clone(); s.append(f +'.html');
+		return [dir, s.path, n, f, h, u]; //… имя, +дата, URL, домен
+	},
 	async Succes(win, dir, dw = true, bg) {
 		var {setTimeout} = ChromeUtils.import("resource://gre/modules/Timer.jsm");
 		var d = await win.Downloads.createDownload({source: "about:blank",target: win.FileUtils.File(dir)});
@@ -70,14 +70,16 @@ ChromeUtils.domProcessChild.childID || ({
 		d.style.background = dw ? 'rgba(0,200,0,0.3)' : 'rgba(250,0,0,0.2)';
 		setTimeout(() => {d.style.removeProperty('background-color')}, 350);
 	},
-	async saveHTML(to, win = this.ownerGlobal) {
-		var br = win.gBrowser.selectedBrowser;
-		var bc = focus.focusedContentBrowsingContext;
+	async SingleHTML(to, win = this.ownerGlobal) {
+		var br = win.gBrowser.selectedBrowser, bc = focus.focusedContentBrowsingContext;
 		if (bc?.top.embedderElement != br) bc = br.browsingContext;
 		var actor = bc?.currentWindowGlobal?.getActor(name);
 		actor && self.save(win, ...await actor.sendQuery(""), to); //htmlAndName
-		}, async save(win, data, fname, host, to) {
-		var path = this.saveFilePath(win, to, fname, host)[0]; //путь сохранения в зависимости от опций
+		},
+	async save(win, data, fname, host, to) {
+		var path = this.TitlePath(win, to, fname, host); //путь в зависимости от опций
+		var dir = path[0], path = path[1];
+		dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);
 		if (!to) { // диалог выбора папки
 			var fp = Cc['@mozilla.org/filepicker;1'].createInstance(Ci.nsIFilePicker);
 			fp.init(win, "", fp.modeSave);
@@ -101,7 +103,7 @@ ChromeUtils.domProcessChild.childID || ({
 	}
 }).init("browser-delayed-startup-finished");
 
-var htmlAndName = async mainWin => { //frameКод SingleHTML by Alex не сохраняет SVG
+var htmlAndName = async mainWin => { //не сохраняет SVG
 
 	var resolveURL = function (url, base) {
 		try { return io.newURI(url, null, io.newURI(base)).spec;} catch {}
