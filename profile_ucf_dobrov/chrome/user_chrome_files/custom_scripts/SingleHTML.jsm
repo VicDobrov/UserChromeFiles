@@ -58,8 +58,8 @@ ChromeUtils.domProcessChild.childID || ({
 		try {dir = dirsvc.get("DfltDwnld",Ci.nsIFile);} catch {dir = prefs.getComplexValue("browser.download.dir",Ci.nsIFile)}
 		var map = l => win.DownloadPaths.sanitize(l); //FIX имён
 		to.map(map).forEach(dir.append);
-		var s = dir.clone(); s.append(f +'.html');
-		return [dir, s.path, n, f, h, u]; //… имя, +дата, URL, домен
+		to = dir.clone(); to.append(f +'.html');
+		return [dir, to.path, n, f, h, u]; //… имя, +дата, URL, домен
 	},
 	async Succes(win, dir, dw = true, bg) {
 		var {setTimeout} = ChromeUtils.import("resource://gre/modules/Timer.jsm");

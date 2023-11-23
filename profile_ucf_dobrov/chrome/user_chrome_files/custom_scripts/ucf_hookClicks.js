@@ -1,4 +1,4 @@
-/* hookMouseKeys © Dumby, mod 3.0 Dobrov. Настройки пользователя
+/* hookMouseKeys © Dumby, mod 3.0 Dobrov. Данные пользователя:
 Keys нажатия клавиш Menu команды Mouse клики мыши Setup опции */
 
 (async (Ff,init) =>{ Tag = {"downloads-button":`{`+ //подсказки кнопок
@@ -333,17 +333,17 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 }; var M = Object.keys(Mouse), Mus = {}; M.forEach((k) =>{Mus["#"+ k] = Mus["."+ k] = Mouse[k]});
 
 Setup = [{ //быстрые настройки
-	pref: ["dom.disable_open_during_load", "Всплывающие окна"], pDefGreen: 2, pYellow: true,
+	pref: ["dom.disable_open_during_load", "Всплывающие окна"], Def3el: 2, Yellow: true,
 	keys: [[true, "Блокировать"], [false, "Разрешить"]],
 },{ //menu:pref,lab,key,hint,[undef,str],code radio:val,lab,val,+hint,code, icon:значок
-	pref: ["javascript.enabled", "Выполнять скрипты Java",,"Поддержка интерактивных сайтов, рекламы\nтакже разрешает действия горячих клавиш"], pDefGreen: true, refresh: true,
+	pref: ["javascript.enabled", "Выполнять скрипты Java",,"Поддержка интерактивных сайтов, рекламы\nтакже разрешает действия горячих клавиш"], Def3el: true, refresh: true,
 	keys: [[true, "Да"], [false, "Нет"]]
 },{
-	pref: ["browser.safebrowsing.downloads.remote.block_dangerous", "Опасные файлы, сайты",,"browser.safebrowsing.downloads.remote.block_dangerous_host"], pDefGreen: true, pYellow: false,
+	pref: ["browser.safebrowsing.downloads.remote.block_dangerous", "Опасные файлы, сайты",,"browser.safebrowsing.downloads.remote.block_dangerous_host"], Def3el: true, Yellow: false,
 	keys: [[true, "Запрет",,,`ucf.pref('browser.safebrowsing.downloads.remote.block_dangerous_host',true)`], [false, "Открыть",,,`ucf.pref('browser.safebrowsing.downloads.remote.block_dangerous_host',false)`]]
 },{
 	pref: ["ucf.savedirs", "Загрузки",,'Пути сохранения Страниц и Графики\nСинтаксис «_Html/subdir|_Pics/subdir»\nsubdir: пусто | 0 заголовок | 1 домен',
-		["", "всё в общей папке"]], pDefGreen: "_Сайты||_Фото|0", pYellow: "_Web|1|_Images|0", pGray: "",
+		["", "всё в общей папке"]], Def3el: "_Сайты||_Фото|0", Yellow: "_Web|1|_Images|0", Gray: "",
 	keys: [ // сохранение Html/Pics. [Загрузки]/"_Html/subdir|_Pics/subdir" subdir: пусто | 0 заголовок | 1 домен
 		["", "всё в общую папку"],
 		["_Сайты||_Фото|0", "_Сайты|_Фото/имя…"],
@@ -354,7 +354,7 @@ Setup = [{ //быстрые настройки
 		["Сайт||Фото|", "ввести свои пути",,"ключ в about:config",`ucf.about_config('ucf.savedirs')`]]
 },null,{
 	pref: [I[3], "Прокси (VPN)", "п", I[2] +"\n\nПереключение сетевых настроек"],
-	pDefGreen: "localhost", pYellow: I[1], pGray: "", refresh: true,
+	Def3el: "localhost", Yellow: I[1], Gray: "", refresh: true,
 	keys: [ //фон кнопки Меню: серый, голубой, красный, жёлтый, зелёный
 		["localhost", "системный", "0",, "ucf.pref(I[2], 0)"],
 		["127.0.0.1", "Tor или Opera", "1", "Необходим сервис tor или opera-proxy",
@@ -364,67 +364,67 @@ Setup = [{ //быстрые настройки
 		[ucf.pref(["user.pacfile", "file:///etc/proxy.pac"]), "user .pac файл", "4", "about:config pacfile"], //нужен диалог выбора pac-файла
 		[null, "сброшен",""]]
 },{
-	pref: [I[2], "Режим прокси", "р"], pDefGreen: 5, pYellow: 2, pGray: 1, refresh: true,
+	pref: [I[2], "Режим прокси", "р"], Def3el: 5, Yellow: 2, Gray: 1, refresh: true,
 	keys: [[5, "системный", "5"],
 		[2, "Автонастройка", "2", "about:config pacfile"],
 		[1, "Ручная настройка", "1", "Используется "+ I[3]],
 		[4, "Автоопределение", "4"],
 		[0, "Без прокси", "0", I[5]]]
 },{
-	pref: ["network.trr.mode", "DNS поверх HttpS",, "Шифрование DNS-трафика для\nзащиты персональных данных"], pDefGreen: 0, pYellow: 2, pGray: 5, refresh: true,
+	pref: ["network.trr.mode", "DNS поверх HttpS",, "Шифрование DNS-трафика для\nзащиты персональных данных"], Def3el: 0, Yellow: 2, Gray: 5, refresh: true,
 	keys: [
 		[0, I[5], "0"], [1, "автоматически", "1", "используется DNS или DoH, в зависимости от того, что быстрее"], [2, "DoH, затем DNS", "2"], [3, "только DoH", "3"], [4, "DNS и DoH", "4"], [5, "отключить DoH", "5"]]
 },{
-	pref: ["network.cookie.cookieBehavior", "Получать куки",,"Персональные настройки посещённых сайтов"], pDefGreen: 3, pYellow: 0, pGray: 4,
+	pref: ["network.cookie.cookieBehavior", "Получать куки",,"Персональные настройки посещённых сайтов"], Def3el: 3, Yellow: 0, Gray: 4,
 	keys: [[0, "со всех сайтов"], [3, "посещённые сайты"], [4, "кроме трекеров"], [1, "кроме сторонних"], [2, "никогда"]]
 },null,{
-	pref: ["browser.display.use_document_fonts", "Загружать шрифты страниц"], pDefGreen: 1, pGray: 0, refresh: true,
+	pref: ["browser.display.use_document_fonts", "Загружать шрифты страниц"], Def3el: 1, Gray: 0, refresh: true,
 	keys: [[1, "Да"], [0, "Нет"]]
 },{
-	pref: ["font.name.sans-serif.x-cyrillic", "Шрифт без засечек ",,"Также влияет на всплывающие подсказки\nСистемный: загрузка шрифтов документа"], pDefGreen: "", pYellow: "Roboto", pGray: "Arial", keys: sans
+	pref: ["font.name.sans-serif.x-cyrillic", "Шрифт без засечек ",,"Также влияет на всплывающие подсказки\nСистемный: загрузка шрифтов документа"], Def3el: "", Yellow: "Roboto", Gray: "Arial", keys: sans
 },{
-	pref: ["font.name.serif.x-cyrillic", "Шрифт с засечками"], pDefGreen: "", pYellow: "Arial", keys: serif
+	pref: ["font.name.serif.x-cyrillic", "Шрифт с засечками"], Def3el: "", Yellow: "Arial", keys: serif
 },{
 	pref: ["gfx.webrender.force-disabled", "Ускорять отрисовку страниц", ,"gfx.webrender.compositor.force-enabled\ngfx.webrender.all\n\nАппаратная отрисовка страниц видеокартой.\nотключите при разных проблемах с графикой"],
-	pDefGreen: false, pYellow: true, pGray: undefined, restart: true, keys: [
+	Def3el: false, Yellow: true, Gray: undefined, restart: true, keys: [
 	[true, "Нет",,,`[['gfx.webrender.compositor.force-enabled', false], ['gfx.webrender.all', false]].map((a) =>{ucf.pref(...a)})`],
 	[false, "Да",,,`[['gfx.webrender.compositor.force-enabled', true], ['gfx.webrender.all', true]].map((a) =>{ucf.pref(...a)})`]]
 },null,{
-	pref: ["media.autoplay.default", "Авто-play аудио/видео"], pDefGreen: 0, pYellow: 2, pGray: 5, refresh: true,
+	pref: ["media.autoplay.default", "Авто-play аудио/видео"], Def3el: 0, Yellow: 2, Gray: 5, refresh: true,
 	keys: [
 		[0, "Разрешить", "0"], [2, "Спрашивать", "2"], [1, "Запретить", "1"], [5, "Блокировать", "5"]]
 },{
 	pref: ["dom.storage.enabled", "Локальное хранилище",, "Сохранение персональных данных, по\nкоторым вас можно идентифицировать"],
-	pDefGreen: false, pYellow: true,
+	Def3el: false, Yellow: true,
 	keys: [[true, "Разрешить"], [false, "Запретить"]]
 },{
-	pref: ["privacy.resistFingerprinting", "Изоляция Firstparty-Fingerprint", ,"privacy.firstparty.isolate\n\nЗащита данных пользователя также\nзапрещает запоминать размер окна"], pDefGreen: false,
+	pref: ["privacy.resistFingerprinting", "Изоляция Firstparty-Fingerprint", ,"privacy.firstparty.isolate\n\nЗащита данных пользователя также\nзапрещает запоминать размер окна"], Def3el: false,
 	keys: [[true, "Да", , "Защита от слежки",`ucf.pref('privacy.firstparty.isolate', true)`], [false, "Нет", , "Защита от слежки",`ucf.pref('privacy.firstparty.isolate', false)`]]
 },(()=>{
 if (parseInt(Ff.ver) > 114) return { //новый FF
-	pref: ["browser.translations.enable", "Встроенный перевод сайтов"], pDefGreen: true, pGray: false, refresh: true,
+	pref: ["browser.translations.enable", "Встроенный перевод сайтов"], Def3el: true, Gray: false, refresh: true,
 	keys: [[true, "Да"], [false, "Откл",,,`ucf.mode_skin('Перевод отключен для новых вкладок')`]]
 	}; else return {
-	pref: ["media.peerconnection.enabled", "WebRTC ваш реальный IP"], pDefGreen: false,
+	pref: ["media.peerconnection.enabled", "WebRTC ваш реальный IP"], Def3el: false,
 	keys: [[true, "Выдать"], [false, "Скрыть"]]
 	}
 })(),null,{
-	pref: ["network.http.sendRefererHeader", "Referer: для чего"], pDefGreen: 2, pYellow: 1,
+	pref: ["network.http.sendRefererHeader", "Referer: для чего"], Def3el: 2, Yellow: 1,
 	keys: [[0, "Ни для чего", "0"], [1, "Только ссылки", "1"], [2, "Ссылки, графика", "2"]]
 },{
-	pref: ["browser.cache.disk.capacity", "Кэш браузера",,"\ncache.memory.max_entry_size:\nДиск и память: 5120\nтолько Память: -1"], pDefGreen: 1048576, pYellow: 0, pGray: 256e3,
+	pref: ["browser.cache.disk.capacity", "Кэш браузера",,"\ncache.memory.max_entry_size:\nДиск и память: 5120\nтолько Память: -1"], Def3el: 1048576, Yellow: 0, Gray: 256e3,
 	keys: [
 	[256e3, I[5]],
 	[1048576, "Диск и Память",,,`[['browser.cache.memory.enable', true], ['browser.cache.disk.enable', true], ['browser.cache.memory.max_entry_size', 5120]].map((a) =>{ucf.pref(...a)})`],
 	[0, "только Память",,,`[['browser.cache.memory.enable', true], ['browser.cache.disk.enable', false], ['browser.cache.memory.max_entry_size', -1]].map((a) =>{ucf.pref(...a)})`],
 	[2097152, "только Диск",,,`[['browser.cache.memory.enable', false], ['browser.cache.disk.enable', true]].map((a) =>{ucf.pref(...a)})`]]
 },{
-	pref: ["browser.sessionstore.interval", "Резервирование сессий",,"Браузер резервирует сессии на\nслучай сбоя, снижая ресурс SSD"], pDefGreen: 3e5, pYellow: I[9], pGray: 15e3,
+	pref: ["browser.sessionstore.interval", "Резервирование сессий",,"Браузер резервирует сессии на\nслучай сбоя, снижая ресурс SSD"], Def3el: 3e5, Yellow: I[9], Gray: 15e3,
 	keys: [
 	[I[9], I[9]/60e3 +" мин"], [15e3, "15 сек"], [6e4, "1 мин"], [3e5, "5 мин"], [9e5, "15 мин"], [18e5, "30 мин"]]
 },{
 	pref: [I[4], "User Agent",,"Тип гаджета меняет вид сайта", [ua, "встроенный"]],
-	pDefGreen: ua, pYellow: I[8] + I[6], pGray: I[8] + I[7], refresh: true,
+	Def3el: ua, Yellow: I[8] + I[6], Gray: I[8] + I[7], refresh: true,
 	keys: [ [ua, I[5]],
 		[I[8] + I[6], "Chrome 118 Win10"], [I[8] + I[7], "Firefox 97 Android 12"],
 		[I[8] + "Windows; U; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)", "MSIE 6.0 Windows"],
@@ -436,8 +436,7 @@ if (parseInt(Ff.ver) > 114) return { //новый FF
 		[I[8] + "Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.143 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36", "Yandex OSX"],
 		[I[8] + "compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "GoogleBot"]]
 }]
-
-Over = { //edit подсказки под мышью
+		Over = { //edit подсказки под мышью
 get [B[1]](){ //PanelUI delete this[…];
 	ucf.mode_skin(); if (ucf.pref("signon.rememberSignons"))
 		Services.cache2.asyncGetDiskConsumption({onNetworkCacheDiskConsumption(bytes){
@@ -805,15 +804,11 @@ CustomizableUI.createWidget({ label:ad.replace('-',' '), id:ad,
 })(B[5],B[14]);
 
 /* переключение опций about:config. Лев+Shift | колёсико блокирует авто-закрытие
-есть pYellow = font italic, цвет = ключ, пусто:Red
+есть Yellow = font italic, цвет = ключ, пусто:Red
 refresh=false ⟳ tab, true load skip cache, restart=true with confirm, false ↯ */
 CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 	label: "Журнал, Меню опций", localized: false, id: B[6],
 	icon: "data:image/webp;base64,UklGRkYCAABXRUJQVlA4WAoAAAAQAAAAFwAAFwAAQUxQSJcAAAANcGJr25S8mH4SNGxAgsguPCZ0BcMOiDSNRpvVaCTa3AI2qm2e2ofz7OuwgIiYgMzb4kVjGvegnQFAwXgFVnvcOmtnMJtutAa3Vo4mhRMDpWq8AjfU+yQoYf1/oTkTIdUrknKswNQ5yAdDzqgr4CYbsJWQfEyEU5QNEl2eKFM2AAIbjmSIMjwXPGyEdj6Bdn4mj9KO63sAAFZQOCCIAQAAdAgAnQEqGAAYAD6dRppKgoCqgAE4lsAKwgisgG27uzPePSvBIu/Pr0HJqW+AfoAIHl2DrAnRo/G3JBpTx8yE7L6LFQyD+yUNvuRYAAD+7mwmpaoBcsJ1hVKsMI2ucqid8qndm+WEvH4l4il6lA8FPscgnrRHrnSjjyNcfUV21+TkfqOWKou2UvVsZSl1z+jKs760Vij5XCWF9Uo6TZAhKfrJpeILyQYwq2Ee/g1uyEH/dJMI/91DsVpI6i2vV/Jqpd4/KniJtTm1woLvaotA2ikt3eeBaqlHf8WPe++lSWS7fETjgvzzbflp0Rj+v23kbb9e/VjUcPaD83shRuwzEo6CAO/AGxE+Zwbvv9NDsQT6T+S4CCDOFTuMRVv9/0E4P+uK+Vc3bMfQQD05gY/fes+ZX6ZHkvFdMn7zX8LMVvI59p7F806HPD2lBjs4lWWhQ5ckJDNflZL49370shr3/Q9uMJN9i/NVCu4OT7K3+4+/RkAMnjuY09u+3i4y4CldQG789iIAAAA=",
-	defGreen: "data:image/webp;base64,UklGRgoBAABXRUJQVlA4TP0AAAAvD8ADEI9hpG2kwpf60h8+nBQkbSSp/tW9hIMPFw5E0kaSKuP9q3kJDx8ePDjQSCQp2z8RkhhIHBVAEdD9J4JYEkEUJSiDD0EIEcFgBSIspCAcbdlyRzfeYpwnDotGYFHIfXe6pdToDwUE2bZNRzds24qTx9b8h+chHET0fwLiX3vNO6jyh5aWbwMaqX3Ttu/j0VDG+5ZB9nQ2nYwBUGepB8vqYH9v+qrpnsESzDcnh9i3DZ4oB3cfPD0+kmSTuyCucHH+8dXwLphnt5+6vgQlz3KwrB90f3drUFqXYE/zJz9KsufsQbatX741WnxtabN4hjds8X2veQdVxr8CAA==",
-	Gray: "data:image/webp;base64,UklGRsgAAABXRUJQVlA4TLsAAAAvD8ADEFW4rbVtaVj67ViCCWhDSugiHSSVle7uMoJnhO973wgztW2IIZo4RvFEMdqu2rZtGJfNqWfYX0SisXgaGvkBFK5k4EEDTtS7Q31XN3ei94VeQuI61k6unuRaB86CMExsYWnFt+imhRgmCMMWJmYWliTRJgrYIAzfJfUMSCK7hDdji3VQkkTjE9hMrsCmNheZy9gzEqlhndwlMoJ5NSqr+KCIfPuDUm+Uoz7+FEmkmIjg/Pcf/6EBAA==",
-	Red: "data:image/webp;base64,UklGRhwBAABXRUJQVlA4TBABAAAvD8ADEL+hNJKkaOTJkycJn7CQJ5GjeXIgE4ZY/5Qq+HyMRJJyEvkR6K+IQwQk8qSRSFJWfgwkMZD0b0IC1KZtwDhl9h1Afx+SIEmAIEmChO+PwVWRpOsj2EgllBRDKy1EiJmhs5ztdaTnOAkEFBjQIGAdDiPJNq37bdu2nX9uDOGevQcR/SeQtNn+Aovh/vL2eF1FYR/cz9tNJKgHvf+4jseiYn59JAC38yqV8N57SDibw3OXzaQlyWKE3dPhtSzkshkiAttSHa4VLRXzqkqhogJIvVEjLbNWScIVeC3araaGoOqxeDk89z3rdphZzMITuF3mA/SJCFA2B9xPs9FkbKTsP8JcDtMhB7nQ747/CA==",
-	Yellow: "data:image/webp;base64,UklGRv4AAABXRUJQVlA4TPEAAAAvD8ADEFeBppGkTMdJQAKSkI0MSsoTgAhDkW1sG3VEF0EER06Mtm1jWBi4/68cNBJJykpiIHFUQNK/CQlIOO+Lr4fmLsUtio7rgkBiUAjszusVxAQkHiEB8xAnXoQwz5sOM4QYHEaSbVrnWf8/21b+GX6GsBvRfwJBCHHADPlLlGQhM0Qfif18v7HTj9/3mI7z4onp8Wrkj+t2ANg4+pEgdYZ5WTdwmQcnFWRF2w8zAPZtkQnCik3bAWhZMRRQAVDVrEoFCAWZoamkApKakQlSV4f2BnBTQRSYxgcGkQDx0zLfWM+PYwLPNml7iH//+A8AAA==",
 	onCreated(btn) {
 		btn.setAttribute("image", this.icon);
 		var doc = btn.ownerDocument, m = nn => doc.createXULElement(nn);
@@ -881,6 +876,7 @@ CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 		for(var obj of data) popup.append(this.createElement(doc, obj));
 		btn.append(popup);
 	},
+	map: {b: "Bool", n: "Int", s: "String"},
 	createElement(doc, obj) { //pref
 		if (!obj) return doc.createXULElement("menuseparator");
 		var pref = doc.ownerGlobal.Object.create(null), node, bool, img;
@@ -900,7 +896,8 @@ CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 			else if (key != "keys") pref[key] = val;
 			else pref.hasVals = true;
 		}
-		str = ucf.pref(pref.pref, "get");
+		var type = prefs.getPrefType(pref.pref);
+		var str = this.map[type == prefs.PREF_INVALID ? obj.keys ? (typeof obj.keys[0][0])[0] : "b" : type == prefs.PREF_BOOL ? "b" : type == prefs.PREF_INT ? "n" : "s"];
 		pref.get = prefs[`get${str}Pref`];
 		var map, set = prefs[`set${str}Pref`];
 		if (pref.hasVals) {
@@ -921,7 +918,7 @@ CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 			str.startsWith("B") && !pref.hasVals ? [[true, "true"], [false, "false"]] : obj.keys,
 			node.appendChild(doc.createXULElement("menupopup"))
 		);
-		if ("pDefGreen" in obj) pref.noAlt = !("pYellow" in obj);
+		if ("Def3el" in obj) pref.noAlt = !("Yellow" in obj);
 		return node;
 	},
 	regexpRefresh: /^(?:view-source:)?(?:https?|ftp)/,
@@ -945,17 +942,17 @@ CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 		hint += "\n" + pref.pref;
 		if (pref.hint) hint += "\n" + pref.hint;
 		node.tooltipText = hint; //+ текст
-		var img, alt = "pYellow" in pref && val == pref.pYellow, pro = "pGray" in pref && val == pref.pGray;
-		if (alt) img = this.Yellow;
-		if (pro) img = this.Gray;
-		if ("pDefGreen" in pref)
-			if (val == pref.pDefGreen)
-				node.style.removeProperty("color"), img = this.defGreen;
+		var img, alt = "Yellow" in pref && val == pref.Yellow, pro = "Gray" in pref && val == pref.Gray;
+		if (alt) img = Icon("f90");
+		if (pro) img = Icon("aaa");
+		if ("Def3el" in pref)
+			if (val == pref.Def3el)
+				node.style.removeProperty("color"), img = Icon();
 			else {
 				node.style.setProperty("color", "#702020", "important");
-				if (!alt && !pro) img = this.Red;
+				if (!alt && !pro) img = Icon("f26");
 			}
-		pref.img || node.setAttribute("image", img || this.Gray); //серый значок, если нет pDefGreen
+		pref.img || node.setAttribute("image", img || Icon("aaa")); //серый значок, если нет Def3el
 		user
 			? node.style.setProperty("font-style", "italic", "important")
 			: node.style.removeProperty("font-style");
@@ -1117,6 +1114,8 @@ tExp = (name,m = Ff.Exp(), t,z)=>{ //… {Общий︰Эксперт (m = 1)[�
 	return t;
 },
 {prefs} = Services, db = prefs.getDefaultBranch(""),
+Icon = (c = '0d0')=>{ return "data:image/svg+xml;charset=utf-8,<svg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='a' x1='16' x2='16' y1='32' gradientUnits='userSpaceOnUse'><stop stop-color='%23"+ c +"'/><stop stop-color='%23fff' offset='.8'/></linearGradient><linearGradient id='b' x2='32' y1='16' gradientTransform='matrix(1 0 0 1 2 2)'><stop stop-opacity='.5'/></linearGradient></defs><circle cx='16' cy='16' r='15' fill='url(%23a)' filter='url(%23c)' stroke='url(%23b)' stroke-width='2'/></svg>";
+},
 I = [AppConstants.platform == "win" ? '#124' : '#e8e8e8', //текст под курсором, без Aero #fff
 	"https://antizapret.prostovpn.org/proxy.pac", "network.proxy.type", "network.proxy.autoconfig_url", "general.useragent.override", "по-умолчанию",
 	"Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",

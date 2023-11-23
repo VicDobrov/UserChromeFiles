@@ -1,3 +1,36 @@
+(noop => addEventListener("TabSelect", { // отображать FindBar на всех вкладках
+	async handleEvent(e) {
+		var findbar = e.target._findBar;
+		var open = findbar && !findbar.hidden;
+		var prev = e.detail.previousTab._findBar;
+		if (prev && !prev.hidden) {
+			if (!open) {
+				if (!findbar) findbar = await gFindBarPromise;
+				Object.defineProperty(findbar, "removeAttribute", this);
+				findbar.setAttribute("noanim", true);
+				findbar.open();
+				setTimeout(this.removeAttr, 50, findbar);
+				var inp = findbar._findField;
+				inp.value && findbar._enableFindButtons(true);
+			}
+		}
+		else if (open) findbar.close(true);
+	},
+	configurable: true,
+	get() {
+		delete this.removeAttribute;
+		return noop;
+	},
+	removeAttr(findbar) {
+		findbar.removeAttribute("noanim");
+	},
+	get e() {
+		delete this.e;
+		return this.e = new Event("input");
+	}
+}, false, gBrowser.tabContainer || 1))(() => {});
+
+
 (this.findbarclose = { // панель поиска
 	timer: null,
 	init(that) {
@@ -62,36 +95,3 @@
 		window.removeEventListener("keydown", this, true);
 	}
 }).init(this);
-
-
-(noop => addEventListener("TabSelect", { // отображать FindBar на всех вкладках
-	async handleEvent(e) {
-			var findbar = e.target._findBar;
-			var open = findbar && !findbar.hidden;
-			var prev = e.detail.previousTab._findBar;
-			if (prev && !prev.hidden) {
-					if (!open) {
-							if (!findbar) findbar = await gFindBarPromise;
-							Object.defineProperty(findbar, "removeAttribute", this);
-							findbar.setAttribute("noanim", true);
-							findbar.open();
-							setTimeout(this.removeAttr, 50, findbar);
-							var inp = findbar._findField;
-							inp.value && findbar._enableFindButtons(true);
-					}
-			}
-			else if (open) findbar.close(true);
-	},
-	configurable: true,
-	get() {
-			delete this.removeAttribute;
-			return noop;
-	},
-	removeAttr(findbar) {
-			findbar.removeAttribute("noanim");
-	},
-	get e() {
-			delete this.e;
-			return this.e = new Event("input");
-	}
-}, false, gBrowser.tabContainer || 1))(() => {});

@@ -1,7 +1,7 @@
 setTimeout(() => { // проверки при старте браузера
 	(async (win, addon) => { // скрипт ucf_hookClicks.js подключен?
 		if (win.document.getElementById("nav-bar").tooltip.indexOf("ucf") < 0)
-			Cc["@mozilla.org/alerts-service;1"].getService(Ci.nsIAlertsService).showAlertNotification(null,"User Chrome Files",`Возможно, скрипт ucf_hookClicks.js не загружен!\n(или вы открыли новое окно Firefox)`,false);
+			Cc["@mozilla.org/alerts-service;1"].getService(Ci.nsIAlertsService).showAlertNotification(null,"User Chrome Files",`Скрипт ucf_hookClicks.js не загружен!\n(или вы открыли новое окно Firefox)`,false);
 	// есть расширение Reader View ? скрыть штатный Read View в url-bar : иначе показать
 		Services.prefs.setBoolPref("reader.parse-on-load.enabled", !(await addon).isActive);
 	})(Services.wm.getMostRecentWindow("navigator:browser"), AddonManager.getAddonByID("{2495d258-41e7-4cd5-bc7d-ac15981f064e}"));}, AppConstants.platform == "win" ? 9e3 : 3e3);
