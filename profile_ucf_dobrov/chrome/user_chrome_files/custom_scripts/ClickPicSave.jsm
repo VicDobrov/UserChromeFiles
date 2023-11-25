@@ -1,15 +1,15 @@
 var EXPORTED_SYMBOLS = ["MouseImgSaverChild", "MouseImgSaverParent"]; // © Dumby, mod Dobrov сохранить картинку колёсиком или перетащив вправо; DBL поиск похожих. нужен SingleHTML.jsm
 
-var u = {get it() { // https://forum.mozilla-russia.org/viewtopic.php?pid=793837#p793837
-	delete this.it; return this.it = Cc["@mozilla.org/image/tools;1"].getService(Ci.imgITools);
+var u = {get it() {delete this.it;
+	return this.it = Cc["@mozilla.org/image/tools;1"].getService(Ci.imgITools);
 }};
 for(let name of ["E10SUtils", "PrivateBrowsingUtils"])
 	ChromeUtils.defineModuleGetter(u, name, `resource://gre/modules/${name}.jsm`);
 
 class MouseImgSaverChild extends JSWindowActorChild {
-	handleEvent(e) { // клики мышью
-		if (e.button > 1) return; // только ЛКМ, СКМ
-		var trg = e.explicitOriginalTarget; // dragstart
+	handleEvent(e) { //клики мыши
+		if (e.button > 1) return; //ЛКМ+СКМ
+		var trg = e.explicitOriginalTarget; //dragstart
 		trg.nodeType == Node.ELEMENT_NODE
 			&& trg instanceof Ci.nsIImageLoadingContent
 			&& this[e.type](trg, e);
@@ -43,13 +43,13 @@ class MouseImgSaverChild extends JSWindowActorChild {
 	dragend(e) { // перетаскивание рисунка
 		var dt = e.dataTransfer, {trg} = this;
 		this.drag();
-		dt.mozUserCancelled || this.send(trg, e.screenX); // сохранить
+		dt.mozUserCancelled || this.send(trg, e.screenX); //сохранить
 		// dt.mozUserCancelled || this.sendAsyncMessage("dragend", (trg.currentRequestFinalURI || uri).spec);
 	}
-	auxclick(trg) { // клик СКМ
+	auxclick(trg) { //СКМ
 		trg.matches(":any-link :scope") || this.send(trg);
 	}
-	dblclick(trg) { // ЛКМ
+	dblclick(trg) { //ЛКМ
 		trg.matches(":any-link :scope")
 			|| this.sendAsyncMessage("dblclick", (trg.currentRequestFinalURI || uri).spec);
 	}
@@ -95,7 +95,7 @@ if (!ChromeUtils.domProcessChild.childID) {
 	});
 	var wref, titles = Object.create(null);
 	var data = Object.assign(Object.create(null), {
-		"browser.download.dir": {type: "String", get set() {
+		"browser.download.dir": {type: "String", get set(){
 			var win = wref.get();
 			win.Downloads.getList(win.Downloads.ALL).then(list => list.addView({
 				onDownloadChanged(download) {
@@ -118,7 +118,9 @@ if (!ChromeUtils.domProcessChild.childID) {
 				}
 			}));
 			Object.defineProperty(this, "set", {get() { // Загрузки/_Pics/Имя вкладки
-				return Cu.getGlobalForObject(Cu)[Symbol.for("saveFilePath")](wref.get(), 2)[1];
+				try {return Cu.getGlobalForObject(Cu)[Symbol.for("TitlePath")](wref.get(), 2)[0].path
+				} catch {console.error("No function TitlePath");
+				return Services.dirsvc.get("DfltDwnld",Ci.nsIFile).path;}
 			}});
 			return this.set;
 		}},
@@ -146,7 +148,7 @@ if (!ChromeUtils.domProcessChild.childID) {
 				null, // file name
 				contentDisposition,
 				contentType,
-				false, // do not bypass the cache
+				false, // no cache
 				null, // filepicker title key
 				null, // chosen data
 				u.E10SUtils.deserializeReferrerInfo(referrerInfo),
@@ -156,7 +158,7 @@ if (!ChromeUtils.domProcessChild.childID) {
 				null, // cache key
 				isPrivate,
 				win.document.nodePrincipal],
-				{length} = win.internalSave, lfix = length > 15;
+				{length} = win.internalSave, lfix = length >15;
 				lfix && args.splice(1, 0, null); //FIX FF113+
 				win.internalSave(...args);
 			} finally {
@@ -168,7 +170,7 @@ if (!ChromeUtils.domProcessChild.childID) {
 		id.style.background = 'rgba(0,200,0,0.3)'; win.setTimeout(() => id.style.removeProperty('background-color'), 350);
 		}
 		dblclick(win, imgURL) {
-			var gb = win.gBrowser, index = gb.selectedTab._tPos + 1;
+			var gb = win.gBrowser, index = gb.selectedTab._tPos +1;
 			gb.selectedTab = gb.addTrustedTab('https://yandex.ru/images/search?rpt=imageview&url=' + imgURL, {index});
 		}
 	}

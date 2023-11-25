@@ -76,7 +76,7 @@ Alt + R		Выбор части страницы\n
 `◧ лев. клик	Атрибут-Инспектор
 ◉ колёсико	Инструменты браузера`,"@": //texts
 
-`Очистить панель колёсиком мыши|Запрещённые сайты через АнтиЗапрет|☀ Яркость сайтов |💾 кэш, данные сайтов, куки занимают |Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|⚡️ Запрещено сохранять логины и пароли|◧ about:config, ◨ пр. клик Сброс, ⟳ Обновить, ↯ Перезапуск|Долгий клик в строке меню: Править опцию │ Колёсико: Сервисы|Ошибка скрипта |↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|период сохранения сессий меняется в меню кнопки «Журнал»|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\n\n◨ пр. клик	настройки UCF\n◨ держать	Перезапустить, удалив кэш\nAlt + x		запустить скрипт User.js|\n◨ правый клик: Без запроса|zoompage-we_dw-dev-|_531906d3-e22f-4a6c-a102-8057b88a1a63_-|_b9db16a4-6edc-47ec-a1f4-b86292ed211d_-`}; init();
+`Очистить панель колёсиком мыши|Запрещённые сайты через АнтиЗапрет|☀ Яркость сайтов |💾 кэш, данные сайтов, куки занимают |Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|⚡️ Запрещено сохранять логины и пароли|Опции ◨ правый клик: по-умолчанию, ⟳ Обновить ↯ Перезапуск|Долгий клик в строке меню: Править опцию │ Колёсико: Сервисы|Ошибка скрипта |↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|период сохранения сессий меняется в меню кнопки «Журнал»|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\n\n◨ пр. клик	настройки UCF\n◨ держать	Перезапустить, удалив кэш\nAlt + x		запустить скрипт User.js|\n◨ правый клик: Без запроса|zoompage-we_dw-dev-|_531906d3-e22f-4a6c-a102-8057b88a1a63_-|_b9db16a4-6edc-47ec-a1f4-b86292ed211d_-`}; init();
 
 Menu = [{ //команды пользователя
 		lab: "экспорт сайта в единый HTML",
@@ -192,7 +192,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 			ucf.pref(p, !n);
 			ucf.toStatus(`Подтверждение загрузки ${n ? "√ разреш" : "✘ запрещ"}ено`,3e3);
 		},
-		16(){ //+Shift
+		16(){ //+Shift //ЮзерАгент по-умолчанию
 			var n = ucf.pref(Ff.i) == 2; ucf.pref(Ff.i, n ? 1 : 2);
 			ucf.mode_skin(); BrowserReload();
 			ucf.toStatus(`Загрузка изображений ${n ? "√ разреш" : "✘ запрещ"}ено`,3e3);
@@ -332,10 +332,10 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 	[B[17]]: {2(){Mouse[B[16]][2]()}},
 }; var M = Object.keys(Mouse), Mus = {}; M.forEach((k) =>{Mus["#"+ k] = Mus["."+ k] = Mouse[k]});
 
-Setup = [{ //быстрые настройки
+Setup = [{ // быстрые настройки
 	pref: ["dom.disable_open_during_load", "Всплывающие окна"], Def3el: 2, Yellow: true,
 	keys: [[true, "Блокировать"], [false, "Разрешить"]],
-},{ //menu:pref,lab,key,hint,[undef,str],code radio:val,lab,val,+hint,code, icon:значок
+},{ // pref,lab,key,hint,[val,str],code | keys:val,lab,dat,+hint,code | icon:значок
 	pref: ["javascript.enabled", "Выполнять скрипты Java",,"Поддержка интерактивных сайтов, рекламы\nтакже разрешает действия горячих клавиш"], Def3el: true, refresh: true,
 	keys: [[true, "Да"], [false, "Нет"]]
 },{
@@ -343,28 +343,26 @@ Setup = [{ //быстрые настройки
 	keys: [[true, "Запрет",,,`ucf.pref('browser.safebrowsing.downloads.remote.block_dangerous_host',true)`], [false, "Открыть",,,`ucf.pref('browser.safebrowsing.downloads.remote.block_dangerous_host',false)`]]
 },{
 	pref: ["ucf.savedirs", "Загрузки",,'Пути сохранения Страниц и Графики\nСинтаксис «_Html/subdir|_Pics/subdir»\nsubdir: пусто | 0 заголовок | 1 домен',
-		["", "всё в общей папке"]], Def3el: "_Сайты||_Фото|0", Yellow: "_Web|1|_Images|0", Gray: "",
+		["", "всё в общей папке"]], Def3el: "_Сайты||_Фото|0", Blue: "_Web|1|_Images|0", Gray: "",
 	keys: [ // сохранение Html/Pics. [Загрузки]/"_Html/subdir|_Pics/subdir" subdir: пусто | 0 заголовок | 1 домен
-		["", "всё в общую папку"],
 		["_Сайты||_Фото|0", "_Сайты|_Фото/имя…"],
 		["_Web||_Photo|0", "_Web|_Photo/имя"],
 		["_Web|1|_Pics|1", "_Web/сайт|_Pics/…"],
 		["_Web|0|_Pics|", "_Web/имя|_Pics"],
 		["_Web|1|_Images|0", "_Web/сайт, _Images/имя"], //открыть опцию about:config:
-		["Сайт||Фото|", "ввести свои пути",,"ключ в about:config",`ucf.about_config('ucf.savedirs')`]]
+		["Сайт||Фото|", "ваши данные…",,"ключ в about:config",`ucf.about_config('ucf.savedirs')`]]
 },null,{
 	pref: [I[3], "Прокси (VPN)", "п", I[2] +"\n\nПереключение сетевых настроек"],
 	Def3el: "localhost", Yellow: I[1], Gray: "", refresh: true,
 	keys: [ //фон кнопки Меню: серый, голубой, красный, жёлтый, зелёный
-		["localhost", "системный", "0",, "ucf.pref(I[2], 0)"],
-		["127.0.0.1", "Tor или Opera", "1", "Необходим сервис tor или opera-proxy",
-			"ucf.pref(I[2], 1)"],
+		["localhost", "системный", "0",, "ucf.pref(I[2], 5)"],
 		[I[1], "АнтиЗапрет", "2", "Надёжный доступ на заблокированные сайты\n«Режим прокси» меняется на 2",
 			"ucf.pref(I[2], 2)"],
-		[ucf.pref(["user.pacfile", "file:///etc/proxy.pac"]), "user .pac файл", "4", "about:config pacfile"], //нужен диалог выбора pac-файла
-		[null, "сброшен",""]]
+		["127.0.0.1", "Tor или Opera", "1", "Необходим сервис tor или opera-proxy",
+			"ucf.pref(I[2], 1)"],
+		[ucf.pref(["user.pacfile", "file:///etc/proxy.pac"]), "user .pac файл", "4", "about:config pacfile"]] //нужен диалог выбора pac-файла
 },{
-	pref: [I[2], "Режим прокси", "р"], Def3el: 5, Yellow: 2, Gray: 1, refresh: true,
+	pref: [I[2], "Режим прокси", "р"], Gray: 0, Def3el: 5, Blue: 4, Yellow: 2, refresh: true,
 	keys: [[5, "системный", "5"],
 		[2, "Автонастройка", "2", "about:config pacfile"],
 		[1, "Ручная настройка", "1", "Используется "+ I[3]],
@@ -415,28 +413,29 @@ if (parseInt(Ff.ver) > 114) return { //новый FF
 	pref: ["browser.cache.disk.capacity", "Кэш браузера",,"\ncache.memory.max_entry_size:\nДиск и память: 5120\nтолько Память: -1"], Def3el: 1048576, Yellow: 0, Gray: 256e3,
 	keys: [
 	[256e3, I[5]],
-	[1048576, "Диск и Память",,,`[['browser.cache.memory.enable', true], ['browser.cache.disk.enable', true], ['browser.cache.memory.max_entry_size', 5120]].map((a) =>{ucf.pref(...a)})`],
-	[0, "только Память",,,`[['browser.cache.memory.enable', true], ['browser.cache.disk.enable', false], ['browser.cache.memory.max_entry_size', -1]].map((a) =>{ucf.pref(...a)})`],
-	[2097152, "только Диск",,,`[['browser.cache.memory.enable', false], ['browser.cache.disk.enable', true]].map((a) =>{ucf.pref(...a)})`]]
+	[1048576, "Диск и Память",,,`[[I[7], true], [I[8], true], ['browser.cache.memory.max_entry_size', 5120]].map((a) =>{ucf.pref(...a)})`],
+	[0, "только Память",,,`[[I[7], true], [I[8], false], ['browser.cache.memory.max_entry_size', -1]].map((a) =>{ucf.pref(...a)})`],
+	[2097152, "только Диск",,,`[[I[7], false], [I[8], true]].map((a) =>{ucf.pref(...a)})`]]
 },{
-	pref: ["browser.sessionstore.interval", "Резервирование сессий",,"Браузер резервирует сессии на\nслучай сбоя, снижая ресурс SSD"], Def3el: 3e5, Yellow: I[9], Gray: 15e3,
+	pref: ["browser.sessionstore.interval", "Резервирование сессий",,"Браузер резервирует сессии на\nслучай сбоя, снижая ресурс SSD"], Gray: 15e3, Def3el: 6e4, Blue: 3e5, Yellow: 9e5,
 	keys: [
-	[I[9], I[9]/60e3 +" мин"], [15e3, "15 сек"], [6e4, "1 мин"], [3e5, "5 мин"], [9e5, "15 мин"], [18e5, "30 мин"]]
+	[15e3, "15 сек"], [6e4, "1 мин"], [3e5, "5 мин"], [9e5, "15 мин"], [18e5, "30 мин"]]
 },{
-	pref: [I[4], "User Agent",,"Тип гаджета меняет вид сайта", [ua, "встроенный"]],
-	Def3el: ua, Yellow: I[8] + I[6], Gray: I[8] + I[7], refresh: true,
-	keys: [ [ua, I[5]],
-		[I[8] + I[6], "Chrome 118 Win10"], [I[8] + I[7], "Firefox 97 Android 12"],
-		[I[8] + "Windows; U; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)", "MSIE 6.0 Windows"],
-		["Opera/9.80 (Windows NT 6.2; Win64; x64) Presto/2.12 Version/12.16", "Opera12 W8"],
-		[I[8] + "Linux; Android 5.1.1; SM-G928X Build/LMY47X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.83 Mobile Safari/537.36", "Samsung Galaxy S6"],
-		[I[8] + "PlayStation 4 3.11) AppleWebKit/537.73 (KHTML, like Gecko)", "Playstation 4"],
-		["Windows NT 10.0; Win64; x64; Xbox; Xbox One) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edge/44.18363.8131", "Edge 44 Xbox One"],
-		[I[8] + "compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; SAMSUNG; GT-I8350)", "Windows Phone"],
-		[I[8] + "Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.143 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36", "Yandex OSX"],
-		[I[8] + "compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "GoogleBot"]]
-}]
-		Over = { //edit подсказки под мышью
+	pref: [I[4], "User Agent",,"Изменяет вид сайта", [ua,"встроенный"],`console.log("MENU"); console.log(trg.val)`], refresh: true, Def3el: ua,
+	// Yellow: I[6] + I[6], Gray: I[6] + I[7],
+	keys: [
+	[ucf.uam(), "ваши данные…",,,`console.log("VASHI");`], //ucf.about_config(I[4])
+	[I[6] + "Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36", "Chrome 118 Win10"],
+	[I[6] +"Windows; U; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)", "MSIE 6.0 Windows"],
+	["Opera/9.80 (Windows NT 6.2; Win64; x64) Presto/2.12 Version/12.16", "Opera12 W8"],
+	[I[6] +"PlayStation 4 3.11) AppleWebKit/537.73 (KHTML, like Gecko)", "Playstation 4"],
+	[I[6] +"compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; SAMSUNG; GT-I8350)", "Windows Phone"],
+	[I[6] +"Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.143 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36","Yandex MacOS"],
+	[I[6] +"compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "GoogleBot"],
+	[ua, I[5]]] //штатный ЮзерАгент
+}]; I.push(Setup[Setup.length-1].keys);
+
+Over = { //edit подсказки под мышью
 get [B[1]](){ //PanelUI delete this[…];
 	ucf.mode_skin(); if (ucf.pref("signon.rememberSignons"))
 		Services.cache2.asyncGetDiskConsumption({onNetworkCacheDiskConsumption(bytes){
@@ -486,8 +485,8 @@ get [B[6]](){ //FavMenu
 	var trg = window.event?.target;
 	if (trg.id == B[6])
 		zoom(0,0,0,`, ${ucf.pref("browser.tabs.loadInBackground") ? "Не выбирать" : "Переключаться в"} новые вкладки`)
-	else
-		ucf.toStatus(T[6],9e3);
+	else if (trg.id)
+			ucf.toStatus(T[6],9e3);
 	try {trg.mstate = trg.config.state + trg.menupopup.state;} catch{} //QuickToggle
 	if (!/open/.test(trg.mstate))
 		return tExp(B[6])
@@ -804,13 +803,12 @@ CustomizableUI.createWidget({ label:ad.replace('-',' '), id:ad,
 })(B[5],B[14]);
 
 /* переключение опций about:config. Лев+Shift | колёсико блокирует авто-закрытие
-есть Yellow = font italic, цвет = ключ, пусто:Red
-refresh=false ⟳ tab, true load skip cache, restart=true with confirm, false ↯ */
+	есть Yellow = font italic, цвет = ключ, пусто:Red
+	refresh=false ⟳ tab, true load skip cache, restart=true with confirm, false ↯ */
 CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 	label: "Журнал, Меню опций", localized: false, id: B[6],
-	icon: "data:image/webp;base64,UklGRkYCAABXRUJQVlA4WAoAAAAQAAAAFwAAFwAAQUxQSJcAAAANcGJr25S8mH4SNGxAgsguPCZ0BcMOiDSNRpvVaCTa3AI2qm2e2ofz7OuwgIiYgMzb4kVjGvegnQFAwXgFVnvcOmtnMJtutAa3Vo4mhRMDpWq8AjfU+yQoYf1/oTkTIdUrknKswNQ5yAdDzqgr4CYbsJWQfEyEU5QNEl2eKFM2AAIbjmSIMjwXPGyEdj6Bdn4mj9KO63sAAFZQOCCIAQAAdAgAnQEqGAAYAD6dRppKgoCqgAE4lsAKwgisgG27uzPePSvBIu/Pr0HJqW+AfoAIHl2DrAnRo/G3JBpTx8yE7L6LFQyD+yUNvuRYAAD+7mwmpaoBcsJ1hVKsMI2ucqid8qndm+WEvH4l4il6lA8FPscgnrRHrnSjjyNcfUV21+TkfqOWKou2UvVsZSl1z+jKs760Vij5XCWF9Uo6TZAhKfrJpeILyQYwq2Ee/g1uyEH/dJMI/91DsVpI6i2vV/Jqpd4/KniJtTm1woLvaotA2ikt3eeBaqlHf8WPe++lSWS7fETjgvzzbflp0Rj+v23kbb9e/VjUcPaD83shRuwzEo6CAO/AGxE+Zwbvv9NDsQT6T+S4CCDOFTuMRVv9/0E4P+uK+Vc3bMfQQD05gY/fes+ZX6ZHkvFdMn7zX8LMVvI59p7F806HPD2lBjs4lWWhQ5ckJDNflZL49370shr3/Q9uMJN9i/NVCu4OT7K3+4+/RkAMnjuY09u+3i4y4CldQG789iIAAAA=",
 	onCreated(btn) {
-		btn.setAttribute("image", this.icon);
+		btn.setAttribute("image", "data:image/webp;base64,UklGRkYCAABXRUJQVlA4WAoAAAAQAAAAFwAAFwAAQUxQSJcAAAANcGJr25S8mH4SNGxAgsguPCZ0BcMOiDSNRpvVaCTa3AI2qm2e2ofz7OuwgIiYgMzb4kVjGvegnQFAwXgFVnvcOmtnMJtutAa3Vo4mhRMDpWq8AjfU+yQoYf1/oTkTIdUrknKswNQ5yAdDzqgr4CYbsJWQfEyEU5QNEl2eKFM2AAIbjmSIMjwXPGyEdj6Bdn4mj9KO63sAAFZQOCCIAQAAdAgAnQEqGAAYAD6dRppKgoCqgAE4lsAKwgisgG27uzPePSvBIu/Pr0HJqW+AfoAIHl2DrAnRo/G3JBpTx8yE7L6LFQyD+yUNvuRYAAD+7mwmpaoBcsJ1hVKsMI2ucqid8qndm+WEvH4l4il6lA8FPscgnrRHrnSjjyNcfUV21+TkfqOWKou2UvVsZSl1z+jKs760Vij5XCWF9Uo6TZAhKfrJpeILyQYwq2Ee/g1uyEH/dJMI/91DsVpI6i2vV/Jqpd4/KniJtTm1woLvaotA2ikt3eeBaqlHf8WPe++lSWS7fETjgvzzbflp0Rj+v23kbb9e/VjUcPaD83shRuwzEo6CAO/AGxE+Zwbvv9NDsQT6T+S4CCDOFTuMRVv9/0E4P+uK+Vc3bMfQQD05gY/fes+ZX6ZHkvFdMn7zX8LMVvI59p7F806HPD2lBjs4lWWhQ5ckJDNflZL49370shr3/Q9uMJN9i/NVCu4OT7K3+4+/RkAMnjuY09u+3i4y4CldQG789iIAAAA=");
 		var doc = btn.ownerDocument, m = nn => doc.createXULElement(nn);
 		btn.domParent = null;
 		btn.popups = new btn.ownerGlobal.Array();
@@ -871,12 +869,11 @@ CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 		var popup = doc.createXULElement("menupopup");
 		btn.popups.push(btn[prop] = popup);
 		popup.id = this.id + "-" + prop;
-		for (var type of ["popupshowing", "click"])
+		for (var type of ["popupshowing"])
 			popup.setAttribute("on" + type, `parentNode.linkedObject.${type}(event)`);
 		for(var obj of data) popup.append(this.createElement(doc, obj));
 		btn.append(popup);
 	},
-	map: {b: "Bool", n: "Int", s: "String"},
 	createElement(doc, obj) { //pref
 		if (!obj) return doc.createXULElement("menuseparator");
 		var pref = doc.ownerGlobal.Object.create(null), node, bool, img;
@@ -896,16 +893,16 @@ CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 			else if (key != "keys") pref[key] = val;
 			else pref.hasVals = true;
 		}
-		var type = prefs.getPrefType(pref.pref);
-		var str = this.map[type == prefs.PREF_INVALID ? obj.keys ? (typeof obj.keys[0][0])[0] : "b" : type == prefs.PREF_BOOL ? "b" : type == prefs.PREF_INT ? "n" : "s"];
+		var t = prefs.getPrefType(pref.pref), m = {b: "Bool", n: "Int", s: "String"};
+		var str = m[t == prefs.PREF_INVALID ? obj.keys ? (typeof obj.keys[0][0])[0] : "b" : t == prefs.PREF_BOOL ? "b" : t == prefs.PREF_INT ? "n" : "s"]; //String по-умолчанию
 		pref.get = prefs[`get${str}Pref`];
 		var map, set = prefs[`set${str}Pref`];
 		if (pref.hasVals) {
-			for(var [val, , , , code] of obj.keys)
+			for(var [val,,,,code] of obj.keys)
 				code && (map || (map = new Map())).set(val, code);
 			if (map) pref.set = (key, val) => {
 				set(key, val);
-				map.has(val) && eval(map.get(val)); //run код
+				map.has(val) && eval(map.get(val)); //код2 если pref изменён
 			}
 		}
 		if (!map) pref.set = set;
@@ -920,6 +917,18 @@ CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 		);
 		if ("Def3el" in obj) pref.noAlt = !("Yellow" in obj);
 		return node;
+	},
+	createRadios(doc, vals, popup) {
+		for(var arr of vals) {
+			var [val, lab, key, hint] = arr;
+			var menuitem = doc.createXULElement("menuitem");
+			with (menuitem)
+				setAttribute("type","radio"), setAttribute("closemenu","none"), setAttribute("label", popup.parentNode.pref.vals[val] = lab), key && setAttribute("accesskey", key);
+			var tip = menuitem.val = val === "" ? "[ пустая строка ]" : val;
+			if (hint) tip += "\n" + hint;
+			menuitem.tooltipText = `${tip != undefined ? tip + "\n\n" : ""}клик с Shift блокирует авто-закрытие`;
+			popup.append(menuitem);
+		}
 	},
 	regexpRefresh: /^(?:view-source:)?(?:https?|ftp)/,
 	upd(node) {
@@ -942,40 +951,27 @@ CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 		hint += "\n" + pref.pref;
 		if (pref.hint) hint += "\n" + pref.hint;
 		node.tooltipText = hint; //+ текст
-		var img, alt = "Yellow" in pref && val == pref.Yellow, pro = "Gray" in pref && val == pref.Gray;
-		if (alt) img = Icon("f90");
-		if (pro) img = Icon("aaa");
+		var img = Icon("999"), alt = "Yellow" in pref && val == pref.Yellow, clr = "Gray" in pref && val == pref.Gray, blu = "Blue" in pref && val == pref.Blue;
+		if (clr) img = Icon("999"); if (blu) img = Icon("a0f"); if (alt) img = Icon("f80");
 		if ("Def3el" in pref)
 			if (val == pref.Def3el)
 				node.style.removeProperty("color"), img = Icon();
 			else {
 				node.style.setProperty("color", "#702020", "important");
-				if (!alt && !pro) img = Icon("f26");
+				if (!alt && !clr && !blu) img = Icon("f26");
 			}
-		pref.img || node.setAttribute("image", img || Icon("aaa")); //серый значок, если нет Def3el
+		pref.img || node.setAttribute("image", img); //нет Def3el ? серый
 		user
 			? node.style.setProperty("font-style", "italic", "important")
 			: node.style.removeProperty("font-style");
 		var {lab} = pref;
 		if (exists && pref.hasVals) {
 			if (val in pref.vals) var sfx = pref.vals[val] || val;
-			else var sfx = user ? "другое" : "стандарт";
+			else var sfx = user ? "другое" : I[5];
 			lab += ` ${"restart" in pref ? "↯-" : "refresh" in pref ? "-⟳" : "—"} ${sfx}`;
 		}
 		lab = exists ? lab : '['+ lab + `${"restart" in pref ? " ↯" : "refresh" in pref ? " ⟳" : ""}` +']'+ `${pref.undef ? " - "+ pref.undef[1] : ""}`;
 		node.setAttribute("label", lab); //имя = [имя] если преф не существует
-	},
-	createRadios(doc, vals, popup) {
-		for(var arr of vals) {
-			var [val, lab, key, hint] = arr;
-			var menuitem = doc.createXULElement("menuitem");
-			with (menuitem)
-				setAttribute("type","radio"), setAttribute("closemenu","none"), setAttribute("label", popup.parentNode.pref.vals[val] = lab), key && setAttribute("accesskey", key);
-			var tip = menuitem.val = val === "" ? "[ пустая строка ]" : val;
-			if (hint) tip += "\n" + hint;
-			menuitem.tooltipText = `${tip != undefined ? tip + "\n\n" : ""}клик с Shift блокирует авто-закрытие`;
-			popup.append(menuitem);
-		}
 	},
 	openPopup(popup) {
 		var btn = popup.parentNode;
@@ -1057,28 +1053,21 @@ CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 				else break;}
 		}
 	},
-	click(e, trg = e.target) { //строки меню
-		if (e.button) return;
-		var {pref} = trg;
-		if (!pref) return;
-	},
-	command(e, trg = e.target) { //лев на кнопке
+	command(e, trg = e.target) { //LMB
 		if (trg.btn) return;
 		var menu = trg.closest("menu"), newVal = trg.val;
 		if (!menu || !menu.pref) return;
 		this.maybeClosePopup(e, menu);
+		menu.pref.code && eval(menu.pref.code); //run1
 		if (newVal != menu.pref.val)
 			menu.pref.set(menu.pref.pref, newVal), this.maybeRe(menu, true);
-		menu.pref.code && eval(menu.pref.code); //run
 	},
 	contextmenu(e, trg = e.target) {
-		if ("pref" in trg) {
-			this.maybeClosePopup(e, trg);
-			if (trg.pref.user)
-				prefs.clearUserPref(trg.pref.pref), this.maybeRe(trg);
-			var code = trg.pref.code; code && eval(code); //run
-		}
-		e.preventDefault();
+		if (!("pref" in trg)) return;
+		this.maybeClosePopup(e, trg);
+		if (trg.pref.user)
+			prefs.clearUserPref(trg.pref.pref), this.maybeRe(trg);
+		trg.pref.code && eval(trg.pref.code); //run
 	}
 });
 
@@ -1114,19 +1103,16 @@ tExp = (name,m = Ff.Exp(), t,z)=>{ //… {Общий︰Эксперт (m = 1)[�
 	return t;
 },
 {prefs} = Services, db = prefs.getDefaultBranch(""),
-Icon = (c = '0d0')=>{ return "data:image/svg+xml;charset=utf-8,<svg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='a' x1='16' x2='16' y1='32' gradientUnits='userSpaceOnUse'><stop stop-color='%23"+ c +"'/><stop stop-color='%23fff' offset='.8'/></linearGradient><linearGradient id='b' x2='32' y1='16' gradientTransform='matrix(1 0 0 1 2 2)'><stop stop-opacity='.5'/></linearGradient></defs><circle cx='16' cy='16' r='15' fill='url(%23a)' filter='url(%23c)' stroke='url(%23b)' stroke-width='2'/></svg>";
-},
+Icon = (c = '0c0')=>"data:image/svg+xml;charset=utf-8,<svg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='a' x1='16' x2='16' y1='32' gradientUnits='userSpaceOnUse'><stop stop-color='%23"+ c +"'/><stop stop-color='%23fff' offset='.8'/></linearGradient><linearGradient id='b' x2='32' y1='16' gradientTransform='matrix(1 0 0 1 2 2)'><stop stop-opacity='.5'/></linearGradient></defs><circle cx='16' cy='16' r='15' fill='url(%23a)' stroke='url(%23b)' stroke-width='2'/></svg>",
 I = [AppConstants.platform == "win" ? '#124' : '#e8e8e8', //текст под курсором, без Aero #fff
-	"https://antizapret.prostovpn.org/proxy.pac", "network.proxy.type", "network.proxy.autoconfig_url", "general.useragent.override", "по-умолчанию",
-	"Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
-	"Android 12.0; Mobile; rv:109.0) Gecko/97.0 Firefox/97.0","Mozilla/5.0 ("],
+	"https://antizapret.prostovpn.org/proxy.pac", "network.proxy.type", "network.proxy.autoconfig_url", "general.useragent.override", "по-умолчанию", "Mozilla/5.0 (", "browser.cache.memory.enable", "browser.cache.disk.enable"],
 window.ucf = { //all ChromeOnly-scripts
-	pref(key,set, pt = {b:"Bool",n:"Int",s:"String"},t){ //или key = [key,default]
+	pref(key,set){ //или key = [key,default]
 		if (typeof key != "object") key = [key];
-		t = prefs.getPrefType(key[0]);
-		t = pt[t == 128 ? "b" : t == 64 ? "n" : t == 32 ? "s" : ""];
+		var t = prefs.getPrefType(key[0]), m = {b:"Bool",n:"Int",s:"String"};
+		t = m[t == 128 ? "b" : t == 64 ? "n" : t == 32 ? "s" : ""];
 		if (set == "get") return t; //тип опции
-		t ||= pt[set != undefined ? (typeof set)[0] : (typeof key[1])[0]];
+		if (!t) t = m[set != undefined ? (typeof set)[0] : (typeof key[1])[0]];
 		if (t) if (set != undefined)
 			prefs[`set${t}Pref`](key[0],set)
 		else
@@ -1215,8 +1201,7 @@ window.ucf = { //all ChromeOnly-scripts
 	}
 }, ua = ucf.ua(true), //real ЮзерАгент
 fonts = arr => arr.map(n => [(n == arr[arr.length-1] ? null : n), n]), //array с вложениями
-serif = fonts("Arial|Cantarell|DejaVu Sans|Roboto|PT Serif|Segoe UI|Ubuntu|Cambria|Fira Sans|Georgia|Noto Sans|Calibri|Times|системный".split('|')), sans = [["PT Sans","PT Sans"], ...serif],
+serif = fonts("Arial|Cantarell|DejaVu Sans|Roboto|PT Serif|Segoe UI|Ubuntu|Cambria|Fira Sans|Georgia|Noto Sans|Calibri|Times".split('|')), sans = [["PT Sans","PT Sans"], ...serif],
 hints = new Map([ //опция отсутствует ? вернуть строку
 	["ucf.savedirs", crop(ucf.dirsvcget(''),34)], [I[4], ucf.ua()]]);
-I.push(ucf.pref(['browser.sessionstore.interval',15e3]));
 });
