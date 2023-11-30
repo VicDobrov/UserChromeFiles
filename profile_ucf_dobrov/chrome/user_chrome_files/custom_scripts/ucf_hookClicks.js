@@ -94,12 +94,11 @@ Menu = { //массив команд пользователя, alt() клик п
 		cmd(){ ucf.HTML()},
 		img: "chrome://devtools/skin/images/globe.svg"
 	},
-	Fav: {lab: "меню Закладки первая | Последняя",
-		inf: `◧ лев.клик: Первая ссылка\n{T[1]}\nесли Закладок нет: Яндекс`,
+	Fav: {lab: "меню Закладки: первая ⇅ Последняя",
+		inf: `◧ лев.клик: Первая ссылка\n${T[1]}\nесли Закладок нет: Яндекс`,
 		cmd(){
 			switchTab(FavItem())},
-		alt(){switchTab(FavItem(true))},
-		img: "chrome://devtools/skin/images/tool-network.svg"
+		alt(){switchTab(FavItem(true))}
 	},
 	Tab: { sep: 1, //сперва разделитель
 		lab: "Вернуть вкладку | Обновить все", inf: T[1],
