@@ -45,7 +45,7 @@ ChromeUtils.domProcessChild.childID || ({
 		win.removeEventListener("unload", this);
 		win.document.getElementById("appMenu-popup").removeEventListener("popupshowing", this);
 	},
-	TitlePath(win, to, f, u, n = 0, h = 99, dir) { //global
+	TitlePath(win, to, f, u, n = 0, h = 99) { //global
 		if(parseInt(to) > 0) [n,to] = [to,n]; if(parseInt(to) < 0) h = Math.abs(to);
 		if (typeof(to) != 'string' || !/.*\|/.test(to)) to = prefs.getStringPref("ucf.savedirs","_Web||_Pic|0");
 		to = to.split('|').slice(0 + n, 2 + n); //Dir/Sub|[empty|0 title|1 url]
@@ -55,7 +55,7 @@ ChromeUtils.domProcessChild.childID || ({
 		u = /^file:\/\//.test(u) ? 'file' : u.replace(/^.*u=|https?:\/\/|www\.|\/.*/g,'').replace(/^ru\.|^m\./,'').replace(/\/.*/,'');
 		to[1] = (to[1] == "0") ? f : (to[1] == "1") ? u : "";
 		f += "_"+ new Date().toLocaleDateString('ru', {day: 'numeric',month: 'numeric',year: '2-digit'}) +'-'+ new Date().toLocaleTimeString('en-GB').replace(/:/g,"։"); //дата-часы
-		try {dir = dirsvc.get("DfltDwnld",Ci.nsIFile);} catch {dir = prefs.getComplexValue("browser.download.dir",Ci.nsIFile)}
+		try {var dir = dirsvc.get("DfltDwnld",Ci.nsIFile);} catch {dir = prefs.getComplexValue("browser.download.dir",Ci.nsIFile)}
 		var map = l => win.DownloadPaths.sanitize(l); //FIX имён
 		to.map(map).forEach(dir.append);
 		to = dir.clone(); to.append(f +'.html');

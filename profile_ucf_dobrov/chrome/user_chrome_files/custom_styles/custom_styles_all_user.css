@@ -69,7 +69,7 @@
 #urlbar .search-panel-header {display: none !important;}
 #urlbar .search-one-offs { padding-block: 0 !important;}
 
-#ToggleButton .toolbarbutton-icon, #print-button .toolbarbutton-icon, #ucf_Reader .toolbarbutton-icon { padding: 4px !important;}
+#QuickToggle .toolbarbutton-icon, #print-button .toolbarbutton-icon, #ucf_Reader .toolbarbutton-icon { padding: 4px !important;}
 
 #star-button { filter: invert(40%) sepia(100%) saturate(500%) !important;}
 

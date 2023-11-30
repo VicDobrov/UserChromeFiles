@@ -61,17 +61,17 @@ var UcfStylesScripts = {
 		],
 	},
 	scriptsbackground: [ // В фоне [System Principal]
-		{ path: "custom_script.js", }, // пусто
-		{ path: "ucf_aom-button.js", },
-		{ path: "ucf_undo-tab.js", },
-		{ path: "ucf_pauseResume.js", },
-		{ path: "ucf_UrlTooltip.js", },
-		{ path: "ucf_SessionManager.js", },
-		{ path: "ucf-loads-favicons.js", },
-		{ path: "ucf_fav-export-html.js", },
-		{ func: mjsmLoad("SingleHTML.jsm"), },
-		{ func: mjsmLoad("ClickPicSave.jsm"), }, // нужен SingleHTML
-		{ func: `${mjsmLoad("UCFTitleChangedChild.jsm")}.registerUCFTitleChanged();`, },
+		{ path: "custom_script.js"}, // пусто
+		{ path: "ucf_aom-button.js"},
+		{ path: "ucf_undo-tab.js"},
+		{ path: "ucf_pauseResume.js"},
+		{ path: "ucf_UrlTooltip.js"},
+		{ path: "ucf_SessionManager.js"},
+		{ path: "ucf-loads-favicons.js"},
+		{ path: "ucf_fav-export-html.js"},
+		{ func: mjsmLoad("SingleHTML.jsm")},
+		{ func: mjsmLoad("ClickPicSave.jsm")}, //need SingleHTML
+		{ func: `${mjsmLoad("UCFTitleChangedChild.jsm")}.registerUCFTitleChanged();`},
 	],
 	/** ************************▲ Настройки ▲************************ */
 };

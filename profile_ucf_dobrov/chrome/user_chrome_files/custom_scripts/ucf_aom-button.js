@@ -44,7 +44,7 @@ var extensionOptionsMenu = {
 			props = {
 				label: `${addon.name}${show_version ? ` ${addon.version}` : ""}`,
 				class: "menuitem-iconic",
-				tooltiptext: `${(show_description && addon.description) ? `${addon.description}\n` : ""}ID: ${addon.id}${addon.isActive && (uuid = extension?.uuid) ? `\nUUID: ${uuid}` : ""}${(user_permissions && (permissions = addon.userPermissions?.permissions)?.length) ? `\nРазрешения: ${permissions.join(", ")}` : ""}\n${addon.optionsURL ? "\nЛКМ: Настройки" : ""}\nCКМ: Копировать ID${uuid ? "\nShift+ЛКМ: Копировать UUID" : ""}${addon.creator?.url ? "\nCtrl+Shift+ЛКМ: Автор" : ""}${addon.homepageURL ? "\nCtrl+ЛКМ: Домашняя страница" : ""}${!addon.isBuiltin ? "\nCtrl+СКМ: Просмотр источника" : ""}\nShift+СКМ: Просмотр источника во вкладке\nПКМ: Включить/Отключить${(!addon.isSystem && !addon.isBuiltin) ? "\nCtrl+ПКМ: Удалить" : ""}`,
+				tooltiptext: `${(show_description && addon.description) ? `${addon.description}\n` : ""}ID: ${addon.id}${addon.isActive && (uuid = extension?.uuid) ? `\nUUID: ${uuid}` : ""}${(user_permissions && (permissions = addon.userPermissions?.permissions)?.length) ? `\nРазрешения: ${permissions.join(", ")}` : ""}\n${addon.optionsURL ? "\nЛКМ: Настройки" : ""}\nПКМ: Включить/Отключить\nCКМ: Копировать ID${uuid ? "\nShift+ЛКМ: Копировать UUID" : ""}${addon.creator?.url ? "\nCtrl+Shift+ЛКМ: Автор" : ""}${addon.homepageURL ? "\nCtrl+ЛКМ: Домашняя страница" : ""}${!addon.isBuiltin ? "\nCtrl+СКМ: Просмотр источника" : ""}\nShift+СКМ: Просмотр источника во вкладке${(!addon.isSystem && !addon.isBuiltin) ? "\nCtrl+ПКМ: Удалить" : ""}`,
 			};
 			for (let p in props)
 				mi.setAttribute(p, props[p]);

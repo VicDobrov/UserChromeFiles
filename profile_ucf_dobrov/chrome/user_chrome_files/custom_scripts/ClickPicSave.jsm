@@ -117,10 +117,10 @@ if (!ChromeUtils.domProcessChild.childID) {
 					} catch {}
 				}
 			}));
-			Object.defineProperty(this, "set", {get() { // Загрузки/_Pics/Имя вкладки
-				try {return Cu.getGlobalForObject(Cu)[Symbol.for("TitlePath")](wref.get(), 2)[0].path
-				} catch {console.error("No function TitlePath");
-				return Services.dirsvc.get("DfltDwnld",Ci.nsIFile).path;}
+			Object.defineProperty(this, "set", {get() { //Загрузки/Фото/Имя вкладки
+				try {return Cu.getGlobalForObject(Cu)[Symbol.for("TitlePath")](wref.get(),2)[0].path}
+				catch {console.error("No function TitlePath");
+					return Services.dirsvc.get("DfltDwnld",Ci.nsIFile).path;}
 			}});
 			return this.set;
 		}},

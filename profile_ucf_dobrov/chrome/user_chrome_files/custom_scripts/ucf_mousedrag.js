@@ -12,7 +12,7 @@
 				this.flash();
 			}
 		},
-		R: {
+		DR: {
 			name: "Открыть ссылку в новой активной странице", cmd() {
 				win.openUILinkIn(this.val, "tab", this.opts);
 			}
@@ -69,7 +69,6 @@
 	},
 	dragstart(e) {
 		win = e.view.windowRoot.ownerGlobal;
-		//if (!win.gBrowser.currentURI.spec.startsWith("http")) return;
 		if (!e.dataTransfer.mozItemCount || !win.gBrowser.selectedBrowser.matches(":hover"))
 			return;
 
@@ -140,6 +139,11 @@
 			w.addEventListener("unload", unload, {once: true});
 		})(w);
 	},
+	help(m, k = ""){
+		for(o in m)
+			k += "\n"+ o +" "+ m[o].name;
+		return k;
+	},
 	init(topic, self) {
 		delete this.init;
 		Services.obs.addObserver(self = this, topic);
@@ -147,5 +151,7 @@
 			Services.obs.removeObserver(self, topic);
 			Services.obs.removeObserver(quit, t);
 		}, "quit-application-granted");
+		with (this)
+			document.getElementById("nav-bar").ucf_mousedrag = "\tЖесты мыши для ссылок:"+ help(link) +"\n\n\tЖесты выделенного текста:"+ help(text);
 	}
 }).init("browser-delayed-startup-finished"))();
