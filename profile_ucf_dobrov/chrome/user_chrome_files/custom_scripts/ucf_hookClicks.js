@@ -468,7 +468,6 @@ if (parseInt(F.ver) > 114) return { //новый FF
 	pref: [F.z, "User Agent",,"Изменяет вид сайтов", [uar,"встроенный"],`console.log("MENU")`],
 		refresh: true, Def3el: uar, // Yellow: F.G, Gray: F.G + F.U,
 	keys: [
-	["Windows", F.t,,,`SetDef(pref, "ваши данные…")`],
 	[F.G +"Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36", "Chrome 118 Win10"],
 	[F.G +"Windows; U; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)", "MSIE 6.0 Windows"],
 	["Opera/9.80 (Windows NT 6.2; Win64; x64) Presto/2.12 Version/12.16", "Opera12 W8"],
