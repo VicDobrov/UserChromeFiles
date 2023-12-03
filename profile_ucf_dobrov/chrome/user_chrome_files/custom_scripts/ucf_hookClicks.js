@@ -45,7 +45,7 @@
 ◧ лев. + Alt	Библиотека
 ◧ держать	Новая вкладка (${F.tc()}T){︰\n
 Ø Ролик ±	масштаб Страницы
-◧ + Shift	масштаб Текст / Всё}`, [F.S]: //ReaderView
+◧ + Shift	масштаб Текст / Всё}`, [F.R]: //ReaderView
 
 `Клик мыши	Чтение в ReaderView
 Колёсико	Простой режим чтения\n`, [F.M]: //reader-mode
@@ -65,7 +65,7 @@ Alt + R		Выбор части страницы
 `нажатие мыши	Сведения о защите сайта\n
 ◨ правый клик	Логины и Пароли
 ◧ лев. держать	⇆ Web-шрифты
-◉ колёсико		ServiceWorkers`, [F.O]: //Stop
+◉ колёсико		ServiceWorkers`, [F.S]: //Stop
 
 `Колёсико:	Прервать обновления {︰
 ◨ п.держать	Антизапрет ⇆ Без прокси}\n`, [F.T]: //Close кроме Windows
@@ -657,7 +657,6 @@ listener = { //действия мыши, перехват существующ�
 	},
 	a: {__proto__: null,bubbles: true,screenX: 0,screenY: 0}
 },
-await delayedStartupPromise;
 events = ["click","mousedown","mouseenter","wheel"],
 els = document.querySelectorAll("#navigator-toolbox,#ucf-additional-vertical-bar,#appMenu-popup,#widget-overflow-mainView");
 for(var el of els) for(var type of events) el.addEventListener(type,listener,true);
