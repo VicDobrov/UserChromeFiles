@@ -849,6 +849,7 @@ CustomizableUI.createWidget({ label:F.A.replace('-',' '), id:F.A,
 		return this.code = F.A;
 	}})
 try {if (!Services.prefs.getStringPref("browser.uiCustomization.state").includes(`"${F.E}"`))
+	await delayedStartupPromise;
 document.getElementById(F.E).setAttribute("removable",true);
 } catch {}
 
