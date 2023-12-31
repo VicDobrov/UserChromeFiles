@@ -47,7 +47,7 @@ ChromeUtils.domProcessChild.childID || ({
 	},
 	TitlePath(win, to, f, u, n = 0, h = 99) { //global
 		if(parseInt(to) > 0) [n,to] = [to,n]; if(parseInt(to) < 0) h = Math.abs(to);
-		if (typeof(to) != 'string' || !/.*\|/.test(to)) to = prefs.getStringPref("ucf.savedirs","_Web||_Pic|0");
+		if (typeof(to) != 'string' || !/.*\|/.test(to)) to = prefs.getStringPref("extensions.user_chrome_files.savedirs","|||0");
 		to = to.split('|').slice(0 + n, 2 + n); //Dir/Sub|[empty|0 title|1 url]
 		f ||= win.gBrowser.selectedTab.label;
 		f = f.replace(/\s+/g,' ').replace(/[\\\/?*\"'`]+/g,'').replace(/[|<>]+/g,'_').replace(/:/g,'։').slice(0,h).trim();
@@ -90,9 +90,10 @@ ChromeUtils.domProcessChild.childID || ({
 				path = fp.file.path
 			else return;
 		}
-		this.write(path, data); await this.Succes(win, path);
+		this.write(path, data); //нужна проверка на ошибки записи
+		await this.Succes(win, path);
 	},
-	write(path, html) { //без Ff 79-84 в save() IOUtils.writeUTF8 вместо this.write, write() удалить
+	write(path, html) { //без Ff 79-84 в save() IOUtils.writeUTF8 вместо this.write
 		if (typeof IOUtils == "object")
 			var write = IOUtils.writeUTF8 || IOUtils.writeAtomicUTF8; // Fx 85+ || 82-84
 		if (!write) { // Fx 79-81
