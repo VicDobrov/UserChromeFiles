@@ -1,4 +1,12 @@
-(this.contextsearch = { // forum.mozilla-russia.org/viewtopic.php?pid=806042#p806042
+// ==UserScript==
+// @name      Browser search engine
+// @author    Vitaliy V.
+// @include   main
+// @shutdown  window.contextsearch.destructor();
+// @note      forum.mozilla-russia.org/viewtopic.php?pid=808658#p808658
+// ==/UserScript==
+
+(this.contextsearch = {
 	topic: "browser-search-engine-modified", hide: "browser.search.hiddenOneOffs",
 	defaultImg: "chrome://browser/skin/search-engine-placeholder.png",
 	searchSelect: null, popup: null,
@@ -8,7 +16,7 @@
 			return;
 		var popup = this.popup = searchSelect.closest("menupopup");
 		popup.addEventListener("popupshowing", this);
-		that.unloadlisteners.push("contextsearch");
+		that.unloadlisteners?.push("contextsearch");
 		document.getElementById("context-sep-screenshots").style.setProperty("display", "none", "important");
 		if (AppConstants.platform == "macosx")
 			Services.prefs.setBoolPref('widget.macos.native-context-menus',false);
@@ -21,7 +29,8 @@
 			Services.prefs.removeObserver(this.hide, this);
 		}
 	},
-	handleEvent(e) { this[e.type](e);
+	handleEvent(e) {
+		this[e.type](e);
 	},
 	popupshowing(e) {
 		var popup = this.popup;
@@ -45,10 +54,13 @@
 		this.popup.addEventListener("popuphidden", this);
 		this.rebuild(menu);
 	},
-	getEngines() { var args = "hideOneOffButton" in Services.search.defaultEngine
-		? [e => !e.hideOneOffButton] : Object.defineProperty(
+	getEngines() {
+		var args = "hideOneOffButton" in Services.search.defaultEngine
+		? [e => !e.hideOneOffButton]
+		: Object.defineProperty(
 			[function(e) {return !this.includes(e.name);}], "1", {
-				get: () => Services.prefs.getStringPref(this.hide)?.split(",") || []}
+				get: () => Services.prefs.getStringPref(this.hide)?.split(",") || []
+			}
 		);
 		return (this.getEngines = async () =>
 			(await Services.search.getVisibleEngines()).filter(...args)
@@ -73,7 +85,7 @@
 	setAttrs(node, engine, label = engine.name) {
 		node.engine = engine;
 		node.setAttribute("label", label);
-		node.setAttribute("image", engine.iconURI ? engine.iconURI.spec : this.defaultImg);
+		node.setAttribute("image", engine._iconURI ? engine._iconURI.spec : engine.iconURI ? engine.iconURI.spec : this.defaultImg);
 	},
 	observe() {
 		this.popupshowing = this.handlerRebuild;

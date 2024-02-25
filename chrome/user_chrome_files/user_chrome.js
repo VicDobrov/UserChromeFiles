@@ -243,22 +243,23 @@ var user_chrome = {
 						"XMLHttpRequest",
 						"fetch",
 					]);
-				if ("defineLazyModuleGetters" in XPCOMUtils)
-					XPCOMUtils.defineLazyModuleGetters(scope, {
-						console: "resource://gre/modules/Console.jsm",
-						AddonManager: "resource://gre/modules/AddonManager.jsm",
-						AppConstants: "resource://gre/modules/AppConstants.jsm",
-						E10SUtils: "resource://gre/modules/E10SUtils.jsm",
-						FileUtils: "resource://gre/modules/FileUtils.jsm",
-						OS: "resource://gre/modules/osfile.jsm",
-						PlacesUtils: "resource://gre/modules/PlacesUtils.jsm",
-						setTimeout: "resource://gre/modules/Timer.jsm",
-						setTimeoutWithTarget: "resource://gre/modules/Timer.jsm",
-						clearTimeout: "resource://gre/modules/Timer.jsm",
-						setInterval: "resource://gre/modules/Timer.jsm",
-						setIntervalWithTarget: "resource://gre/modules/Timer.jsm",
-						clearInterval: "resource://gre/modules/Timer.jsm",
-					});
+				var data = { // fix баг 1872673 by Dumby
+						AddonManager: null, AppConstants: null, E10SUtils: null, FileUtils: null, PlacesUtils: null,
+						Timer: ["setTimeout", "setTimeoutWithTarget", "clearTimeout", "setInterval", "setIntervalWithTarget", "clearInterval"]
+				};
+				var sfx, def, modules = {};
+				var vers = parseInt(Services.appinfo.platformVersion);
+				if (vers <= 114) data.osfile = "OS";
+				if (vers <= 122) def = XPCOMUtils.defineLazyModuleGetters, sfx = "jsm", data.Console = "console";
+				else def = ChromeUtils.defineESModuleGetters, sfx = "sys.mjs",
+						ChromeUtils.defineLazyGetter(scope, "console", () => Cu.getGlobalForObject(Cu).console.createInstance());
+				var set = (key, val) => modules[key] = `resource://gre/modules/${val}.${sfx}`;
+				for(var key in data) {
+						var val = data[key] || key;
+						if (Array.isArray(val)) for(var str of val) set(str, key);
+						else set(val, key);
+				}
+				def(scope, modules);
 				for (let s of UcfStylesScripts.scriptsbackground) {
 					try {
 						if (s.path)

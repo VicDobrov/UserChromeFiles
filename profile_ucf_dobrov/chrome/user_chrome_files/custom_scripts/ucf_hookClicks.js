@@ -345,7 +345,8 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		16(btn){if (btn.id == F.Q) zoom(0,1)}, //L+Shift
 		128(btn, trg){ //C Menu-1
 			if (btn.id == F.Q || trg)
-				btn.menupopup.openPopup(trg ||= btn, "after_start");
+				btn.menupopup.openPopup(trg ||= btn, "after_start")
+			else ucf.mode_skin();
 		},
 		129(btn){userjs(btn,"")}, //дC консоль
 		256(btn){ //about Menu
@@ -437,7 +438,7 @@ Setup = [{ //about:config меню. refresh=true ⟳ Обновить без к�
 	keys: [[true, "Разрешить"], [false, "Запретить"]]
 },{
 	pref: ["privacy.resistFingerprinting", "Изоляция Firstparty-Fingerprint", ,"privacy.firstparty.isolate\n\nЗащита данных пользователя также\nзапрещает запоминать размер окна"], Def3el: false,
-	keys: [[true, "Да", , "Защита от слежки",`ucf.pref('privacy.firstparty.isolate', true)`], [false, "Нет", , "Защита от слежки",`ucf.pref('privacy.firstparty.isolate', false)`]]
+	keys: [[true, "Да",,"Защита от слежки",`ucf.pref('privacy.firstparty.isolate', true)`], [false, "Нет",,,`ucf.pref('privacy.firstparty.isolate',false)`]]
 },(()=>{
 if (parseInt(F.ver) > 114) return { //новый FF
 	pref: ["browser.translations.enable", "Встроенный перевод сайтов"], Def3el: true, Gray: false, refresh: true,
@@ -449,11 +450,14 @@ if (parseInt(F.ver) > 114) return { //новый FF
 	pref: ["network.http.sendRefererHeader", "Referer: для чего"], Def3el: 2, Yellow: 1,
 	keys: [[0, "Ни для чего", "0"], [1, "Только ссылки", "1"], [2, "Ссылки, графика", "2"]]
 },{
-	pref: ["browser.cache.disk.capacity", "Кэш браузера",,"\ncache.memory.max_entry_size:\nДиск и память: 5120\nтолько Память: -1"], Def3el: 1048576, Yellow: 0, Gray: 256e3,
-	keys: [[256e3, F.m],
-	[1048576, "Диск и Память",,,`[[F.U, true], [F.V, true], ['browser.cache.memory.max_entry_size', 5120]].map((a) =>{ucf.pref(...a)})`],
-	[0, "только Память",,,`[[F.U, true], [F.V, false], ['browser.cache.memory.max_entry_size', -1]].map((a) =>{ucf.pref(...a)})`],
-	[2097152, "только Диск",,,`[[F.U, false], [F.V, true]].map((a) =>{ucf.pref(...a)})`]]
+	pref: ["browser.cache.disk.capacity", "Кэш браузера",,`\n${F.X}:\nДиск и память: 5120\nтолько Память: -1`,,`[[F.U,true],[F.V,true],[F.W,true]].map((a)=>{ucf.pref(...a)})`],
+	Def3el: 1048576, Yellow: 0, Gray: 5e5, Blue: 25e4, restart: true,
+	keys: [[5e5, F.m,,"500 Мб авторазмер"],
+	[1048576, "Диск и Память",,,`ucf.pref(F.X, 5120)`],
+	[0, "только Память",,,`[[F.V,false], [F.X,-1]].map((a)=>{ucf.pref(...a)})`],
+	[2097152, "только Диск",,,`ucf.pref(F.U,false)`],
+	[25e4, "250 Мб на диске",,"Ограничить размер кэша",`ucf.pref(F.W,false)`],
+	[1000000, "1 Гб максимум",,,`ucf.pref(F.W,false)`]]
 },{
 	pref: ["browser.sessionstore.interval", "Резервирование сессий",,"Браузер резервирует сессии на\nслучай сбоя, снижая ресурс SSD"], Gray: 15e3, Def3el: 6e4, Blue: 3e5, Yellow: 9e5,
 	keys: [[15e3, "15 сек"], [6e4, "1 мин"], [3e5, "5 мин"], [9e5, "15 мин"], [18e5, "30 мин"]]
@@ -471,7 +475,6 @@ if (parseInt(F.ver) > 114) return { //новый FF
 	[F.G +"compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "GoogleBot"],
 	[uar, F.m]] //штатный ЮзерАгент
 }];
-
 Over = { //edit подсказки под мышью
 get [F.P](){ //PanelUI delete this[…];
 	ucf.mode_skin(); if (ucf.pref("signon.rememberSignons"))
@@ -832,7 +835,7 @@ CustomizableUI.createWidget({label:`Панели, Папки`,id: F.F,tooltiptex
 	onCreated(btn){btn.style.setProperty("list-style-image",`url(${F.dir})`)}});
 CustomizableUI.createWidget({ label:F.A.replace('-',' '), id:F.A,
 	defaultArea: CustomizableUI.AREA_NAVBAR, localized: false,
-	onCreated(btn){btn.setAttribute("image", F.ati);
+	onCreated(btn){btn.setAttribute("image", F.ai);
 		btn.onmouseenter = btn.onmouseleave = this.onmouse;
 		btn.setAttribute("oncommand","handleCommand(this)"); btn.handleCommand = this.handleCommand;
 	},
@@ -1085,6 +1088,11 @@ CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 		menu.pref.code && eval(menu.pref.code); //run1
 		if (newVal != menu.pref.val)
 			menu.pref.set(menu.pref.pref, newVal), this.maybeRe(menu, true);
+			// if (newVal)
+			// 	menu.pref.set(menu.pref.pref, newVal)
+			// else
+			// 	console.log("NULL");
+				// prefs.clearUserPref(menu.pref.pref);
 	},
 	contextmenu(e) {
 		var trg = e.target;
@@ -1097,7 +1105,7 @@ CustomizableUI.createWidget({ defaultArea: CustomizableUI.AREA_NAVBAR,
 });
 
 })(()=>{ //перенос кода в конец
-db = `Очистить панель колёсиком мыши|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через АнтиЗапрет|Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|◧ + Shift, Колёсико: не закрывать|период сохранения сессий меняйте в меню кнопки «Быстрые опции»|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|☀ Яркость сайтов |по-умолчанию|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\tнастройки UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tзапуск скрипта User.js|ошибка скрипта — |[ пустая строка ]|chrome://user_chrome_files/content/|ваши данные…|extensions.user_chrome_files.|permissions.default.image|https://antizapret.prostovpn.org/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|Attributes-Inspector|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Android 9; Mobile; rv:109) Gecko/97 Firefox/97|identity-box|victor-dobrov.narod.ru/help-FF.html|pageAction-urlbar-_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|ReaderView|wheel-stop|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable`.split('|');
+db = `Очистить панель колёсиком мыши|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через АнтиЗапрет|Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|◧ + Shift, Колёсико: не закрывать|период сохранения сессий меняйте в меню кнопки «Быстрые опции»|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|☀ Яркость сайтов |по-умолчанию|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\tнастройки UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tзапуск скрипта User.js|ошибка скрипта — |[ пустая строка ]|chrome://user_chrome_files/content/|ваши данные…|extensions.user_chrome_files.|permissions.default.image|https://antizapret.prostovpn.org/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|Attributes-Inspector|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Android 9; Mobile; rv:109) Gecko/97 Firefox/97|identity-box|victor-dobrov.narod.ru/help-FF.html|pageAction-urlbar-_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|ReaderView|wheel-stop|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|browser.cache.memory.max_entry_size`.split('|');
 hints = "chrome://devtools/skin/images/"; F = {
 	id: "ucf_hookExpert", os: AppConstants.platform, ver: Services.appinfo.version.replace(/-.*/,''),
 	tc(m = "⌘",w = "Ctrl+"){return this.os == "macosx" ? m : w},
@@ -1105,7 +1113,7 @@ hints = "chrome://devtools/skin/images/"; F = {
 	upd: hints + "reload.svg", dom: hints + "tool-dom.svg", dir: hints + "folder.svg",
 	hlp: hints + "help.svg", opt: hints + "settings.svg", ie: hints + "globe.svg",
 	clr: hints + "clear.svg", con: hints + "aboutdebugging-connect-icon.svg",
-	ati: "data:image/webp;base64,UklGRjwAAABXRUJQVlA4TC8AAAAvD8ADAAoGbSM5Ov6k774XCPFP/0/03/8JGPxzroIzuOW06Ih60Genn1S/gHe+BgA=",
+	ai: "data:image/webp;base64,UklGRjwAAABXRUJQVlA4TC8AAAAvD8ADAAoGbSM5Ov6k774XCPFP/0/03/8JGPxzroIzuOW06Ih60Genn1S/gHe+BgA=",
 	qt: "data:image/webp;base64,UklGRkYCAABXRUJQVlA4WAoAAAAQAAAAFwAAFwAAQUxQSJcAAAANcGJr25S8mH4SNGxAgsguPCZ0BcMOiDSNRpvVaCTa3AI2qm2e2ofz7OuwgIiYgMzb4kVjGvegnQFAwXgFVnvcOmtnMJtutAa3Vo4mhRMDpWq8AjfU+yQoYf1/oTkTIdUrknKswNQ5yAdDzqgr4CYbsJWQfEyEU5QNEl2eKFM2AAIbjmSIMjwXPGyEdj6Bdn4mj9KO63sAAFZQOCCIAQAAdAgAnQEqGAAYAD6dRppKgoCqgAE4lsAKwgisgG27uzPePSvBIu/Pr0HJqW+AfoAIHl2DrAnRo/G3JBpTx8yE7L6LFQyD+yUNvuRYAAD+7mwmpaoBcsJ1hVKsMI2ucqid8qndm+WEvH4l4il6lA8FPscgnrRHrnSjjyNcfUV21+TkfqOWKou2UvVsZSl1z+jKs760Vij5XCWF9Uo6TZAhKfrJpeILyQYwq2Ee/g1uyEH/dJMI/91DsVpI6i2vV/Jqpd4/KniJtTm1woLvaotA2ikt3eeBaqlHf8WPe++lSWS7fETjgvzzbflp0Rj+v23kbb9e/VjUcPaD83shRuwzEo6CAO/AGxE+Zwbvv9NDsQT6T+S4CCDOFTuMRVv9/0E4P+uK+Vc3bMfQQD05gY/fes+ZX6ZHkvFdMn7zX8LMVvI59p7F806HPD2lBjs4lWWhQ5ckJDNflZL49370shr3/Q9uMJN9i/NVCu4OT7K3+4+/RkAMnjuY09u+3i4y4CldQG789iIAAAA="
 };
 [`titlebar-button.titlebar-close`,,`zoompage-we_dw-dev-`,,`_531906d3-e22f-4a6c-a102-8057b88a1a63_-`,,`_b9db16a4-6edc-47ec-a1f4-b86292ed211d_-`].forEach((c,i)=>{ //расширения
