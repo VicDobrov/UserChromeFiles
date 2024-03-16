@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name      Browser search engine
-// @author    Vitaliy V.
+// @author    Vitaliy V., mod Dumby
 // @include   main
 // @shutdown  window.contextsearch.destructor();
-// @note      forum.mozilla-russia.org/viewtopic.php?pid=808658#p808658
+// @note      forum.mozilla-russia.org/viewtopic.php?pid=808870#p808870
 // ==/UserScript==
 
 (this.contextsearch = {
@@ -85,7 +85,7 @@
 	setAttrs(node, engine, label = engine.name) {
 		node.engine = engine;
 		node.setAttribute("label", label);
-		node.setAttribute("image", engine._iconURI ? engine._iconURI.spec : engine.iconURI ? engine.iconURI.spec : this.defaultImg);
+		node.setAttribute("image", await engine.getIconURL?.() || engine.iconURI?.spec || this.defaultImg);
 	},
 	observe() {
 		this.popupshowing = this.handlerRebuild;
@@ -93,6 +93,7 @@
 		Services.prefs.removeObserver(this.hide, this);
 	},
 	search(e) {
+		console.log(e.button);
 		var {engine} = e.target;
 		if (!engine) return;
 		var searchSelect = this.searchSelect;

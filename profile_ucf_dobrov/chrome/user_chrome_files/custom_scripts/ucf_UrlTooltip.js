@@ -6,9 +6,9 @@ try {CustomizableUI.createWidget(({
 	get state() {
 		return Services.prefs.getBoolPref(this.pref, false); //по-умолчанию выкл
 	},
-	image: "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' style='fill:context-fill rgb(97, 99, 99);'><path d='M9.618 6.721a2.483 2.483 0 0 0-.39-.317l-.735.734A1.486 1.486 0 0 1 8.91 9.55l-2.12 2.122a1.486 1.486 0 0 1-2.122 0 1.486 1.486 0 0 1 0-2.121l.605-.605a3.53 3.53 0 0 1-.206-1.209L3.961 8.843a2.506 2.506 0 0 0 0 3.535 2.506 2.506 0 0 0 3.535 0l2.122-2.121a2.506 2.506 0 0 0 0-3.536z'/><path d='M6.79 9.55c.12.121.25.226.389.317l.734-.734a1.486 1.486 0 0 1-.417-2.411L9.618 4.6a1.486 1.486 0 0 1 2.121 0 1.486 1.486 0 0 1 0 2.121l-.605.605c.137.391.211.798.206 1.209l1.106-1.107a2.506 2.506 0 0 0 0-3.535 2.506 2.506 0 0 0-3.535 0L6.789 6.014a2.506 2.506 0 0 0 0 3.536z'/><circle style='fill:none;stroke:context-fill rgb(97, 99, 99);stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round' cx='8' cy='8' r='7.4'/></svg>",
-	setIcon(btn, state = this.state, i = this.image) {
-		if (state) i = i.replace(/97/g, '233');
+	image: "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg'><path d='M9.618 6.721a2.48 2.48 0 0 0-.39-.32l-.73.73A1.48 1.48 0 0 1 8.91 9.55l-2.12 2.12a1.48 1.48 0 0 1-2.12 0 1.48 1.48 0 0 1 0-2.12l.60-.60a3.53 3.53 0 0 1-.2-1.2L3.96 8.843a2.5 2.5 0 0 0 0 3.53 2.5 2.5 0 0 0 3.53 0l2.12-2.12a2.5 2.5 0 0 0 0-3.54z' fill='%23c22'/><path d='M6.79 9.55c.12.12.25.226.389.32l.73-.73a1.48 1.48 0 0 1-.417-2.411L9.62 4.6a1.48 1.48 0 0 1 2.12 0 1.48 1.48 0 0 1 0 2.12l-.60.60c.14.39.21.79.2 1.2l1.1-1.1a2.5 2.5 0 0 0 0-3.53 2.5 2.5 0 0 0-3.53 0L6.79 6.014a2.5 2.5 0 0 0 0 3.54z' fill='%23c22'/><circle cx='8' cy='8' r='7.4' fill='none' stroke='%23c22'/></svg>",
+		setIcon(btn, state = this.state, i = this.image) {
+		if (!state) i = i.replace(/23c/g, '232');
 		btn.setAttribute("image", i);
 	},
 	onCreated(btn) {

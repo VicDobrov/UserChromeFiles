@@ -5,7 +5,7 @@
 Колёсико или Клик + Ctrl:
 	Открыть сессию в новых вкладках\n
 Сортировка: тащите строки мышью
-	или курсором, удерживая Shift`, label: "Менеджер сессий", localized: false,
+	или курсором, удерживая Shift`, label: "Менеджер сессий", localized: false, defaultArea: CustomizableUI.AREA_NAVBAR,
 	init() {
 		this.handleEvent = e => this[e.type](e);
 		this.onTimeout = async () => await this.saveSession() || this.save();
