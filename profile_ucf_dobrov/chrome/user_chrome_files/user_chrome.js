@@ -27,9 +27,9 @@ var user_chrome = {
 		branch.setBoolPref("custom_styles_scripts_child", true);
 		branch.setStringPref("custom_styles_scripts_groups", "[\"browsers\"]");
 		branch.setBoolPref("custom_safemode", true);
-		branch.setBoolPref("winbuttons", false);
+		branch.setBoolPref("mystyle", false);
 		branch.setBoolPref("expert", false);
-		branch.setBoolPref("debug", false);
+		branch.setBoolPref("info", false);
 		if (UcfPrefs.vertical_top_bottom_bar_enable = UcfPrefs.gbranch.getBoolPref("vertical_top_bottom_bar_enable"))
 			this.sheettoolbars(() => {});
 		let noSafeMode = true;
