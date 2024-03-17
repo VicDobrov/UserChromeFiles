@@ -1,7 +1,7 @@
-// UCF 2024 mod for FF78+
+// UCF 2021 FF78+
 (async () => {Cu.evalInSandbox(`
-	var Services = globalThis.Services || ChromeUtils.import("resource://gre/modules/Services.jsm").Services;
-	var user_chrome_files_sandbox = {
+	var Services = globalThis.Services || ChromeUtils.import("resource://gre/modules/Services.jsm").Services,
+	user_chrome_files_sandbox = {
 		init() {
 			Services.obs.addObserver(this, "domwindowopened");
 			Services.obs.addObserver(this, "profile-after-change");
@@ -31,11 +31,9 @@
 			}
 			try {
 				Components.manager.QueryInterface(Ci.nsIComponentRegistrar).autoRegister(file);
-				try {Services.scriptloader.loadSubScript("chrome://user_chrome_files/content/user_chrome/user_chrome.js", globalThis, "UTF-8");
-				} catch(ex) {Services.scriptloader.loadSubScript("chrome://user_chrome_files/content/user_chrome.js", globalThis, "UTF-8")}
+				Services.scriptloader.loadSubScript("chrome://user_chrome_files/content/user_chrome.js", globalThis, "UTF-8");
 			} catch(ex) {
 				this.removeObs();
-				Cu.reportError(ex);
 				return;
 			}
 			if (aTopic === "domwindowopened")
@@ -53,4 +51,3 @@ lockPref("extensions.experiments.enabled", true);
 lockPref("extensions.legacy.enabled", true);
 lockPref("xpinstall.signatures.required", false);
 lockPref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
-lockPref("browser.newtabpage.activity-stream.feeds.telemetry", false); // FIX для about:newtab
