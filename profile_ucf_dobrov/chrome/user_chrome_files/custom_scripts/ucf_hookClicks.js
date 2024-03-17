@@ -1,7 +1,7 @@
 /* hookMouseKeys © Dumby, mod 3.0 Dobrov. нужен SingleHTML.jsm
 меняйте «под себя» Подсказки, Keys нажатия клавиш, Menu команды, Mouse клики мыши, Setup меню опций */
 
-(async init =>{init(); Tag = {[F.D]:`{`+ //подсказки кнопок вкладок меню
+(async init =>{init(); Tag = {[F.D]:`{`+ //подсказки кнопок вкладок меню: справка в help.html
 `
 ◉ колёсико	⬇︎ папка [Загрузки]
 ◨ правый клик ➜ Сохранить сайт
@@ -1320,4 +1320,8 @@ serif = fonts("Arial|Roboto|Cantarell|DejaVu Sans|PT Serif|Segoe UI|Ubuntu|Cambr
 hints = new Map([ //опция отсутствует ? вернуть строку
 	[F.u +"savedirs", crop(ucf.dirsvcget(''),34)], [F.z, ucf.ua()]]
 );
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> 06db064ed6126492c3fae71f58b2274051473cad
