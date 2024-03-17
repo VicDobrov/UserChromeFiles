@@ -1,5 +1,5 @@
 /* hookMouseKeys © Dumby, mod 3.0 Dobrov. нужен SingleHTML.jsm
-Данные юзера: Keys нажатия клавиш Menu команды Mouse клики мыши Setup опции */
+меняйте «под себя» Подсказки, Keys нажатия клавиш, Menu команды, Mouse клики мыши, Setup меню опций */
 
 (async init =>{init(); Tag = {[F.D]:`{`+ //подсказки кнопок вкладок меню
 `
@@ -202,6 +202,7 @@ Menu = { //массив команд пользователя, alt() клик п
 			Services.prompt.alert(null,"Справка по жестам мыши",`Перетащите фото вправо, чтобы сохранить\n\n`+ h);},
 		cmd(){Help()}
 }}
+
 Keys = { //перехват-клавиш KeyA[_mod][_OS](e,t){код} и KeyB: "KeyA"
 	KeyX_1(e,t) {userjs(e)}, // Alt+X запуск внешнего JS-кода
 	KeyS_6() {saveSelToTxt()}, // Ctrl+Shift+S
@@ -214,6 +215,7 @@ Keys = { //перехват-клавиш KeyA[_mod][_OS](e,t){код} и KeyB: "
 	отделять «_» от кода, если есть модификаторы и/или «iI»-флаг
 	только в указанной OS: KeyA_1i_win(e,t){… Alt+A для винды */
 },
+
 Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 	"urlbar-input": {
 		2(trg, forward){trg.value = ""} //очистить колёсиком
@@ -512,6 +514,7 @@ code из pref:
 // function SetDef(pref){ // pref.pref
 // 	console.log(pref.val);
 // }
+
 Over = { //edit подсказки под мышью
 get [F.P](){ //PanelUI delete this[…];
 	ucf.mode_skin(); if (ucf.pref("signon.rememberSignons"))
@@ -934,6 +937,7 @@ document.getElementById("nav-bar-customization-target").append(btn);
 			));
 			if (upd){ //обновляемая строка
 				item.style.filter = "drop-shadow(0.1px 1px 0.1px #c99)";
+				item.style.setProperty("font-style", "italic", "important");
 				if (item.renderedOnce) (item.render = upd).call(item);
 				else item.upd = upd, item.render = self.renderSub;
 			}
@@ -1167,16 +1171,16 @@ document.getElementById("nav-bar-customization-target").append(btn);
 }))()})(F.Q);
 
 
-})(()=>{ //перенос кода в конец
+})(()=>{ //перенос кода init() в конец
 db = `Очистить панель колёсиком мыши|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|◧ + Shift, Колёсико: не закрывать|период сохранения сессий меняйте в меню кнопки «Быстрые опции»|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|☀ Яркость сайтов |по-умолчанию|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\tнастройки UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tзапуск скрипта User.js|ошибка скрипта — |[ пустая строка ]|chrome://user_chrome_files/content/|ваши данные…|extensions.user_chrome_files.|permissions.default.image|https://antizapret.prostovpn.org/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|Attributes-Inspector|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Android 9; Mobile; rv:109) Gecko/97 Firefox/97|identity-box|victor-dobrov.narod.ru/help-FF.html|pageAction-urlbar-_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|ReaderView|wheel-stop|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|browser.cache.memory.max_entry_size`.split('|');
 uar = "chrome://devtools/skin/images/"; F = {
 	id: "ucf_hookExpert", os: AppConstants.platform, ver: Services.appinfo.version.replace(/-.*/,''),
 	tc(m = "⌘",w = "Ctrl+"){return this.os == "macosx" ? m : w},
-	pdi: "chrome://browser/skin/canvas-blocked.svg", eye: uar + "command-eyedropper.svg",
-	upd: uar + "reload.svg", dom: uar + "tool-dom.svg", dir: uar + "folder.svg",
-	sec: uar + "security-state-insecure.svg", ok: uar + "check.svg", no: uar + "close.svg",
-	hlp: uar + "help.svg", ie: uar + "globe.svg", nul: uar + "blocked.svg", del: uar + "clear.svg",
-	opt: uar + "settings.svg", con: uar + "aboutdebugging-connect-icon.svg",
+	pdi: "chrome://browser/skin/canvas-blocked.svg", eye: uar +"command-eyedropper.svg",
+	upd: uar +"reload.svg", dom: uar +"tool-dom.svg", dir: uar +"folder.svg",
+	sec: uar +"security-state-insecure.svg", ok: uar +"check.svg", no: uar +"close.svg",
+	hlp: uar +"help.svg", ie: uar +"globe.svg", nul: uar +"blocked.svg", del: uar +"clear.svg",
+	opt: uar +"settings.svg", con: uar +"aboutdebugging-connect-icon.svg",
 	ai: "data:image/webp;base64,UklGRjwAAABXRUJQVlA4TC8AAAAvD8ADAAoGbSM5Ov6k774XCPFP/0/03/8JGPxzroIzuOW06Ih60Genn1S/gHe+BgA=",
 	qt: "data:image/webp;base64,UklGRkYCAABXRUJQVlA4WAoAAAAQAAAAFwAAFwAAQUxQSJcAAAANcGJr25S8mH4SNGxAgsguPCZ0BcMOiDSNRpvVaCTa3AI2qm2e2ofz7OuwgIiYgMzb4kVjGvegnQFAwXgFVnvcOmtnMJtutAa3Vo4mhRMDpWq8AjfU+yQoYf1/oTkTIdUrknKswNQ5yAdDzqgr4CYbsJWQfEyEU5QNEl2eKFM2AAIbjmSIMjwXPGyEdj6Bdn4mj9KO63sAAFZQOCCIAQAAdAgAnQEqGAAYAD6dRppKgoCqgAE4lsAKwgisgG27uzPePSvBIu/Pr0HJqW+AfoAIHl2DrAnRo/G3JBpTx8yE7L6LFQyD+yUNvuRYAAD+7mwmpaoBcsJ1hVKsMI2ucqid8qndm+WEvH4l4il6lA8FPscgnrRHrnSjjyNcfUV21+TkfqOWKou2UvVsZSl1z+jKs760Vij5XCWF9Uo6TZAhKfrJpeILyQYwq2Ee/g1uyEH/dJMI/91DsVpI6i2vV/Jqpd4/KniJtTm1woLvaotA2ikt3eeBaqlHf8WPe++lSWS7fETjgvzzbflp0Rj+v23kbb9e/VjUcPaD83shRuwzEo6CAO/AGxE+Zwbvv9NDsQT6T+S4CCDOFTuMRVv9/0E4P+uK+Vc3bMfQQD05gY/fes+ZX6ZHkvFdMn7zX8LMVvI59p7F806HPD2lBjs4lWWhQ5ckJDNflZL49370shr3/Q9uMJN9i/NVCu4OT7K3+4+/RkAMnjuY09u+3i4y4CldQG789iIAAAA="
 };
@@ -1314,5 +1318,6 @@ uar = ucf.ua(true), //real ЮзерАгент
 fonts = arr => arr.map(n => [(n == arr[arr.length-1] ? null : n), n]), //array с вложениями
 serif = fonts("Arial|Roboto|Cantarell|DejaVu Sans|PT Serif|Segoe UI|Ubuntu|Cambria|Fira Sans|Georgia|Noto Sans|Calibri|Times".split('|')), sans = [["PT Sans","PT Sans"], ...serif],
 hints = new Map([ //опция отсутствует ? вернуть строку
-	[F.u +"savedirs", crop(ucf.dirsvcget(''),34)], [F.z, ucf.ua()]]);
+	[F.u +"savedirs", crop(ucf.dirsvcget(''),34)], [F.z, ucf.ua()]]
+);
 });
