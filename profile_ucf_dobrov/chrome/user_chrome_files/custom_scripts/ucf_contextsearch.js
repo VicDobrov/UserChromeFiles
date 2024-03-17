@@ -85,7 +85,7 @@
 	setAttrs(node, engine, label = engine.name) {
 		node.engine = engine;
 		node.setAttribute("label", label);
-		node.setAttribute("image", await engine.getIconURL?.() || engine.iconURI?.spec || this.defaultImg);
+		node.setAttribute("image", engine.getIconURL?.() || engine.iconURI?.spec || this.defaultImg);
 	},
 	observe() {
 		this.popupshowing = this.handlerRebuild;
@@ -93,7 +93,6 @@
 		Services.prefs.removeObserver(this.hide, this);
 	},
 	search(e) {
-		console.log(e.button);
 		var {engine} = e.target;
 		if (!engine) return;
 		var searchSelect = this.searchSelect;
