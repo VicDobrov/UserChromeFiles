@@ -1,4 +1,4 @@
-// Скрипт для документа окна браузера [ChromeOnly] если включено в настройках
+// Script For browser window document [ChromeOnly]
 var ucf_custom_script_win = {
 	initialized: false,
 	get unloadlisteners() {
@@ -6,17 +6,15 @@ var ucf_custom_script_win = {
 		window.addEventListener("unload", this, { once: true });
 		return this.unloadlisteners = [];
 	},
-	 load() {
+	load() {
 		if (this.initialized)
 			return;
 		this.initialized = true;
-
 		/* ************************************************ */
 
-		// Здесь может быть ваш код который сработает по событию "load" не раньше
+		// Here may be your code that will fire on the "load" event
 
 		/* ************************************************ */
-
 	},
 	handleEvent(e) {
 		this[e.type](e);
@@ -30,11 +28,5 @@ var ucf_custom_script_win = {
 	},
 };
 /* ************************************************ */
-// Здесь может быть ваш код который сработает по событию "DOMContentLoaded"
 
-if (window.document.readyState != "complete") {
-	window.addEventListener("load", function load() {
-		ucf_custom_script_win.load();
-	}, { once: true });
-} else
-	ucf_custom_script_win.load();
+// Here may be your code that will fire on the "DOMContentLoaded" event

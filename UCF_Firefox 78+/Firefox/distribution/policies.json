@@ -1,0 +1,12 @@
+{
+	"policies": {
+		"DisableAppUpdate": true,
+		"DisableFirefoxStudies": true,
+		"DisableTelemetry": true,
+		"OverrideFirstRunPage": "",
+		"OverridePostUpdatePage": "",
+		"DontCheckDefaultBrowser": true,
+		"DisableSystemAddonUpdate": true,
+		"DisableFeedbackCommands": true
+	}
+}

@@ -1,124 +1,21 @@
 /* Этот файл для правил CSS с правами AGENT_SHEET работает во всех документах */
-@import url("./aris-t2/userContent.css") /* aris-t2/customcssforfx */;
 
-:root {	/* глобальные переменные */
-	--reader-link: #3848a0;
-	--reader-link-visited: #6c71c4;
-	--reader-background-toolbar: #dce1e1;
-	--reader-toolbar-width: 28px;
-	--reader-button-width: 24px;
-	--v-findbar-duration: 50ms;
-}
 tooltip {
 	-moz-appearance: none !important;
 	appearance: none !important;
 }
 tooltip[hasbeenopened="true"] {
-	/*border-radius: 3px !important;*/
 	padding: 4px 8px !important;
 	font-size: 90% !important;
 }
 @media (prefers-color-scheme: light), (-moz-toolbar-prefers-color-scheme: light) {
+
 tooltip[hasbeenopened="true"] {
 	color: rgb(12, 12, 22) !important;
-/* жёлтый фон подсказок */
 	background: #f8f8e0 !important;
 	border: 1px solid gray;
-	}
-}
-@media (prefers-color-scheme: dark), (-moz-toolbar-prefers-color-scheme: dark) {
-tooltip[hasbeenopened="true"] {
-	color: rgb(177, 177, 187) !important;
-	color: rgba(0,128,128,0.5) !important;
-	background: rgb(27, 27, 37) !important;
-	border-color: rgb(64, 64, 75) !important;
-	}
 }
 tooltip[hasbeenopened="true"] :is(description,label) {
 	color: inherit !important;
 }
-#navigator-toolbox { /* фон заголовка */
-	background-color: var(--navbar-background) !important;
-}
-#ucf-additional-vertical-box {
-	background: var(--navbar-background) !important;
-}
-.tab-icon-image {min-height: 18px !important; margin-top: 1px !important; }
-#context-bookmarkpage .menu-iconic-icon { fill: #FF69e0 !important;} /* context-menu цвет: Назад, Обновить, Звёздочка */
-#context-back .menu-iconic-icon, #context-forward .menu-iconic-icon { fill: #00b800 !important;}
-#context-reload .menu-iconic-icon, #context-stop .menu-iconic-icon { fill: #fa7900 !important;}
-
-/* скрыть пункты контекстного меню: Печать выделенной области */
-#urlbar-zoom-button, #context-viewbgimage, #context-print-selection, #context-sep-setbackground, #context-inspect-a11y { display:none!important;}
-
-findbar { /* поднять findbar вверх */
-	-moz-box-ordinal-group: 0;
-	border-bottom: 1px solid ThreeDShadow;
-	padding-block: 2px !important;
-}
-findbar { /* настройки фонов и бордюров */
-	--toolbar-field-background-color: white !important;
-	--toolbar-field-border-color: grey !important;
-}
-.browserContainer > findbar > #findbar-close-container, .browserContainer > findbar {
-	background-color: var(--navbar-background) !important;
-}
-input.findbar-textbox:focus {
-	border-color: blue !important;
-}
-
-@-moz-document url("about:newtab"), url("about:home") { /* страница быстрого доступа */
-.logo-and-wordmark{ display:none! important;} /* скрыть логотип Firefox */
-.fixed-search .search-wrapper {
-	 border-bottom: none !important;
-	 position: static !important;
-}
-.fixed-search main {
-	padding-top: 0 !important;
-}
-.ds-outer-wrapper-breakpoint-override main { /* предел столбцов: обрезка по данной ширине 1400=9 плиток 930=6 */
-	width: 930px !important;
-}
-html body.activity-stream { /* фон домашней страницы быстрого доступа */
-	--newtab-background-color: var(--navbar-background) !important; }
-}
-
-@-moz-document regexp("(?:https?|ftp|file):\/\/.*") { /* FIX FF 102 BUG */
-	option:checked { background-color: -moz-cellhighlight !important; color: -moz-cellhighlighttext !important;}
-}
-
-/* Reader режим Чтения */
-body.sepia {
-	background-color: #ccd1d1 !important; /*светлый, #cbd3c5 светло-зелёный*/
-}
-.sepia-button {
-  background-color: #ccd1d1 !important;
-}
-/* Ранее посещённые ссылки */
-:link[target="_blank"], :visited[target="_blank"], :link["_new"], :visited["_new"] { cursor: move; }
-
-/* Показ альфа-канала графики (если есть) при наведении мыши */
-html:not([xmlns]):not([dir]):not([lang]) body > img:only-child:only-of-type:hover {
-	background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAAAAACo4kLRAAAAG0lEQVR42mO4AwLvQADBookggo9g0UJw+PkIAJdvZeAMVgxlAAAAAElFTkSuQmCC") !important;
-}
-
-/* Hide wiki sidebar */
-@-moz-document domain(wikipedia.org) {
-	div#mw-panel{ display: none;}
-	#mw-head-base, div#content, div#footer{
-		margin-left: 1em !important;
-	}
-}
-/* доступность картинок - скрытие мешающих элементов на странице */
-@-moz-document domain(2gis.ru) {
-	img { pointer-events: auto !important; }
-	._1l6w5m0i, ._1u8o1ijy { display: none;}
-}
-@-moz-document domain(doramatv.live), domain(mose.live) { /* позволяет сохранять картинки сайта Дорама */
-	.fotorama__fullscreen-icon { max-height: 300px !important; max-width: 300px !important;}
-}
-@-moz-document domain("mozilla-russia.org") { body { background-image: none !important;}}
-
-@-moz-document domain(author.today) {
-	a:visited { color: #6f40b0 !important;}
 }

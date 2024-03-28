@@ -1,4 +1,4 @@
-// Этот скрипт можно использовать для создания кнопок с помощью CustomizableUI.createWidget
+// This script can be used, for example, to create buttons using CustomizableUI.createWidget
 
 (async () => { [] // подключить внешние скрипты js или jsm, [инициализация]
 	.forEach(function(js) { try { if (/\.jsm$/i.test(js)) { // var obj =

@@ -1,4 +1,4 @@
-(async win => ({ // UCF drag and go жесты мыши https://forum.mozilla-russia.org/viewtopic.php?pid=797234#p797234
+(async win => ({ // UCF drag and go forum.mozilla-russia.org/viewtopic.php?pid=806837#p806837
 	link: {
 		L: {
 			name: "Копировать ссылку в буфер обмена", cmd() {
@@ -13,24 +13,24 @@
 			}
 		},
 		DR: {
-			name: "Открыть ссылку в новой активной странице", cmd() {
-				win.openUILinkIn(this.val, "tab", this.opts);
+			name: "Открыть ссылку в активной странице", cmd() {
+				win.openTrustedLinkIn(this.val, "tab", this.opts);
 			}
 		},
 		D: {
-			name: "Открыть ссылку в новой фоновой странице", cmd() {
-				win.openUILinkIn(this.val, "tabshifted", this.opts);
+			name: "Открыть ссылку в фоновой странице", cmd() {
+				win.openTrustedLinkIn(this.val, "tabshifted", this.opts);
 			}
 		}
 	},
 	text: {
 		U: {
-			name: "Поиск текста поисковиком по умолчанию в новой активной странице", cmd() {
+			name: "Поиск текста в активной странице", cmd() {
 				this.search("tab");
 			}
 		},
 		D: {
-			name: "Поиск текста поисковиком по умолчанию в новой фоновой странице", cmd() {
+			name: "Поиск текста в фоновой странице", cmd() {
 				this.search("tabshifted");
 			}
 		},
@@ -42,7 +42,7 @@
 		}
 	},
 	toStatus(txt) {
-		win.StatusPanel._labelElement.value = txt;
+		win.StatusPanel._labelElement.value = win.StatusPanel._label = txt;
 		win.StatusPanel.panel.removeAttribute("inactive");
 	},
 	gClipboard: {
@@ -51,12 +51,13 @@
 		}
 	},
 	flash(color = 'rgba(240,176,0,0.5)', sec = 250, id = 'urlbar-input-container') {
-		id = document.getElementById(id); id.style.background = color; setTimeout(() => { id.style.removeProperty('background-color');}, sec);
+		id = win.document.getElementById(id); id.style.background = color;
+		setTimeout(() => { id.style.removeProperty('background-color');}, sec);
 	},
 	search(where) {
 		var engine = Services.search[`default${this.opts.private ? "Private" : ""}Engine`];
 		var submission = engine.getSubmission(this.val, null, "");
-		win.openUILinkIn(submission.uri.spec, where, {postData: submission.postData, ...this.opts});
+		win.openTrustedLinkIn(submission.uri.spec, where, {postData: submission.postData, ...this.opts});
 	},
 	opts: { //relatedToCurrent: true,
 		triggeringPrincipal: Cu.getObjectPrincipal(this),
@@ -69,24 +70,38 @@
 	},
 	dragstart(e) {
 		win = e.view.windowRoot.ownerGlobal;
+		//if (!win.gBrowser.currentURI.spec.startsWith("http")) return;
 		if (!e.dataTransfer.mozItemCount || !win.gBrowser.selectedBrowser.matches(":hover"))
 			return;
 
 		var dt = e.dataTransfer;
 		this.type = this.link;
 		this.dir = this.val = "";
-		var txt = dt.getData("text/plain");
 		var url = dt.getData("text/x-moz-url-data");
+
+		if (url) this.val = url;
+		else {
+			var txt = dt.getData("text/plain");
+			if (txt) {
+			this.val = txt;
+				if (!this.textLinkRe.test(txt))
+					this.type = this.text;
+			}
+			else return;
+		}
+/*
+		var txt = dt.getData("text/plain");
 		if (url)
 			this.val = url, this.txt = dt.getData("text/x-moz-url").split("\n")[1];
 		else if (!txt) return;
 		try {
-			this.val = new URL(txt.trim());
+			this.val = new URL(txt.trim()).href;
 		} catch {
 			this.val = txt;
 			if (!this.textLinkRe.test(txt))
 				this.type = this.text;
 		}
+*/
 		this.x = e.screenX; this.y = e.screenY;
 		this.drag(true);
 	},
@@ -94,7 +109,6 @@
 		var meth = `${init ? "add" : "remove"}EventListener`;
 		for(var type of this.events) win[meth](type, this, true);
 		init || win.StatusPanel.panel.setAttribute("inactive", true);
-
 	},
 	events: ["dragover", "drop", "dragend"],
 	dragover(e) {
@@ -114,7 +128,6 @@
 	dragend(e) {
 		var dt = e.dataTransfer;
 		this.drag();
-
 		var obj = this.type[this.dir];
 		if (!obj || dt.mozUserCancelled) return;
 

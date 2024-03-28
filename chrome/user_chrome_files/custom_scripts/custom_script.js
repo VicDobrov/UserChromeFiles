@@ -1,1 +1,1 @@
-// Этот скрипт можно использовать например для создания кнопок с помощью CustomizableUI.createWidget
+// This script can be used, for example, to create buttons using CustomizableUI.createWidget

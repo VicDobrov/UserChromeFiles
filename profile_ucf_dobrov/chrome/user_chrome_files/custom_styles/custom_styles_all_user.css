@@ -1,42 +1,120 @@
 /* Этот файл для правил CSS с правами USER_SHEET работает во всех документах */
-
-:root{ /* Dobrov userChrome_mod.css – глобальные переменные */
-	--general_ui_font_size: 11pt;
-	--urlbar-container-width: 340px;	/* панель адреса: лимит ширины */
+@media (prefers-color-scheme: light), (-moz-toolbar-prefers-color-scheme: light) {
+:root {
+  --general_ui_font_size: 11pt;
+  --urlbar-container-width: 300px;	/* панель адреса: лимит ширины */
+  --photon_tabs_tab_height: 28px !important;
+  --classic_squared_tabs_tab_height: 26px !important;
+  --classic_squared_tabs-border-radius: 3px !important;
+  --default_tab_border_roundness: 5px !important;
+  --classic_squared_tabs_tab_default_loading_icon_color: #0A84FF !important;
+  --tab_close_icons_size: 16px !important; /* 14-20px */
+  --tab_min_width: 50px !important; 
+  --tab_max_width: 250px !important;
+  --tab_min_width_mlt: 100px !important;
+  --tab_max_width_mlt: 200px !important;
+  --tabs-lines: 3 !important; 
+  --bookmark_items_height: 22px !important; /* <- bookmark items - line height */
+  --bookmark_items_lines: 3 !important; /* <- maximum amount of lines */
+  --general_ui_font_size: 10pt !important;
+  --search-one-offs_labels_height: 100px !important;
+  --results_font_size: var(--general_ui_font_size,10pt) !important; /* 10pt */
+  /* for top_toolbar_colors.css */
+  --top_toolbars_background: hsl(235,33%,19%) !important; /* #0063b1 */ /* hsl(235,33%,19%) was used by old accent color option  */ 
+  --top_toolbars_background_inactive: hsl(235,13%,9%) !important; /* #ffffff */
+  --top_toolbars_text: hsl(240,9%,98%) !important;
+  --top_toolbars_text_inactive: #999999 !important;
+  --urlbar_background_color: white !important;
+  --urlbar_text_color: black !important;
+  --classic_squared_tabs_tab_height: 22px !important;
+  --general_ui_font_size: 11pt !important;
+  --navbar-background: #e6ebfa;
+  --urlbar-container-width: 435px;  /* панель адреса: лимит ширины */
+  --general_toolbar_color_toolbars: linear-gradient(var(--navbar-background), var(--navbar-background)) !important;
+  --general_toolbar_color_navbar: linear-gradient(var(--navbar-background),var(--navbar-background)) !important;
+  --general_toolbar_text_color: inherit !important;
+  --general_toolbar_text_shadow: transparent !important;
+  --tabs_toolbar_color_tabs_not_on_top: linear-gradient(var(--navbar-background),var(--navbar-background)) !important;
+  --tabs_toolbar_border-tnot_normal_mode_size: 1px !important;
+  --tabs_toolbar_border-tnot_normal_mode: var(--tabs-border-color) !important;
+  --colored_menubar_background_image: linear-gradient(var(--navbar-background),var(--navbar-background)) !important;
+  --colored_menubar_text_color: black !important;
+  --statusbar_background_color: linear-gradient(var(--navbar-background),var(--navbar-background)) !important;
+  --statusbar_font_color: inherit !important;
+  --general_toolbar_color_toolbars: linear-gradient(#f9f9fa,#f9f9fa);
+  --general_toolbar_color_navbar: linear-gradient(#f9f9fa,#f9f9fa);
+  --general_toolbar_text_color: inherit;
+  --general_toolbar_text_shadow: transparent;
 }
-.toolbarbutton-badge-stack .toolbarbutton-badge{
-	font-size: 10px !important;
+#tabbrowser-arrowscrollbox {
+  background: var(--navbar-background) !important;
 }
-#PanelUI-button, #PanelUI-button * {
-	font-size: var(--general_ui_font_size) !important;
+#nav-bar:not(:-moz-lwtheme) {
+  appearance: none !important;
+  background: var(--general_toolbar_color_navbar, inherit) !important;
 }
-/* override CSS code set by other 'options' */
-#main-window[uidensity="compact"] toolbar :-moz-any(.searchbar-textbox, #urlbar,#searchbar), .megabar #urlbar-results :-moz-any(.urlbarView-tags, .urlbarView-action, .urlbarView-title, .urlbarView-url), #urlbar-container[breakout] #urlbar[breakout], #searchbar, .searchbar-textbox {
-	font-size: var(--general_ui_font_size) !important;
+#main-window toolbar:not(:-moz-lwtheme):not(#TabsToolbar):not(#toolbar-menubar):not(#nav-bar) {
+  appearance: none !important;
+  background: var(--general_toolbar_color_toolbars, inherit) !important;
 }
-/* remove maximum/minimum width restriction of sidebar */
-#sidebar { max-width: none !important; min-width: 0px !important;
+#nav-bar:not(:-moz-lwtheme) #urlbar ::-moz-selection {
+  background-color: Highlight !important;
+  color: HighlightText !important;
 }
-/* увеличить шрифт боковой панели */
-#bookmarks-view *, #historyTree{ font-size:12pt !important;
+#main-window:not(:-moz-lwtheme) #PersonalToolbar #bookmarks-menu-button::after,
+#main-window:not(:-moz-lwtheme) toolbar > toolbarbutton > .toolbarbutton-text,
+#main-window:not(:-moz-lwtheme) toolbar #stop-reload-button toolbarbutton > .toolbarbutton-text,
+#main-window:not(:-moz-lwtheme) toolbar #PanelUI-button toolbarbutton > .toolbarbutton-text,
+#main-window:not(:-moz-lwtheme) toolbar > toolbarbutton >.toolbarbutton-badge-stack .toolbarbutton-text,
+#main-window:not(:-moz-lwtheme) #nav-bar-customization-target > toolbarbutton > .toolbarbutton-text,
+#main-window:not(:-moz-lwtheme) #PlacesToolbarItems toolbarbutton > :is(label,description) {
+  color: var(--general_toolbar_text_color, inherit) !important;
+  text-shadow: 1px 1px 1px var(--general_toolbar_text_shadow, inherit) !important;
 }
-/* Фон боковой панели */
+#main-window[style*='--lwt-header-image']:-moz-lwtheme :is(.browserContainer,#viewSource) :is(findbar,#FindToolbar) {
+  background: var(--lwt-header-image) !important;
+  background-position: calc(100vw - 5px) !important;
+}
+#main-window[style*='--lwt-header-image']:-moz-lwtheme :is(.browserContainer,#viewSource) :is(findbar,#FindToolbar) :is(.toolbarbutton-icon,.toolbarbutton-text) {
+  color: var(--lwt-text-color) !important;
+  fill: var(--lwt-text-color) !important;
+}
+#main-window[style*='--lwt-header-image']:-moz-lwtheme-brighttext :is(.browserContainer,#viewSource) :is(findbar,#FindToolbar) :is(.toolbarbutton-icon,.toolbarbutton-text) {
+  text-shadow: 1px 1px 1px black !important;
+}
 #historyTree { background-color: #F0F4F9 !important;}
 #bookmarks-view, #bookmarks-view-children { background-color: #F2F2F0 !important;}
-
-/* жирный шрифт строки адреса */
+}
+@media (-moz-content-prefers-color-scheme: dark) {
+	#main-window[style*='--lwt-header-image']:-moz-lwtheme :is(.browserContainer,#viewSource) :is(findbar,#FindToolbar) :is(.toolbarbutton-icon,.toolbarbutton-text) {
+	  text-shadow: 1px 1px 1px black !important;
+	}
+}
 #urlbar{ font-weight: bold !important; font-size: 12pt !important;
 	border-radius: 0px 6px 6px 0px !important;
 }
 #urlbar-container{ /* панель адреса ширина */
 	min-width: var(--urlbar-container-width) !important; max-width: var(--urlbar-container-width) !important;
 }
-/* скрыть подпись иконки сайта */
-#identity-icon-label { display: none !important;}
-
-/* кнопка меню: комбо-значок «Закрыть/⇲/Мин…» */
+@-moz-document url-prefix("chrome:"), url("about:downloads") {
+  richlistbox > richlistitem.download-state[state="0"] > .downloadPauseResumeButton {
+    list-style-image: url("./svg/download-pause.svg") !important;
+  }
+  richlistbox > richlistitem.download-state[state="4"] > .downloadPauseResumeButton {
+    list-style-image: url("./svg/download-resume.svg") !important;
+  }
+  richlistbox > richlistitem.download-state[buttonhidden] .downloadPauseResumeButton,
+  richlistbox > richlistitem.download-state:not(:is([state="0"],[state="4"])) .downloadPauseResumeButton {
+    display: none !important;
+  }
+}
+#PanelUI-button, #PanelUI-button * { font-size: var(--general_ui_font_size) !important}
+/* override CSS code set by other 'options' */
+#main-window[uidensity="compact"] toolbar :-moz-any(.searchbar-textbox, #urlbar,#searchbar), .megabar #urlbar-results :-moz-any(.urlbarView-tags, .urlbarView-action, .urlbarView-title, .urlbarView-url), #urlbar-container[breakout] #urlbar[breakout], #searchbar, .searchbar-textbox {
+	font-size: var(--general_ui_font_size) !important;
+}
 #PanelUI-menu-button:not(:hover) { -moz-image-region: auto !important;
-	list-style-image: url("data:image/svg+xml,<svg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><rect transform='matrix(2,0,0,2,-26,8.5)' x='13' y='-4.26' width='16' height='16' fill='hsl(220, 80%, 90%)'/><g fill='none' stroke='black'><path d='m18.825 4.43h12' stroke-width='2.6'/><g transform='translate(.4 .3)' opacity='.6' stroke-miterlimit='0'><path d='m29 14-15 15' stroke-width='3.4'/><path d='m14 13.8 15 15' stroke-width='3.4'/></g><g transform='matrix(1 0 0 .9 -6.6 -5)' stroke-width='2'><rect x='9' y='12.3' width='8' height='8' stroke-linecap='square' stroke-miterlimit='8' stroke-width='1.7'/><g transform='translate(.8 -.9)'><path d='m9.6 9.1h10.8' stroke-width='2.2'/><path d='m19.9 8v10' stroke-width='1.4'/></g></g><g transform='matrix(1 0 0 .7 5.5 -10)'><path d='m-2.3 46.6 3.6 7' stroke-width='1.7'/><path d='m1.3 53.6 3.57-7' stroke-width='1.7'/><path d='m1.3 53.6v-15' stroke-width='1.88'/></g></g></svg>") !important;
+	list-style-image: url("data:image/svg+xml,<svg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><rect transform='matrix(2,0,0,2,-26,8.5)' x='13' y='-4.26' width='16' height='16' fill='rgba(220,225,255,0.5)'/><g fill='none' stroke='black'><path d='m18.825 4.43h12' stroke-width='2.6'/><g transform='translate(.4 .3)' opacity='.6' stroke-miterlimit='0'><path d='m29 14-15 15' stroke-width='3.4'/><path d='m14 13.8 15 15' stroke-width='3.4'/></g><g transform='matrix(1 0 0 .9 -6.6 -5)' stroke-width='2'><rect x='9' y='12.3' width='8' height='8' stroke-linecap='square' stroke-miterlimit='8' stroke-width='1.7'/><g transform='translate(.8 -.9)'><path d='m9.6 9.1h10.8' stroke-width='2.2'/><path d='m19.9 8v10' stroke-width='1.4'/></g></g><g transform='matrix(1 0 0 .7 5.5 -10)'><path d='m-2.3 46.6 3.6 7' stroke-width='1.7'/><path d='m1.3 53.6 3.57-7' stroke-width='1.7'/><path d='m1.3 53.6v-15' stroke-width='1.88'/></g></g></svg>") !important;
 }
 #PanelUI-menu-button .toolbarbutton-badge-stack {padding: 0px !important;}
 #PanelUI-button .toolbarbutton-icon {margin: 0px !important;
@@ -45,50 +123,7 @@
 #PanelUI-menu-button .toolbarbutton-icon { min-width: 28px !important; min-height: 28px !important; padding: 0 !important;}
 .toolbarbutton-icon { min-width: 18px !important; min-height: 18px !important;}
 
-#sidebar-header{ padding-top: 0px !important; padding-bottom: 0px !important;}
-
-#navigator-toolbox[fullscreenShouldAnimate] {transition: none !important;}
-
-/* разделители кнопок поиска подменю строки адреса */
-.searchbar-engine-one-off-item:not(#urlbar-anon-search-settings-compact) {
-    background: linear-gradient(transparent 15%, var(--panel-separator-color) 15%, var(--panel-separator-color) 85%, transparent 85%);
-    background-size: 1px auto;
-    background-repeat: no-repeat;
-    background-position: right center;
-    background-clip: padding-box;
-    color: var(--panel-disabled-color);
+toolbar #downloads-button > .toolbarbutton-badge-stack { /* увеличить кнопку Загрузки */
+  transform: scale(1.33, 1.33) !important; padding: 4px !important;
 }
-.searchbar-engine-one-off-item:not(#urlbar-anon-search-settings-compact),
-.search-panel-one-offs-header {border-bottom: 1px solid var(--panel-separator-color);}
-.search-panel-one-offs {height: auto !important;}
-.search-one-offs .searchbar-separator {display: none;}
-#PopupSearchAutoComplete {padding-bottom: 0 !important;}
-.search-setting-button {border-top: none !important;}
-#urlbar .searchbar-engine-one-off-item {margin-inline-end: 0 !important;}
-#urlbar .search-one-offs {padding-bottom: 0 !important;}
-#urlbar .search-panel-header {display: none !important;}
-#urlbar .search-one-offs { padding-block: 0 !important;}
-
 #QuickToggle .toolbarbutton-icon, #print-button .toolbarbutton-icon, #ucf_Reader .toolbarbutton-icon { padding: 4px !important;}
-
-#star-button { filter: invert(40%) sepia(100%) saturate(500%) !important;}
-
-#reader-mode-button-icon, #pageAction-urlbar-_2495d258-41e7-4cd5-bc7d-ac15981f064e_ { /* Reader View - иконка Очки */
-	padding-bottom: 1px !important;
-	list-style-image: url("data:image/webp;base64,UklGRgICAABXRUJQVlA4TPYBAAAvF8AFELVItba9cSNBwR8K/nDgQMOBhoaBhoaGuYRAw8BAw8DAwMBcQmBPDIdtmbLtBv49U/Zz71VaBYVsWznY/lcTPgw/fgzD8CPjtm0kp/iz9l6X1raHTTFY/DEYHA6HvYRhMFgs5hJ6CcFisFgMBofDYjH0fhMgf2QLM1yEmHKFy2B2wzjMswxFIYDZ0pgVQJkx1zyKwRyw80QT09xgamHnaQFRIaJ9wYlGESHRJGhE9HsccSEgphFVIWaTCB+xSGqDJSLIBMSZ0sJbzfCS2x/sJMFEFPKDBZiUqBGS24QOlqeLbZYgThFp4i3swRrqOm3NVHuwsDsRZgWghwDijnglLPEHpgAmIgV4cNlxd+K6ovEDRLtiDnlPxoLZZmr3KBRTRFDLIDSN9xjkk3vIT/gBQwdWOFWudNO1Yngmov3CveaW967XgdTKPeaXX7k1DLFNQ+/GIB/+NZdO5W0FipD4v8Bn6f1qMkWH3qGh14j38Cdf3lSAuEQKjBKuwoz5ovXDDZJWq3hPF51g2EVG+LdZrYbu7AHbv5pHo35HnDHIJ3d/gocQ8hEZYla4Ms6ovW1hYpRBQ90b/YqLxh5EFRExVOyX/YpdASaLdHGGA1AAEK2BJUKMaMACMJRznGISkYDE/DRi7rrLLKnD+pNQQA9I8icC") !important;
-}
-#pageAction-urlbar-_2495d258-41e7-4cd5-bc7d-ac15981f064e_:not(:hover){filter: contrast(80%) opacity(70%); !important;}
-
-@-moz-document url-prefix("chrome:"), url("about:downloads") {
-	richlistbox > richlistitem.download-state[state="0"] > .downloadPauseResumeButton {
-	    list-style-image: url("./svg/download-pause.svg") !important;
-	}
-	richlistbox > richlistitem.download-state[state="4"] > .downloadPauseResumeButton {
-	    list-style-image: url("./svg/download-resume.svg") !important;
-	}
-	richlistbox > richlistitem.download-state[buttonhidden] .downloadPauseResumeButton,
-	richlistbox > richlistitem.download-state:not(:is([state="0"],[state="4"])) .downloadPauseResumeButton {
-		display: none !important;
-	}
-}
-menu[label="Text Linky Tool"]{ display: none !important;}

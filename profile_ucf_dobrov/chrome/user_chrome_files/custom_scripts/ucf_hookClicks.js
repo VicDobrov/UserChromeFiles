@@ -150,7 +150,7 @@ Menu = { //массив команд пользователя, alt() клик п
 				var {BrowserToolboxLauncher} = ChromeUtils.import("resource://devtools/client/framework/browser-toolbox/Launcher.jsm");
 				BrowserToolboxLauncher.init();}
 		},
-		"Настройки UserChromeFiles": { sep: 1, img: F.opt, cmd(){openDial()}
+		"Настройки UserChromeFiles": { sep: 1, img: F.opt, cmd(){Click()}
 		},
 		DelCache: {lab: `Restart браузер, удалить кэш`, img: F.del,
 			cmd(){
@@ -192,7 +192,7 @@ Menu = { //массив команд пользователя, alt() клик п
 			(test = obj.oncommand.bind(null, {target:trg}))();
 			ucf.flash(0,0,'rgba(100,0,225,0.1)',500, F.e);}
 	},
-	"запуск скрипта user.js (alt+x)": {
+	"запуск скрипта user.js (Alt+x)": {
 		cmd(trg){userjs(trg)}
 	},
 	"Краткая справка | Жесты мыши": { inf: F.b, img: F.hlp,
@@ -244,9 +244,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 	},
 	[F.K]: { //ReaderView
 		2(trg,forward){bright(trg,forward,5)}, //яркость по wheel ±
-		128(btn){
-			btn.ownerDocument.getElementById("key_toggleReaderMode").doCommand() //штатный Режим чтения
-		},
+		128(btn){Menu.View.alt(btn)},
 		256(btn){Mouse[F.M][256](btn)}
 	},
 	[F.T]: {
@@ -298,7 +296,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		272(btn){btn.ownerGlobal.PlacesCommandHook.showPlacesOrganizer("History")} //R+Shift
 	},
 	[F.I]: { //замок
-		8(){openDial()}, //+Alt
+		8(){Click()}, //+Alt
 		128(){openProxyWin()},
 		16(btn){ //+Shift
 			BrowserPageInfo(btn,"mediaTab") //securityTab feed… perm…
@@ -335,12 +333,14 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 	},
 	[F.A]: {mousedownTarget: true, //AttrView
 		128(){Menu.O.Remote.cmd()}, //C
-		256(){openDial()},
+		256(){Click()},
 		257(){switchTab('about:debugging#/runtime/this-firefox')} //дR
 	},
 	[F.E]: {mousedownTarget: true,
 		1(){Menu.O.DelCache.cmd()}, //д
-		128(){openDial()}, //UCFprefs
+		128(){Click()}, //UCFprefs
+		129(){ //дС
+			switchTab('about:addons')},
 		256(btn){
 			document.getElementById(F.Q).menupopup.openPopup(btn, "after_start");
 		},
@@ -348,7 +348,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 	},
 	"add-ons-button": {
 		1(){Menu.O.DelCache.cmd()}, //д
-		128(){openDial()}, //UCFprefs
+		128(){Click()}, //UCFprefs
 		256(btn){Mouse[F.E][256](btn)},
 		257(){Mouse[F.A][257]()}
 	},
@@ -708,15 +708,15 @@ ucf_custom_script_win[F.id] = {destructor(){
 var addDestructor = nextDestructor => { //для saveSelToTxt
 	var {destructor} = ucf_custom_script_win[F.id];
 	ucf_custom_script_win[F.id].destructor = () => {
-		try {destructor();} catch(ex){Cu.reportError(ex);}
+		try {destructor();} catch(ex){Cu.reportError(ex)}
 		nextDestructor();
 }};
 with (document) getElementById(F.O).removeAttribute("tooltip"),
 	getElementById("nav-bar").tooltip = F.id; //флаг успешной загрузки
 
 ucf.mode_skin(); //подсветка кнопок и подсказки отображают настройки браузера
-[['ui.prefersReducedMotion',0],['browser.download.alwaysOpenPanel',false] //Animation Fix
-].forEach((p)=>ucf.pref(...p)); //lockPref опций ['browser.download.autohideButton',false]
+[['ui.prefersReducedMotion',0],['browser.download.alwaysOpenPanel',false], //animation Fix
+['browser.download.autohideButton',false]].forEach((p)=>ucf.pref(...p)); //lockPref опций
 var tabr = F.u +"opacity",url = `resource://${tabr}/`, //bright tabs
 getIntPref = (p) => prefs.getIntPref(p,100),
 sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService),
@@ -784,6 +784,9 @@ switchTab = (url = 'about:serviceworkers', go) => { //открыть вклад�
 	gBrowser.selectedTab = gBrowser.visibleTabs[gBrowser.visibleTabs.length -1];
 },
 openDial = (args = [F.cfg,"user_chrome_prefs:window","centerscreen,resizable,dialog=no"]) => window.openDialog(...args),
+Click = (id = "ucf-open-about-config-button") => {
+	var n = document.getElementById(id); n && n.click();
+},
 tooltip = (id = document.getElementById(F.T), s = "\n◨ правый клик: Без запроса") => {
 	if (id && id.tooltipText.indexOf(s) == -1)
 		return id.tooltipText + s;
@@ -1049,7 +1052,7 @@ document.getElementById("nav-bar-customization-target").append(btn);
 			else if (val != pref.defVal) {
 				if (!alt && !clr && !blu)
 					img = Icon("f26"); // Red
-				node.style.filter = "drop-shadow(1px 1px 1px #B8F)";
+				node.style.filter = "drop-shadow(0.1px 1px 0.1px #c99)";
 			}
 		pref.img || node.setAttribute("image", img); //нет Def3el ? серый
 		user
@@ -1172,7 +1175,7 @@ document.getElementById("nav-bar-customization-target").append(btn);
 
 
 })(()=>{ //перенос кода init() в конец
-db = `Очистить панель колёсиком мыши|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|◧ + Shift, Колёсико: не закрывать|период сохранения сессий меняйте в меню кнопки «Быстрые опции»|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|☀ Яркость сайтов |по-умолчанию|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\tнастройки UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tзапуск скрипта User.js|ошибка скрипта — |[ пустая строка ]|chrome://user_chrome_files/content/|ваши данные…|extensions.user_chrome_files.|permissions.default.image|https://antizapret.prostovpn.org/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|Attributes-Inspector|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Android 9; Mobile; rv:109) Gecko/97 Firefox/97|identity-box|victor-dobrov.narod.ru/help-FF.html|pageAction-urlbar-_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|ReaderView|wheel-stop|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|browser.cache.memory.max_entry_size`.split('|');
+db = `Очистить панель колёсиком мыши|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|◧ + Shift, Колёсико: не закрывать|период сохранения сессий меняйте в меню кнопки «Быстрые опции»|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|☀ Яркость сайтов |по-умолчанию|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tзапуск скрипта User.js|ошибка скрипта — |[ пустая строка ]|chrome://user_chrome_files/content/|ваши данные…|extensions.user_chrome_files.|permissions.default.image|https://antizapret.prostovpn.org/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|Attributes-Inspector|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Android 9; Mobile; rv:109) Gecko/97 Firefox/97|identity-box|victor-dobrov.narod.ru/help-FF.html|pageAction-urlbar-_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|ReaderView|wheel-stop|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|browser.cache.memory.max_entry_size`.split('|');
 uar = "chrome://devtools/skin/images/"; F = {
 	id: "ucf_hookExpert", os: AppConstants.platform, ver: Services.appinfo.version.replace(/-.*/,''),
 	tc(m = "⌘",w = "Ctrl+"){return this.os == "macosx" ? m : w},
@@ -1202,7 +1205,7 @@ FileExists = (file) => {try { //файл|папка есть?
 	else return Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).convertChromeURL(Services.io.newURI(file)).QueryInterface(Ci.nsIFileURL).file.exists();
 	} catch {}; return false;
 },
-crop = (s,cut = 33,ch = '…\n') => { //обрезать/разбить текст
+crop = (s = "",cut = 33,ch = '…\n') => { //обрезать/разбить текст
 	return s.substring(0,cut) +`${s.length > cut - 1 ? `${ch}…${s.substring(s.length - cut + ch.length,s.length)}`: ''}`;
 },
 Exp = ()=>{
@@ -1240,9 +1243,11 @@ ucf = { //all ChromeOnly-scripts
 	// },
 	dirsvcget(){ //константа пути + subdirs, если посл. опция = "" вернуть путь, иначе открыть
 		var f, d = [...arguments], r = (d[d.length-1] == ""); (r) && d.pop();
-		try {f = Services.dirsvc.get(d[0] || "DfltDwnld",Ci.nsIFile);} catch {f = prefs.getComplexValue("browser.download.dir",Ci.nsIFile)}
-		d.slice(1, d.length).forEach((c)=>f.append(c));
-		if (r) return f.path; f.exists() && f.launch();
+		try {var b = Services.dirsvc.get("DfltDwnld",Ci.nsIFile);} catch {b = prefs.getComplexValue("browser.download.dir",Ci.nsIFile)}
+		try {f = Services.dirsvc.get(d[0], Ci.nsIFile);} catch {f = b}
+		d.slice(1, d.length).forEach((c) => f.append(c));
+		if (r) return f.path;
+		f.exists() && f.launch();
 	},
 	formatBytes(b = 0,d = 1){ //объём байт…Тб
 		let i = Math.log2(b)/10|0; return parseFloat((b/1024**(i=i<=0?0:i)).toFixed(d))+`${i>0?'KMGT'[i-1]:''}b`;
@@ -1302,8 +1307,9 @@ ucf = { //all ChromeOnly-scripts
 		this.mode_skin(); //разный фон замка для Прокси
 		BrowserReload();
 	},
-	Title(n){try {return Cu.getGlobalForObject(Cu)[Symbol.for("TitlePath")](window,n)[3]
-		} catch {return document.title || gBrowser.selectedTab.label}},
+	Title(n){try {return Cu.getGlobalForObject(Cu)[Symbol.for("TitlePath")](n)[3];}
+		catch {return document.title || gBrowser.selectedTab.label}
+	},
 	HTML(){
 		var inf = ["√ страница записана: " + crop(this.Title(),48,''),7e3], sfile = document.getElementById(F[4]); //расширение SingleFile
 		try {Cu.getGlobalForObject(Cu)[Symbol.for("SingleHTML")](true,window);
@@ -1320,8 +1326,4 @@ serif = fonts("Arial|Roboto|Cantarell|DejaVu Sans|PT Serif|Segoe UI|Ubuntu|Cambr
 hints = new Map([ //опция отсутствует ? вернуть строку
 	[F.u +"savedirs", crop(ucf.dirsvcget(''),34)], [F.z, ucf.ua()]]
 );
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> 06db064ed6126492c3fae71f58b2274051473cad

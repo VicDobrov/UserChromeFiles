@@ -1,4 +1,4 @@
-// Скрипт для документов всех окон [ChromeOnly]
+// Script For documents of all windows [ChromeOnly]
 var ucf_custom_script_all_win = {
 	initialized: false,
 	get unloadlisteners() {
@@ -11,6 +11,8 @@ var ucf_custom_script_all_win = {
 			return;
 		this.initialized = true;
 		/* ************************************************ */
+
+		// Here may be your code that will fire on the "load" event
 
 		/* ************************************************ */
 	},
@@ -26,3 +28,5 @@ var ucf_custom_script_all_win = {
 	}
 };
 /* ************************************************ */
+
+// Here may be your code that will fire on the "DOMContentLoaded" event
