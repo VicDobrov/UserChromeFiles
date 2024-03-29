@@ -87,7 +87,7 @@ Menu = { //массив команд пользователя, alt() клик п
 		lab: `Мобильный дизайн | для Чтения`, inf: F.b, img: F.con,
 		cmd(trg){ //пункт меню с HotKey
 			trg.ownerDocument.getElementById("key_responsiveDesignMode").doCommand();
-			if (gBrowser.selectedBrowser.browsingContext.inRDMPane) BrowserReload();},
+			if(gBrowser.selectedBrowser.browsingContext.inRDMPane) BrowserReload();},
 		alt(btn){
 			btn.ownerDocument.getElementById("key_toggleReaderMode").doCommand()} //штатный Режим чтения
 	},
@@ -129,9 +129,9 @@ Menu = { //массив команд пользователя, alt() клик п
 			cmd(){
 				var p = "fission.autostart"; ucf.pref(p, !ucf.pref(p));
 			},
-			upd() {
+			upd(){
 				var i = F.sec;
-				if (ucf.pref("fission.autostart"))
+				if(ucf.pref("fission.autostart"))
 					i = i.replace("-in","-");
 				this.image = i;
 			},
@@ -144,7 +144,7 @@ Menu = { //массив команд пользователя, alt() клик п
 		},
 		Remote: {lab: `Удалённая отладка`,
 			cmd(chr = "devtools.chrome.enabled",rem = "devtools.debugger.remote-enabled"){
-				if (!ucf.pref(chr) || !ucf.pref(rem)) {
+				if(!ucf.pref(chr) || !ucf.pref(rem)){
 					ucf.pref(chr,true); ucf.pref(rem,true);
 				}
 				var {BrowserToolboxLauncher} = ChromeUtils.import("resource://devtools/client/framework/browser-toolbox/Launcher.jsm");
@@ -156,7 +156,7 @@ Menu = { //массив команд пользователя, alt() клик п
 			cmd(){
 				var cancelQuit = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
 				Services.obs.notifyObservers(cancelQuit,"quit-application-requested","restart");
-				if (cancelQuit.data) return false;
+				if(cancelQuit.data) return false;
 				Services.appinfo.invalidateCachesOnRestart();
 				var restart = Services.startup;
 				restart.quit(restart.eAttemptQuit | restart.eRestart);}
@@ -169,7 +169,7 @@ Menu = { //массив команд пользователя, alt() клик п
 		cmd(){ucf.switchProxy()}
 	},
 	Pics: {
-		upd() { //обновлять строку меню
+		upd(){ //обновлять строку меню
 			var val = ucf.pref(F.v), s = val == 1, i = F.pdi; s ? i = i.replace("-blocked","") : 0;
 			this.label = `Графика страниц – ${s ? "включена" : val == 3 ? "только сайт" : "запрещена"}`;
 			this.image = i || F.nul;
@@ -204,10 +204,10 @@ Menu = { //массив команд пользователя, alt() клик п
 }}
 
 Keys = { //перехват-клавиш KeyA[_mod][_OS](e,t){код} и KeyB: "KeyA"
-	KeyX_1(e,t) {userjs(e)}, // Alt+X запуск внешнего JS-кода
-	KeyS_6() {saveSelToTxt()}, // Ctrl+Shift+S
+	KeyX_1(e,t){userjs(e)}, // Alt+X запуск внешнего JS-кода
+	KeyS_6(){saveSelToTxt()}, // Ctrl+Shift+S
 	KeyS_15_macosx: "KeyS_6", // Super+S
-	KeyS_1(e,t) {ucf.HTML()}, //Alt+S | e: Event, t: gBrowser.selectedTab
+	KeyS_1(e,t){ucf.HTML()}, //Alt+S | e: Event, t: gBrowser.selectedTab
 /*
 	mod = e.metaKey*8 + e.ctrlKey*4 + e.shiftKey*2 + e.altKey
 	mod + I в конце: только в полях ввода, «i» кроме полей ввода
@@ -224,14 +224,14 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		2(trg,forward){
 			gBrowser.tabContainer.advanceSelectedTab(forward ? -1 : 1,true)},
 		128(btn){ //СМ
-			if (btn.id)
+			if(btn.id)
 				gBrowser.removeAllTabsBut(gBrowser.selectedTab)
 			else
 				gBrowser.removeTab(TabAct(btn));}, //вкладка под мышью
 		264(btn){
-			if (!btn.id) TabsDel(1, TabAct(btn))}, //R+Alt закрыть вкладки справа
+			if(!btn.id) TabsDel(1, TabAct(btn))}, //R+Alt закрыть вкладки справа
 		272(btn){
-			if (!btn.id) TabsDel(0, TabAct(btn))}, //R+Shift … слева
+			if(!btn.id) TabsDel(0, TabAct(btn))}, //R+Shift … слева
 		8(){},16(){},64(){} //выбор
 	},
 	[F.C]: { //newTab
@@ -297,7 +297,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 	},
 	[F.I]: { //замок
 		8(){Click()}, //+Alt
-		128(){openProxyWin()},
+		128(){CfgProxy()},
 		16(btn){ //+Shift
 			BrowserPageInfo(btn,"mediaTab") //securityTab feed… perm…
 		},
@@ -354,32 +354,32 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 	},
 	[F.Q]: {mousedownTarget: true,
 		0(btn){ //L
-			if (btn.id == F.Q) {
+			if(btn.id == F.Q){
 				var bar = document.getElementById("ucf-additional-vertical-bar");
-				if (bar) window.setToolbarVisibility(bar,document.getElementById("sidebar-box").hidden);
+				if(bar) window.setToolbarVisibility(bar,document.getElementById("sidebar-box").hidden);
 				window.SidebarUI.toggle("viewHistorySidebar");
-			} else if (btn.className == "menu-iconic") {
+			} else if (btn.className == "menu-iconic"){
 				Node.hidePopup();
 				ucf.about_config(btn.pref.pref); //go параметр
 			} else ucf.mode_skin();
 		},
 		2(trg,forward){zoom(forward)}, //wheel
 		1(btn){ //д
-			if (btn.id == F.Q)
+			if(btn.id == F.Q)
 				switchTab("about:newtab");},
 		8(){switchTab('chrome://browser/content/places/places.xhtml')}, //L+Alt
 		264(){ //R+Alt
 			switchTab(FavItem(true))},
 		16(btn){if (btn.id == F.Q) zoom(0,1)}, //L+Shift
 		128(btn, trg){ //C Menu-1
-			if (btn.id == F.Q || trg)
+			if(btn.id == F.Q || trg)
 				btn.menupopup.openPopup(trg ||= btn, "after_start")
 			else ucf.mode_skin();
 		},
 		129(btn){userjs(btn,"")}, //дC консоль
 		256(btn){ //about Menu
-			if (btn.id == F.Q) setTimeout(()=> {
-				if (btn.config.state != "open")
+			if(btn.id == F.Q) setTimeout(()=> {
+				if(btn.config.state != "open")
 				  btn.config.openPopup(btn, "after_start")
 				else
 				  btn.config.hidePopup();
@@ -388,7 +388,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 				btn.parentNode.hidePopup(), btn.alt(btn);
 		},
 		257(btn){ //дR
-			if (btn.id == F.Q) //линза
+			if(btn.id == F.Q) //линза
 				Menu.EyeDrop.cmd(btn);
 		},
 		136(){ //С+Alt
@@ -468,7 +468,7 @@ Setup = [{ //about:config меню. refresh=true ⟳ Обновить без к�
 	pref: ["privacy.resistFingerprinting", "Изоляция Firstparty-Fingerprint", ,"privacy.firstparty.isolate\n\nЗащита данных пользователя также\nзапрещает запоминать размер окна"], Def3el: false,
 	keys: [[true, "Да",,"Защита от слежки",`ucf.pref('privacy.firstparty.isolate', true)`], [false, "Нет",,,`ucf.pref('privacy.firstparty.isolate',false)`]]
 },(()=>{
-if (parseInt(F.ver) > 114) return { //новый FF
+if(parseInt(F.ver) > 114) return { //новый FF
 	pref: ["browser.translations.enable", "Встроенный перевод сайтов"], Def3el: true, Gray: false, refresh: true,
 	keys: [[true, "Да"], [false, "Откл",,,`ucf.mode_skin('Перевод отключен для новых вкладок')`]]
 }; else return {
@@ -503,21 +503,10 @@ if (parseInt(F.ver) > 114) return { //новый FF
 	[F.G +"compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "GoogleBot"],
 	[uar, F.m]] //штатный ЮзерАгент
 }];
-/*
-code из pref:
-	предыдущее значение: menu.pref.val
-	Новое: newVal и trg.val данные
-	trg.label метка keys:
-*/
-// I.push(Setup[Setup.length-1].keys); //ЮзерАгент
-// SetDef(trg, "ваши данные…")
-// function SetDef(pref){ // pref.pref
-// 	console.log(pref.val);
-// }
 
 Over = { //edit подсказки под мышью
 get [F.P](){ //PanelUI delete this[…];
-	ucf.mode_skin(); if (ucf.pref("signon.rememberSignons"))
+	ucf.mode_skin(); if(ucf.pref("signon.rememberSignons"))
 		Services.cache2.asyncGetDiskConsumption({onNetworkCacheDiskConsumption(bytes){
 			ucf.toStatus(F.h + ucf.formatBytes(bytes),3e3) //вывод объёма кэша
 		}, QueryInterface: ChromeUtils.generateQI(["nsISupportsWeakReference","nsICacheStorageConsumptionObserver"])})
@@ -532,7 +521,7 @@ get [F.C](){ //newtab
 	return GetDynamicShortcutTooltipText(F.C) + Tag[F.C];
 },
 get [F.D](){var dw = ucf.dirsvcget("");
-	if (dw) ucf.mode_skin(`${ucf.pref(F.v) > 1 ? "\u{26A1} Графика отключена," : "💾 папка"} [Загрузки] `+ crop(dw, 96,''));
+	if(dw) ucf.mode_skin(`${ucf.pref(F.v) > 1 ? "\u{26A1} Графика отключена," : "💾 папка"} [Загрузки] `+ crop(dw, 96,''));
 	return GetDynamicShortcutTooltipText(F.D) +"\n"+ tExp(F.D);
 },
 get [F.N](){ucf.mode_skin('');
@@ -545,8 +534,8 @@ get "urlbar-input"(){ucf.toStatus(F.a,2500)}, //tab
 [F[1]]: Tag[F[0]], //title-close
 get [F.T](){
 	var t = `${ucf.pref("dom.disable_open_during_load") ? "Запрет" : "↯ Разреш"}ить всплывающие окна`;
-	if (!ucf.pref("places.history.enabled")) t = F.j;
-	if (ucf.pref("privacy.sanitize.sanitizeOnShutdown")) t = F.k;
+	if(!ucf.pref("places.history.enabled")) t = F.j;
+	if(ucf.pref("privacy.sanitize.sanitizeOnShutdown")) t = F.k;
 	ucf.toStatus(t,3e3); return tooltip();
 },
 get [F.A](){return Tag[F.A] + F.p;},
@@ -562,12 +551,12 @@ get [F.O](){ucf.toStatus(this.BrExp(),2500); //щит
 },
 get [F.Q](){
 	var trg = window.event?.target;
-	if (trg.id == F.Q)
+	if(trg.id == F.Q)
 		zoom(0,0,0,`, ${ucf.pref("browser.tabs.loadInBackground") ? "Не выбирать" : "Переключаться в"} новые вкладки`)
 	else if (trg.id)
 			ucf.toStatus(F.c,9e3);
 	try {trg.mstate = trg.config.state + trg.menupopup.state;} catch{} //QuickToggle
-	if (!/open/.test(trg.mstate))
+	if(!/open/.test(trg.mstate))
 		return tExp(F.Q)
 	else trg.tooltipText = "";
 },
@@ -581,7 +570,7 @@ get "ucf_SessionManager"(){ucf.toStatus(F.g);},
 get [F.E](){
 	ucf.toStatus(F.g); return Tag[F.E] + F.p;
 },
-get "add-ons-button"() {
+get "add-ons-button"(){
 	ucf.toStatus(F.g); var s = Tag[F.E];
 	return tooltip(window.event.target, s.replace(s.split("\n", 1),"") + F.p);
 },
@@ -602,7 +591,7 @@ BrExp(t = F.l + br_val()){
 	for(var p in Keys) if (reos.test(p)) //убрать имя вашей ОС из свойства
 		Keys[p.replace(reos,'')] = Keys[p], delete Keys[p];
 	for(var p in Keys){var func = Keys[p]; //(){…}, bool,num
-		if (typeof func == "string") func = Keys[func]; //ссылка на функцию
+		if(typeof func == "string") func = Keys[func]; //ссылка на функцию
 		var [key,mod] = p.split("_"); mod ||= "";
 		var upper = key[0].toUpperCase(); var prevent = key[0] == upper;
 		var [, m,i] = mod.match(re); m ||= 0; //modifiers bitmap
@@ -615,21 +604,21 @@ BrExp(t = F.l + br_val()){
 keydown_win = e => { //перехват клавиш, учитывая поля ввода
 	if (e.repeat) return; //выключить
 	var KB = Keys[e.code]?.[e.metaKey*8 + e.ctrlKey*4 + e.shiftKey*2 + e.altKey];
-	if (KB) //есть HotKey
+	if(KB) //есть HotKey
 		for(var [func,p,i] of KB)
-			if (i ^ docShell.isCommandEnabled("cmd_insertText"))
+			if(i ^ docShell.isCommandEnabled("cmd_insertText"))
 				p && e.preventDefault(), func(e, gBrowser.selectedTab); //запуск по сочетанию
-	if (!Debug()) return; //показ клавиш
+	if(!Debug()) return; //показ клавиш
 	console.log('■ key '+ e.code + ('_'+ (e.metaKey*8 + e.ctrlKey*4 + e.shiftKey*2 + e.altKey)).replace('_0',''));
 };
 listener = { //действия мыши, перехват существующих
 	handleEvent(e){
-		if (this.skip || e.detail > 1) return;
+		if(this.skip || e.detail > 1) return;
 		var trg = e.target, id = trg.id || trg.className; //trg.tagName;
-		if (trg.id) Node = trg;
-		if (e.type == "mouseenter"){
+		if(trg.id) Node = trg;
+		if(e.type == "mouseenter"){
 			var hint = Over[id] || Over[(trg = trg.parentNode).id];
-			if (hint) trg.tooltipText = hint; return; //update
+			if(hint) trg.tooltipText = hint; return; //update
 		}
 		var sels = this.selectors.filter(this.filter, trg); //#id
 		var {length} = sels; if (!length) return;
@@ -639,23 +628,23 @@ listener = { //действия мыши, перехват существующ�
 			length > 1 && sels.find(this.find,num) || sels[0]
 		];
 		Debug() && console.log('■ but «'+ id +'» key '+ num); //wheel дважды
-		if (wheel) return obj[num]?.(trg, e.deltaY < 0);
+		if(wheel) return obj[num]?.(trg, e.deltaY < 0);
 // mousedown
-		if (e.type.startsWith("m")) {
+		if(e.type.startsWith("m")){
 			obj.mousedownTarget && this.stop(e);
 			this.longPress = false; //+задержка при обычном клике
-			if (++num in obj)
+			if(++num in obj)
 				this.mousedownTID = setTimeout(this.onLongPress, 333, trg,obj,num);
-			if (e.button == 2)
+			if(e.button == 2)
 				this.ctx = trg.getAttribute("context"), trg.setAttribute("context","");
 			return;
 		}
 		obj.mousedownTarget || this.stop(e);	//click
-		if (this.longPress) return this.longPress = false;
+		if(this.longPress) return this.longPress = false;
 		this.mousedownTID &&= clearTimeout(this.mousedownTID);
-		if (!obj[num]){
-			if (e.button == 1) return;
-			if (e.button){
+		if(!obj[num]){
+			if(e.button == 1) return;
+			if(e.button){
 				num = "context";
 				for(var p in this.a) this.a[p] = e[p];
 			} else
@@ -766,7 +755,7 @@ saveSelToTxt = async () => { //в .txt Всё или Выбранное
 			if (ed && ed instanceof Ci.nsIEditor)
 				sel = ed.selection, fed = fe;
 		}
-		if (sel.isCollapsed)
+		if(sel.isCollapsed)
 			fed && fed.blur(),docShell.doCommand("cmd_selectAll"),
 			res = win.getSelection().toString(),docShell.doCommand("cmd_selectNone"),
 			fed && fed.focus();
@@ -778,23 +767,22 @@ saveSelToTxt = async () => { //в .txt Всё или Выбранное
 },
 switchTab = (url = 'about:serviceworkers', go) => { //открыть вкладку | закрыть её | выбрать
 	for(var tab of gBrowser.visibleTabs)
-		if (tab.linkedBrowser.currentURI.spec == url)
+		if(tab.linkedBrowser.currentURI.spec == url)
 			{go ? gBrowser.selectedTab = tab : gBrowser.removeTab(tab); return;}
 	gBrowser.addTrustedTab(url);
 	gBrowser.selectedTab = gBrowser.visibleTabs[gBrowser.visibleTabs.length -1];
 },
-openDial = (args = [F.cfg,"user_chrome_prefs:window","centerscreen,resizable,dialog=no"]) => window.openDialog(...args),
 Click = (id = "ucf-open-about-config-button") => {
 	var n = document.getElementById(id); n && n.click();
 },
 tooltip = (id = document.getElementById(F.T), s = "\n◨ правый клик: Без запроса") => {
-	if (id && id.tooltipText.indexOf(s) == -1)
+	if(id && id.tooltipText.indexOf(s) == -1)
 		return id.tooltipText + s;
 },
 tooltip_x = (trg,text = "", ttt = "") => {
-	if (!trg.id.endsWith("x")){ //box
+	if(!trg.id.endsWith("x")){ //box
 		ttt = (trg.hasAttribute("tooltiptext")) ? trg.ttt = trg.tooltipText : trg.ttt;
-		if (ttt && ttt.indexOf(text) == -1) ttt += "\n\n";
+		if(ttt && ttt.indexOf(text) == -1) ttt += "\n\n";
 		trg.removeAttribute("tooltiptext");
 	}
 	return (ttt.indexOf(text) == -1) ? ttt + text : ttt;
@@ -821,7 +809,7 @@ userjs = (e,myjs = F.s +"custom_scripts/User.js") => {
 },
 Translate = (brMM = gBrowser.selectedBrowser.messageManager) => { //перевод сайт | выдел. текст
 	brMM.addMessageListener('getSelect',listener = (msg) =>{
-		if (msg.data) //выделено
+		if(msg.data) //выделено
 			switchTab("https://translate.google.com/#view=home&op=translate&sl=auto&tl=ru&text="+ msg.data,true)
 		else
 			switchTab("https://translate.yandex.com/translate?url="+ gURLBar.value +"&dir=&ui=ru&lang=auto-ru",true);
@@ -829,10 +817,10 @@ Translate = (brMM = gBrowser.selectedBrowser.messageManager) => { //перево
 	});
 	brMM.loadFrameScript('data:,sendAsyncMessage("getSelect",content.document.getSelection().toString())',false);
 },
-openProxyWin = (_win = Services.wm.getMostRecentWindow("aTaB:ProxyWin")) => {
-	if (_win) _win.focus()
+CfgProxy = (_win = Services.wm.getMostRecentWindow("aTaB:ProxyWin")) => {
+	if(_win) _win.focus()
 	else {
-		_win = openDial(["chrome://browser/content/preferences/dialogs/connection.xhtml","_blank","chrome,dialog=no,centerscreen,resizable"]);
+		_win = window.openDialog("chrome://browser/content/preferences/dialogs/connection.xhtml","_blank","chrome,dialog=no,centerscreen,resizable");
 		_win.addEventListener("DOMContentLoaded",() => {
 			_win.document.documentElement.setAttribute("windowtype","aTaB:ProxyWin");
 		},{once: true});
@@ -844,16 +832,16 @@ FavItem = (end = false,def_url = 'ua.ru', s = 0,m = 1)=>{ //first|last url Ме�
 	var folder = PlacesUtils.history.executeQuery(query.value, options.value).root;
 	folder.containerOpen = true;
 	var max = folder.childCount -1, type = Ci.nsINavHistoryResultNode.RESULT_TYPE_URI;
-	if (end) s = max, m = -1;
+	if(end) s = max, m = -1;
 	for(var ind = s; end ? 0 <= ind : ind <= max; ind = ind + m){
 		var node = folder.getChild(ind);
-		if (node.type == type) return node.uri;
+		if(node.type == type) return node.uri;
 	}; return def_url;
 },
 toFav = () => {with (PlacesUtils.bookmarks){ //без диалога
 	var url = gBrowser.selectedBrowser.currentURI.spec;
 	search({url}).then(async array => {
-		if (array.length)
+		if(array.length)
 			try {await remove(array);} catch {}
 		else
 			try {await insert({
@@ -865,18 +853,18 @@ toFav = () => {with (PlacesUtils.bookmarks){ //без диалога
 	});
 }}
 
-if (F.os == "macosx") Object.keys(Tag).forEach((k)=>{ //i счётчик, замена букв
+if(F.os == "macosx") Object.keys(Tag).forEach((k)=>{ //i счётчик, замена букв
 	['◉','Ø'].forEach((c,i)=>{Tag[k] = Tag[k].replace(new RegExp(c,'g'),
 	['⦿','◎'][i])})})
 else if (ucf.pref([F.u +'mystyle',false]))
 	css_USER(F.s +"custom_styles/win_buttons-vitv.css")
 else
 	css_USER('.titlebar-buttonbox {display: none !important}');
-F.cfg = F.s +"options/prefs_win.xhtml"; if (!FileExists(F.cfg)) F.cfg = F.s +"user_chrome/prefs_win.xhtml";
 
 //+ кнопки
 CustomizableUI.createWidget({label:`Панели, Папки`,id: F.F,tooltiptext: Tag[F.F],
 	onCreated(btn){btn.style.setProperty("list-style-image",`url(${F.dir})`)}});
+if(FileExists(F.as))
 CustomizableUI.createWidget({ label:F.A.replace('-',' '), id:F.A,
 	defaultArea: CustomizableUI.AREA_NAVBAR, localized: false,
 	onCreated(btn){btn.setAttribute("image", F.ai);
@@ -887,16 +875,17 @@ CustomizableUI.createWidget({ label:F.A.replace('-',' '), id:F.A,
 	get handleCommand(){delete this.handleCommand;
 		return this.handleCommand = btn => {(btn.handleCommand = new btn.ownerGlobal.Function(this.code).bind(btn))();}
 	},
-	get code(){delete this.code; var s = F.s +"custom_scripts/"+ F.A +".js";
+	get code(){delete this.code;
 		try {var c = 'this.focusedWindow && this.focusedWindow.focus();\n'+
-			Cu.readUTF8URI(Services.io.newURI(s))} catch {c = `console.error(F.q + ${s})`}
+			Cu.readUTF8URI(Services.io.newURI(F.as))} catch {c = `console.error(F.q + ${F.as})`}
 		return this.code = c;
 	}})
-try {if (!Services.prefs.getStringPref("browser.uiCustomization.state").includes(`"${F.E}"`))
+
+try {if(!Services.prefs.getStringPref("browser.uiCustomization.state").includes(`"${F.E}"`))
 	await delayedStartupPromise;
-var btn = document.getElementById(F.E);
-btn.setAttribute("removable", true);
-document.getElementById("nav-bar-customization-target").append(btn);
+var s = document.getElementById(F.E);
+s.setAttribute("removable", true);
+document.getElementById("nav-bar-customization-target").append(s);
 } catch {}
 
 
@@ -921,43 +910,43 @@ document.getElementById("nav-bar-customization-target").append(btn);
 		this.remove();
 		this.fill(Menu, popup);
 	},
-	fill(o, popup) {
-		for (key in o) {
+	fill(o, popup){
+		for (key in o){
 			var val = o[key];
-			if (typeof val != "object") continue;
+			if(typeof val != "object") continue;
 			var {lab, inf, img, cmd, alt, sep, men, upd} = val;
 			sep && popup.append(this.m("menuseparator"));
 			var name = men ? "menu" : "menuitem";
 			var item = this.m(name);
 			item.setAttribute("label", lab || key);
 			item.alt = alt; //RClick в ucf_hookClicks.js {Mouse…
-			if (inf)
+			if(inf)
 				item.tooltipText = inf;
-			if (img || /this\.image.*=/.test(upd))
+			if(img || /this\.image.*=/.test(upd))
 				item.className = name + "-iconic", item.setAttribute("image", img || F.nul);
 			men || cmd && item.setAttribute("oncommand", cmd.toString().replace(
 				/cmd\(.*?\){/, "{var trg = event.target || event;"
 			));
-			if (upd){ //обновляемая строка
+			if(upd){ //обновляемая строка
 				item.style.filter = "drop-shadow(0.1px 1px 0.1px #c99)";
 				item.style.setProperty("font-style", "italic", "important");
-				if (item.renderedOnce) (item.render = upd).call(item);
+				if(item.renderedOnce) (item.render = upd).call(item);
 				else item.upd = upd, item.render = self.renderSub;
 			}
 			popup.append(item);
 			men && this.fill(val, item.appendChild(this.m("menupopup")));
 		}
 	},
-	renderSub() {
+	renderSub(){
 		delete this.render;
 		this.render();
 		this.render = self.updSub;
 		this.upd();
 	},
-	updSub() {
+	updSub(){
 		this.parentNode.state.startsWith("c") || this.upd();
 	},
-	createPopup(doc, btn, prop, data) {
+	createPopup(doc, btn, prop, data){
 		var popup = doc.createXULElement("menupopup");
 		btn[prop] = popup;
 		popup.id = this.id +"-"+ prop;
@@ -966,38 +955,38 @@ document.getElementById("nav-bar-customization-target").append(btn);
 		for(var obj of data) popup.append(this.createElement(doc, obj));
 		btn.append(popup);
 	},
-	createElement(doc, obj) { //pref
-		if (!obj) return doc.createXULElement("menuseparator");
+	createElement(doc, obj){ //pref
+		if(!obj) return doc.createXULElement("menuseparator");
 		var pref = doc.ownerGlobal.Object.create(null), node, bool, img;
-		for(var [key, val] of Object.entries(obj)) {
-			if (key == "pref") {
+		for(var [key, val] of Object.entries(obj)){
+			if(key == "pref"){
 				var [apref, lab, akey, hint, undef, code] = val; //строка меню
 				pref.pref = apref; pref.lab = lab || apref;
-				if (hint) {
-					if (RegExp(/\p{L}/,'u').test(hint[0]) && (hint[0] === hint[0].toUpperCase()))
+				if(hint){
+					if(RegExp(/\p{L}/,'u').test(hint[0]) && (hint[0] === hint[0].toUpperCase()))
 						hint = '\n'+ hint;
 					pref.hint = hint;
 				}
-				if (undef) pref.undef = undef; //если не массив: undef || undef == ""
+				if(undef) pref.undef = undef; //если не массив: undef || undef == ""
 				if (code) pref.code = code;
 			}
-			else if (key == "icon") img = val, pref.img = true;
-			else if (key != "keys") pref[key] = val;
+			else if(key == "icon") img = val, pref.img = true;
+			else if(key != "keys") pref[key] = val;
 			else pref.hasVals = true;
 		}
 		var t = prefs.getPrefType(pref.pref), m = {b: "Bool", n: "Int", s: "String"};
 		var str = m[t == prefs.PREF_INVALID ? obj.keys ? (typeof obj.keys[0][0])[0] : "b" : t == prefs.PREF_BOOL ? "b" : t == prefs.PREF_INT ? "n" : "s"]; //String по-умолчанию
 		pref.get = prefs[`get${str}Pref`];
 		var map, set = prefs[`set${str}Pref`];
-		if (pref.hasVals) {
+		if(pref.hasVals){
 			for(var [val,,,,code] of obj.keys)
 				code && (map || (map = new Map())).set(val, code);
-			if (map) pref.set = (key, val) => {
+			if(map) pref.set = (key, val) => {
 				set(key, val);
 				map.has(val) && eval(map.get(val)); //код2 если pref изменён
 			}
 		}
-		if (!map) pref.set = set;
+		if(!map) pref.set = set;
 		node = doc.createXULElement("menu");
 		node.className = "menu-iconic";
 		img && node.setAttribute("image", img);
@@ -1007,50 +996,50 @@ document.getElementById("nav-bar-customization-target").append(btn);
 			str.startsWith("B") && !pref.hasVals ? [[true, "true"], [false, "false"]] : obj.keys,
 			node.appendChild(doc.createXULElement("menupopup"))
 		);
-		if ("Def3el" in obj) pref.noAlt = !("Yellow" in obj);
+		if("Def3el" in obj) pref.noAlt = !("Yellow" in obj);
 		return node;
 	},
-	createRadios(doc, vals, popup) {
-		for(var arr of vals) {
+	createRadios(doc, vals, popup){
+		for(var arr of vals){
 			var [val, lab, key, hint] = arr;
 			var menuitem = doc.createXULElement("menuitem");
 			with (menuitem)
 				setAttribute("type","radio"), setAttribute("closemenu","none"), setAttribute("label", popup.parentNode.pref.vals[val] = lab), key && setAttribute("accesskey", key);
 			var tip = menuitem.val = val === "" ? F.r : val;
-			if (hint) tip += "\n" + hint;
+			if(hint) tip += "\n" + hint;
 			menuitem.tooltipText = `${tip != undefined ? tip + "\n\n" : ""}`+ F.f;
 			popup.append(menuitem);
 		}
 	},
 	regexpRefresh: /^(?:view-source:)?(?:https?|ftp)/,
-	upd(node) {
+	upd(node){
 		var {pref} = node, def = false, user = false, val; //если опция не найдена
-		if (prefs.getPrefType(pref.pref) != prefs.PREF_INVALID) {
+		if(prefs.getPrefType(pref.pref) != prefs.PREF_INVALID){
 			try {
 				val = pref.defVal = db[pref.get.name](pref.pref); def = true; //опция по-умолчанию получена
 			} catch {def = false}
 			user = prefs.prefHasUserValue(pref.pref);
-			if (user) try {val = pref.get(pref.pref, undefined);} catch {}
+			if(user) try {val = pref.get(pref.pref, undefined);} catch {}
 		}
-		if (val == pref.val && def == pref.def && user == pref.user) return;
+		if(val == pref.val && def == pref.def && user == pref.user) return;
 		pref.val = val; pref.def = def; pref.user = user;
 		var exists = def || user;
-		if (!exists && pref.undef) //опции нет ? вернуть default
+		if(!exists && pref.undef) //опции нет ? вернуть default
 			val = pref.undef[0];
 		var hint = hints.get(pref.pref);
 		hint ||= val != undefined ? val : "Эта опция не указана";
-		if (hint === "") hint = F.r;
+		if(hint === "") hint = F.r;
 		hint += "\n" + pref.pref;
-		if (pref.hint) hint += "\n"+ pref.hint;
+		if(pref.hint) hint += "\n"+ pref.hint;
 		node.tooltipText = hint; //+ текст
 		var img = Icon("999"), alt = "Yellow" in pref && val == pref.Yellow, clr = "Gray" in pref && val == pref.Gray, blu = "Blue" in pref && val == pref.Blue;
-		if (blu) img = Icon("a0f");
-		if (alt) img = Icon("f80");
-		if ("Def3el" in pref)
-			if (val == pref.Def3el)
+		if(blu) img = Icon("a0f");
+		if(alt) img = Icon("f80");
+		if("Def3el" in pref)
+			if(val == pref.Def3el)
 				img = Icon(), node.style.removeProperty('filter');
-			else if (val != pref.defVal) {
-				if (!alt && !clr && !blu)
+			else if (val != pref.defVal){
+				if(!alt && !clr && !blu)
 					img = Icon("f26"); // Red
 				node.style.filter = "drop-shadow(0.1px 1px 0.1px #c99)";
 			}
@@ -1059,8 +1048,8 @@ document.getElementById("nav-bar-customization-target").append(btn);
 			? node.style.setProperty("font-style", "italic", "important")
 			: node.style.removeProperty("font-style");
 		var {lab} = pref;
-		if (exists && pref.hasVals) {
-			if (val in pref.vals)
+		if(exists && pref.hasVals){
+			if(val in pref.vals)
 				var sfx = pref.vals[val] || val;
 			else
 				var sfx = user ? "Иное" : F.m;
@@ -1069,11 +1058,11 @@ document.getElementById("nav-bar-customization-target").append(btn);
 		lab = exists ? lab : '['+ lab + `${"restart" in pref ? " ↯" : "refresh" in pref ? " ⟳" : ""}` +']'+ `${pref.undef ? " - "+ pref.undef[1] : ""}`;
 		node.setAttribute("label", lab); //имя = [имя] если преф не существует
 	},
-	openPopup(popup) {
+	openPopup(popup){
 		var btn = popup.parentNode;
-		if (btn.domParent != btn.parentNode) {
+		if(btn.domParent != btn.parentNode){
 			btn.domParent = btn.parentNode;
-			if (btn.matches(".widget-overflow-list > :scope"))
+			if(btn.matches(".widget-overflow-list > :scope"))
 				var pos = "after_start";
 			else var win = btn.ownerGlobal, {width, height, top, bottom, left, right} =
 				btn.closest("toolbar").getBoundingClientRect(), pos = width > height
@@ -1083,35 +1072,35 @@ document.getElementById("nav-bar-customization-target").append(btn);
 		}
 		popup.openPopup(btn);
 	},
-	maybeRestart(node, conf) {
-		if (conf && !Services.prompt.confirm(null, this.label, "Перезапустить браузер?")) return;
+	maybeRestart(node, conf){
+		if(conf && !Services.prompt.confirm(null, this.label, "Перезапустить браузер?")) return;
 		var cancel = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
 		Services.obs.notifyObservers(cancel, "quit-application-requested", "restart");
 		return cancel.data ? Services.prompt.alert(null, this.label, "Запрос на выход отменён.") : this.restart();
 	},
-	async restart() {
+	async restart(){
 		var meth = Services.appinfo.inSafeMode ? "restartInSafeMode" : "quit";
 		Services.startup[meth](Ci.nsIAppStartup.eAttemptQuit | Ci.nsIAppStartup.eRestart);
 	},
-	maybeRe(node, fe) {
+	maybeRe(node, fe){
 		var {pref} = node;
-		if ("restart" in pref) {
-			if (this.maybeRestart(node, pref.restart)) return;
+		if("restart" in pref){
+			if(this.maybeRestart(node, pref.restart)) return;
 		}
 		else this.popupshowing(fe, node.parentNode);
-		if ("refresh" in pref) {
+		if("refresh" in pref){
 			var win = node.ownerGlobal;
-			if (this.regexpRefresh.test(win.gBrowser.currentURI.spec)) pref.refresh
+			if(this.regexpRefresh.test(win.gBrowser.currentURI.spec)) pref.refresh
 				? win.BrowserReloadSkipCache() : win.BrowserReload();}
 	},
-	maybeClosePopup(e, trg) {
+	maybeClosePopup(e, trg){
 		(e.shiftKey || e.button == 1) || trg.parentNode.hidePopup();
 	},
-	popupshowing(e, trg = e.target, checkstate = true) {
-		if (checkstate && trg.state == "closed") return;
-		if (trg.id) {
-			for(var node of trg.children) {
-				if (node.nodeName.endsWith("r")) continue;
+	popupshowing(e, trg = e.target, checkstate = true){
+		if(checkstate && trg.state == "closed") return;
+		if(trg.id){
+			for(var node of trg.children){
+				if(node.nodeName.endsWith("r")) continue;
 				this.upd(node);
 				!e && node.open && this.popupshowing(null, node.querySelector("menupopup"));
 			} return;
@@ -1119,55 +1108,50 @@ document.getElementById("nav-bar-customization-target").append(btn);
 		var {pref} = trg.closest("menu"), findChecked = true;
 		var findDef = "defVal" in pref;
 		var checked = trg.querySelector("[checked]");
-		if (checked) {
-			if (checked.val == pref.val) {
-				if (findDef) findChecked = false;
+		if (checked){
+			if(checked.val == pref.val){
+				if(findDef) findChecked = false;
 				else return;
 			}
 			else checked.removeAttribute("checked");
 		}
-		if (findDef) {
+		if(findDef){
 			var def = trg.querySelector("menuitem:not([style*=font-style]");
-			if (def)
-				if (def.val == pref.defVal) {
-					if (findChecked) findDef = false;
+			if(def)
+				if(def.val == pref.defVal){
+					if(findChecked) findDef = false;
 					else return;
 				}
 				else def.style.setProperty("font-style","italic","important");
 		}
-		for(var node of trg.children) if ("val" in node) {
-			if (!pref.val && pref.val != "" && pref.undef)
+		for(var node of trg.children) if ("val" in node){
+			if(!pref.val && pref.val != "" && pref.undef)
 				pref.val = pref.undef[0]; //опции нет ? вернуть default
-			if (findChecked && node.val == pref.val) {
+			if(findChecked && node.val == pref.val){
 				node.setAttribute("checked", true);
-				if (findDef) findChecked = false;
+				if(findDef) findChecked = false;
 				else break;
 			}
-			if (findDef && node.val == pref.defVal) {
+			if(findDef && node.val == pref.defVal){
 				node.style.removeProperty("font-style");
 				if (findChecked) findDef = false;
 				else break;}
 		}
 	},
-	command(e, trg = e.target) { //LMB
-		if (trg.btn) return;
+	command(e, trg = e.target){ //LMB
+		if(trg.btn) return;
 		var menu = trg.closest("menu"), newVal = trg.val;
-		if (!menu || !menu.pref) return;
+		if(!menu || !menu.pref) return;
 		this.maybeClosePopup(e, menu);
 		menu.pref.code && eval(menu.pref.code); //run1
-		if (newVal != menu.pref.val)
+		if(newVal != menu.pref.val)
 			menu.pref.set(menu.pref.pref, newVal), this.maybeRe(menu, true);
-			// if (newVal)
-			// 	menu.pref.set(menu.pref.pref, newVal)
-			// else
-			// 	console.log("NULL");
-				// prefs.clearUserPref(menu.pref.pref);
-	},
-	contextmenu(e) {
+},
+	contextmenu(e){
 		var trg = e.target;
-		if (!("pref" in trg)) return;
+		if(!("pref" in trg)) return;
 		this.maybeClosePopup(e, trg);
-		if (trg.pref.user)
+		if(trg.pref.user)
 			prefs.clearUserPref(trg.pref.pref), this.maybeRe(trg);
 		trg.pref.code && eval(trg.pref.code); //run
 	}
@@ -1188,19 +1172,19 @@ uar = "chrome://devtools/skin/images/"; F = {
 	qt: "data:image/webp;base64,UklGRkYCAABXRUJQVlA4WAoAAAAQAAAAFwAAFwAAQUxQSJcAAAANcGJr25S8mH4SNGxAgsguPCZ0BcMOiDSNRpvVaCTa3AI2qm2e2ofz7OuwgIiYgMzb4kVjGvegnQFAwXgFVnvcOmtnMJtutAa3Vo4mhRMDpWq8AjfU+yQoYf1/oTkTIdUrknKswNQ5yAdDzqgr4CYbsJWQfEyEU5QNEl2eKFM2AAIbjmSIMjwXPGyEdj6Bdn4mj9KO63sAAFZQOCCIAQAAdAgAnQEqGAAYAD6dRppKgoCqgAE4lsAKwgisgG27uzPePSvBIu/Pr0HJqW+AfoAIHl2DrAnRo/G3JBpTx8yE7L6LFQyD+yUNvuRYAAD+7mwmpaoBcsJ1hVKsMI2ucqid8qndm+WEvH4l4il6lA8FPscgnrRHrnSjjyNcfUV21+TkfqOWKou2UvVsZSl1z+jKs760Vij5XCWF9Uo6TZAhKfrJpeILyQYwq2Ee/g1uyEH/dJMI/91DsVpI6i2vV/Jqpd4/KniJtTm1woLvaotA2ikt3eeBaqlHf8WPe++lSWS7fETjgvzzbflp0Rj+v23kbb9e/VjUcPaD83shRuwzEo6CAO/AGxE+Zwbvv9NDsQT6T+S4CCDOFTuMRVv9/0E4P+uK+Vc3bMfQQD05gY/fes+ZX6ZHkvFdMn7zX8LMVvI59p7F806HPD2lBjs4lWWhQ5ckJDNflZL49370shr3/Q9uMJN9i/NVCu4OT7K3+4+/RkAMnjuY09u+3i4y4CldQG789iIAAAA="
 };
 [`titlebar-button.titlebar-close`,,`zoompage-we_dw-dev-`,,`_531906d3-e22f-4a6c-a102-8057b88a1a63_-`,,`_b9db16a4-6edc-47ec-a1f4-b86292ed211d_-`].forEach((c,i)=>{ //расширения
-if (c) { F[i] = i == 0 ? c : c +"BAP"; F[i+1] = i == 0 ? c.replace("."," ") : c +"browser-action";}});
+if(c){F[i] = i == 0 ? c : c +"BAP"; F[i+1] = i == 0 ? c.replace("."," ") : c +"browser-action";}});
 db.forEach((c,i)=>{
-	if (i == 0) k = 97; if (i == 26) k = 39; F[String.fromCharCode(i+k)] = c;
-});
+	if(i == 0) k = 97; if(i == 26) k = 39; F[String.fromCharCode(i+k)] = c;
+}); F.as = F.s +"custom_scripts/"+ F.A +".js";
 Debug = (e,id = "sidebar-box") => {
-	if (prefs.getBoolPref(F.u +'info',false)) return true;
+	if(prefs.getBoolPref(F.u +'info',false)) return true;
 	return !document.getElementById(id).hidden;
 },
 InArr = (arr, val) => { //вложенный массив
-	for (a of arr) if (a.find(e => e === val)) return a;
+	for (a of arr) if(a.find(e => e === val)) return a;
 },
 FileExists = (file) => {try { //файл|папка есть?
-	if (!file.startsWith("chrome://"))
+	if(!file.startsWith("chrome://"))
 		return FileUtils.File(String.raw`${file}`).exists()
 	else return Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).convertChromeURL(Services.io.newURI(file)).QueryInterface(Ci.nsIFileURL).file.exists();
 	} catch {}; return false;
@@ -1213,8 +1197,8 @@ Exp = ()=>{
 },
 tExp = (name,m = Exp(), t,z)=>{ //… {Общий︰Эксперт (m = 1)[︰…]}
 	t = Tag[name]; z = t.match(/(\{)([\s\S]*?)(\})/gm);
-	if (z) z.forEach((k,h) =>{ //текст зависит от режима
-		h = k.split('︰'); if (h && h.length > m)
+	if(z) z.forEach((k,h) =>{ //текст зависит от режима
+		h = k.split('︰'); if(h && h.length > m)
 			t = t.replace(k,h[m].replace(/\{|\}/g,''));})
 	return t;
 },
@@ -1222,12 +1206,12 @@ tExp = (name,m = Exp(), t,z)=>{ //… {Общий︰Эксперт (m = 1)[︰�
 Icon = (c = '0c0')=>"data:image/svg+xml;charset=utf-8,<svg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='a' x1='16' x2='16' y1='32' gradientUnits='userSpaceOnUse'><stop stop-color='%23"+ c +"'/><stop stop-color='%23fff' offset='.8'/></linearGradient><linearGradient id='b' x2='32' y1='16' gradientTransform='matrix(1 0 0 1 2 2)'><stop stop-opacity='.5'/></linearGradient></defs><circle cx='16' cy='16' r='15' fill='url(%23a)' stroke='url(%23b)' stroke-width='2'/></svg>",
 ucf = { //all ChromeOnly-scripts
 	pref(key,set){ //или key = [key,default]
-		if (!Array.isArray(key)) key = [key];
+		if(!Array.isArray(key)) key = [key];
 		var t = prefs.getPrefType(key[0]), m = {b:"Bool",n:"Int",s:"String"};
 		t = m[t == 128 ? "b" : t == 64 ? "n" : t == 32 ? "s" : ""];
-		if (set == "get") return t; //тип опции
-		if (!t) t = m[set != undefined ? (typeof set)[0] : (typeof key[1])[0]];
-		if (t) if (set != undefined)
+		if(set == "get") return t; //тип опции
+		if(!t) t = m[set != undefined ? (typeof set)[0] : (typeof key[1])[0]];
+		if(t) if(set != undefined)
 			prefs[`set${t}Pref`](key[0],set)
 		else
 			set = prefs[`get${t}Pref`](...key);
@@ -1236,34 +1220,31 @@ ucf = { //all ChromeOnly-scripts
 	ua(real = false,ua_my = F.z){ //текущий или вшитый ЮзерАгент
 		ttt = this.pref(ua_my); prefs.clearUserPref(ua_my);
 		u = Cc["@mozilla.org/network/protocol;1?name=http"].getService(Ci.nsIHttpProtocolHandler).userAgent; //костыль
-		ttt && this.pref(ua_my,ttt); ttt ||= u; if (real) ttt = u; return ttt;
+		ttt && this.pref(ua_my,ttt); ttt ||= u; if(real) ttt = u; return ttt;
 	},
-	// uam(){ //my ЮзерАгент
-	// 	return this.pref(["ucf.ua", F.G + F.H]);
-	// },
 	dirsvcget(){ //константа пути + subdirs, если посл. опция = "" вернуть путь, иначе открыть
 		var f, d = [...arguments], r = (d[d.length-1] == ""); (r) && d.pop();
-		try {var b = Services.dirsvc.get("DfltDwnld",Ci.nsIFile);} catch {b = prefs.getComplexValue("browser.download.dir",Ci.nsIFile)}
+		try {var b = prefs.getComplexValue("browser.download.dir",Ci.nsIFile);} catch {b = Services.dirsvc.get("DfltDwnld",Ci.nsIFile)}
 		try {f = Services.dirsvc.get(d[0], Ci.nsIFile);} catch {f = b}
 		d.slice(1, d.length).forEach((c) => f.append(c));
-		if (r) return f.path;
+		if(r) return f.path;
 		f.exists() && f.launch();
 	},
 	formatBytes(b = 0,d = 1){ //объём байт…Тб
 		let i = Math.log2(b)/10|0; return parseFloat((b/1024**(i=i<=0?0:i)).toFixed(d))+`${i>0?'KMGT'[i-1]:''}b`;
 	},
 	about_config(filter){ //на опцию
-		if (gURLBar.value.startsWith("about:config")) switchTab(gURLBar.value);
+		if(gURLBar.value.startsWith("about:config")) switchTab(gURLBar.value);
 		var setFilter = (e,input = (e?.target || window.content.document).getElementById("about-config-search")) => {	try {
-			if (e || input.value != filter) input.setUserInput(filter);} catch{}
+			if(e || input.value != filter) input.setUserInput(filter);} catch{}
 		},
 		found = window.switchToTabHavingURI("about:config",true, {relatedToCurrent: true,
 			triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal()});
-		if (found) setFilter(null,window);
+		if(found) setFilter(null,window);
 		else gBrowser.selectedBrowser.addEventListener("pageshow",setFilter, {once: true});
 	},
 	toStatus(txt,time = 5e3,StatusPanel = window.StatusPanel){
-		if (StatusPanel.update.tid)
+		if(StatusPanel.update.tid)
 			clearTimeout(StatusPanel.update.tid)
 		else {
 			var {update} = StatusPanel;
@@ -1276,22 +1257,22 @@ ucf = { //all ChromeOnly-scripts
 	},
 	flash(id,style,color,ms,text,time = 5e3){ //статус, мигание
 		id = document.getElementById(id || 'urlbar-input-container'); if (!id) return;
-		if (style) id.style.filter = style; if (color) id.style.background = color;
-		if (ms) setTimeout(() => {
+		if(style) id.style.filter = style; if(color) id.style.background = color;
+		if(ms) setTimeout(() => {
 			id.style.removeProperty('filter'),id.style.removeProperty('background-color');},ms);
-		if (text) ucf.toStatus(text,time);
+		if(text) ucf.toStatus(text,time);
 	},
 	mode_skin(text,p,t,s = 'unset',o = '',z){with(this){setTimeout(()=>{ //подсветка кнопок и подсказки отображают настройки браузера
-		if (pref("dom.security.https_only_mode"))
+		if(pref("dom.security.https_only_mode"))
 			flash(F.N,"drop-shadow(0px 0.5px 0px #F8F)"),o = ', только HTTPS'
 		else flash(F.N,"none");
-		if (ua() && (ua() != ua(true))) o = o +', чужой ЮзерАгент';
+		if(ua() && (ua() != ua(true))) o = o +', чужой ЮзерАгент';
 		z = pref("network.proxy.no_proxies_on") == "" ? "" : ', Есть сайты-исключения';
 		p = p || pref(F.x);
-		if (p == 1) t = ['sepia(100%) saturate(150%) brightness(0.9)', 'Ручная настройка прокси'+ z];
-		else if (p == 2) t = ['hue-rotate(120deg) saturate(70%)',F.d + z],s = 'hue-rotate(270deg) brightness(95%)';
-		else if (p == 4) t = ['hue-rotate(250deg) brightness(0.95) saturate(150%)','Сеть - автонастройка прокси'+ z];
-		else if (p == 0) t = ['saturate(0%) brightness(0.95)','Настройки сети - системные'+ z];
+		if(p == 1) t = ['sepia(100%) saturate(150%) brightness(0.9)', 'Ручная настройка прокси'+ z];
+		else if(p == 2) t = ['hue-rotate(120deg) saturate(70%)',F.d + z],s = 'hue-rotate(270deg) brightness(95%)';
+		else if(p == 4) t = ['hue-rotate(250deg) brightness(0.95) saturate(150%)','Сеть - автонастройка прокси'+ z];
+		else if(p == 0) t = ['saturate(0%) brightness(0.95)','Настройки сети - системные'+ z];
 		else t = [s,'Сеть работает без прокси']; //серый фон кнопки
 		flash(F.D, pref(F.v) > 1 ? "hue-rotate(180deg) drop-shadow(0px 0.5px 0px #F68)" : "none");
 		flash(F.Q,s); flash(F.P,t[0]);
@@ -1300,24 +1281,21 @@ ucf = { //all ChromeOnly-scripts
 	},250)}},
 	switchProxy(pac = F.w){
 		var t = F.x,u = F.y;
-		if (this.pref(t) != 2) //выключить
+		if(this.pref(t) != 2) //выключить
 			this.pref(t,2), this.pref(u,pac)
 		else
 			this.pref(t,5), this.pref(u,"localhost");
 		this.mode_skin(); //разный фон замка для Прокси
 		BrowserReload();
 	},
-	Title(n){try {return Cu.getGlobalForObject(Cu)[Symbol.for("TitlePath")](n)[3];}
+	Title(n){try {return Cu.getGlobalForObject(Cu)[Symbol.for("ucf_TitlePath")](n)[3];}
 		catch {return document.title || gBrowser.selectedTab.label}
 	},
-	HTML(){
-		var inf = ["√ страница записана: " + crop(this.Title(),48,''),7e3], sfile = document.getElementById(F[4]); //расширение SingleFile
-		try {Cu.getGlobalForObject(Cu)[Symbol.for("SingleHTML")](true,window);
-			gBrowser.selectedTab.textLabel.style.textDecoration = "overline"; //^отметка
-		} catch {if (sfile) sfile.click(), inf = ''
-			else inf = [F.q +'SingleHTML.jsm', 1e4];
-		}
-		this.toStatus(...inf);
+	HTML(){var i = '√ страница записана: ', t = crop(this.Title(),48,''), w = 1,
+		sfile = document.getElementById(F[4]); //addon SingleFile
+		try {Cu.getGlobalForObject(Cu)[Symbol.for("ucf_SingleHTML")](true,window);
+		} catch {w = 0; if (sfile) sfile.click();}
+		if(w) this.toStatus(i + t);
 	}
 },
 uar = ucf.ua(true), //real ЮзерАгент
