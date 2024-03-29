@@ -1,5 +1,5 @@
 /* SingleHtml Ff103+ © Лекс, правка Dumby, mod Dobrov
-вызов: Cu.getGlobalForObject(Cu)[Symbol.for("SingleHTML")](1) если 0: выбор пути */
+вызов: Cu.getGlobalForObject(Cu)[Symbol.for("ucf_SingleHTML")](1) если 0: выбор пути */
 
 var self, name = "SingleHTML", EXPORTED_SYMBOLS = [`${name}Child`], {io, focus, obs, prefs, dirsvc} = Services;
 
@@ -19,8 +19,9 @@ ChromeUtils.domProcessChild.childID || ({
 			obs.removeObserver(self, topic);
 		}, "quit-application-granted");
 		this.handleEvent = e => this[e.type](e);
-		globalThis[Symbol.for(name)] = this.SingleHTML; //общие функции
-		globalThis[Symbol.for('TitlePath')] = this.TitlePath;
+		globalThis[Symbol.for('ucf_'+ name)] = this.SingleHTML; //общие функции
+		globalThis[Symbol.for('ucf_TitlePath')] = this.TitlePath;
+		globalThis[Symbol.for('ucf_Succes')] = this.Succes;
 	},
 	observe(win) {
 		win.document.getElementById("appMenu-popup").addEventListener("popupshowing", this);
@@ -55,7 +56,9 @@ ChromeUtils.domProcessChild.childID || ({
 	async save(win, data, fname, host, to) {
 		var path = this.TitlePath(to, fname, host, win); //путь в зависимости от опций
 		var dir = path[0], path = path[1];
-		dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);
+		try {dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);}
+			catch(ex) {
+				this.Succes(dir.path, 0); return;}
 		if (!to) { // диалог выбора папки
 			var fp = Cc['@mozilla.org/filepicker;1'].createInstance(Ci.nsIFilePicker);
 			fp.init(parseInt(Services.appinfo.platformVersion) < 125 ? win : win.browsingContext,"", fp.modeSave);
@@ -66,21 +69,23 @@ ChromeUtils.domProcessChild.childID || ({
 			if (res == fp.returnOK || res == fp.returnReplace)
 				path = fp.file.path
 			else return;
-		}
-		IOUtils.writeUTF8(path, data); //нужна проверка на ошибки записи
-		await this.Succes(path, win);
+		}; to = 1;
+		try {await IOUtils.writeUTF8(path, data);} catch {to = 0}
+		await this.Succes(path, to);
 	},
-	async Succes(dir, win, dw = true, bg) {
-		var d = await win.Downloads.createDownload({source: "about:blank",target: win.FileUtils.File(dir)});
-		(await win.Downloads.getList(win.Downloads.ALL)).add(d);
-		if (dw) await d.refresh(d.succeeded = true); //flash DWButton
-		d = win.document.getElementById('urlbar-input-container');
-		d.style.background = dw ? 'rgba(0,200,0,0.3)' : 'rgba(250,0,0,0.2)';
-		win.setTimeout(() => {d.style.removeProperty('background-color')}, 350);
+	async Succes(path, w = 1, er = 'rgba(250,0,0,0.2)', win = self.getwin()){
+		var i = win.document.getElementById('urlbar-input-container');
+		i.style.background = w ? 'rgba(0,200,0,0.3)' : er;
+		win.setTimeout(() => {i.style.removeProperty('background-color')}, 350);
+		if(w == 1) win.gBrowser.selectedTab.textLabel.style.textDecoration = "overline"; //^отметка
+		if(w) {w = await win.Downloads.createDownload({source: "about:blank",target: win.FileUtils.File(path)});
+		(await win.Downloads.getList(win.Downloads.ALL)).add(w);
+		await w.refresh(w.succeeded = true);} //flash DWButton
 	},
-	TitlePath(to, d, h, win = self.getwin(), n = 0, u = 99) { //global
+	TitlePath(to, d, h, win = self.getwin(), n = 0, u = 99){ //0 web|2 pic|-№ cut, name, url
 		if(parseInt(to) > 0) [n,to] = [to,n]; if(parseInt(to) < 0) u = Math.abs(to);
-		if (typeof(to) != 'string' || !/.*\|/.test(to)) to = prefs.getStringPref("extensions.user_chrome_files.savedirs","|||0");
+		if(typeof(to) != 'string' || !/.*\|/.test(to))
+			to = prefs.getStringPref("extensions.user_chrome_files.savedirs","|||0");
 		to = to.split('|').slice(0 + n, 2 + n); //Dir/Sub|[empty|0 title|1 url]
 		d = /^blank/.test(d || "blank") ? win.gBrowser.selectedTab.label : d;
 		d = d.replace(/\s+/g,' ').replace(/:/g,'։').replace(/[|<>]+/g,'_').replace(/([\\\/?*\"'`]+| ։։ .*)/g,'').slice(0,u).trim();
@@ -88,7 +93,7 @@ ChromeUtils.domProcessChild.childID || ({
 		h = /^file:\/\//.test(h) ? 'file' : h.replace(/^.*u=|https?:\/\/|www\.|\/.*/g,'').replace(/^(moz-extension|ru\.|m\.)/,'').replace(/\/.*/,'');
 		to[1] = (to[1] == "0") ? d : (to[1] == "1") ? h : "";
 		d += "_"+ new Date().toLocaleDateString('ru', {day: 'numeric',month: 'numeric',year: '2-digit'}) +'-'+ new Date().toLocaleTimeString('en-GB').replace(/:/g,"։"); //дата-часы
-		try {var dir = Services.dirsvc.get("DfltDwnld",Ci.nsIFile);} catch {dir = prefs.getComplexValue("browser.download.dir",Ci.nsIFile)}
+		try {var dir = prefs.getComplexValue("browser.download.dir",Ci.nsIFile);} catch {dir = Services.dirsvc.get("DfltDwnld",Ci.nsIFile)}
 		var map = s => win.DownloadPaths.sanitize(s); //FIX имён
 		to.map(map).forEach(dir.append);
 		to = dir.clone(); to.append(d +'.html');
