@@ -123,9 +123,9 @@ if (!ChromeUtils.domProcessChild.childID) {
 				}
 			}));
 			Object.defineProperty(this, "set", {get() { //Загрузки/Фото/Имя вкладки
-				try {var dir = Cu.getGlobalForObject(Cu)[Symbol.for("TitlePath")](2)[0];}
-					catch {dir = Services.dirsvc.get("DfltDwnld", Ci.nsIFile)}
-				dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);
+				try {var dir = Cu.getGlobalForObject(Cu)[Symbol.for("ucf_TitlePath")](2)[0];}
+					catch {dir = Services.dirsvc.get("DfltDwnld",Ci.nsIFile)}
+				try {dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);} catch{}
 				return dir.path;
 			}});
 			return this.set;
@@ -143,10 +143,12 @@ if (!ChromeUtils.domProcessChild.childID) {
 
 			if (title) titles[url] = title;
 			wref = Cu.getWeakReference(win);
+
 			var p = win.Services.prefs;
 			for(var pref in data) {
 				var obj = data[pref], meth = `et${obj.type}Pref`;
 				obj.val = p.prefHasUserValue(pref) ? p["g" + meth](pref) : null;
+				console.log(obj.set);
 				p["s" + meth](pref, obj.set);
 			}
 			try { var args = [url,
@@ -166,14 +168,15 @@ if (!ChromeUtils.domProcessChild.childID) {
 				win.document.nodePrincipal],
 				{length} = win.internalSave, lfix = length >15;
 				lfix && args.splice(1, 0, null); //FIX FF113+
-				win.internalSave(...args);
+				try {win.internalSave(...args);} catch{console.log("ERROR")}
 			} finally {
 				for(var pref in data) data[pref].val === null
 					? p.clearUserPref(pref)
 					: p[`set${data[pref].type}Pref`](pref, data[pref].val);
+				for(var pref in data)
+					console.log(data[pref].val);
 			}
-		var id = win.document.getElementById('urlbar-input-container');
-		id.style.background = 'rgba(0,200,0,0.3)'; win.setTimeout(() => id.style.removeProperty('background-color'), 350);
+			Cu.getGlobalForObject(Cu)[Symbol.for("ucf_Succes")](data["browser.download.dir"].set, 2);
 		}
 		dblclick(win, imgURL) {
 			var gb = win.gBrowser, index = gb.selectedTab._tPos +1;
