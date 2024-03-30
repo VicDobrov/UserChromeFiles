@@ -170,8 +170,6 @@ if (!ChromeUtils.domProcessChild.childID) {
 				for(var pref in data) data[pref].val === null
 					? p.clearUserPref(pref)
 					: p[`set${data[pref].type}Pref`](pref, data[pref].val);
-				for(var pref in data)
-					console.log(data[pref].val);
 			}
 			Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")].Succes(data["browser.download.dir"].set, 2);
 		}
