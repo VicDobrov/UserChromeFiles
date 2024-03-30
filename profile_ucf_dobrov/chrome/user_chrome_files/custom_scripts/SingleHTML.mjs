@@ -1,5 +1,5 @@
 /* SingleHtml Ff103+ © Лекс, правка Dumby, mod Dobrov
-вызов: Cu.getGlobalForObject(Cu)[Symbol.for("ucf_SingleHTML")](1) если 0: выбор пути */
+вызов: Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")].SingleHTML(1) если 0: выбор пути */
 
 var self, name = "SingleHTML", EXPORTED_SYMBOLS = [`${name}Child`], {io, focus, obs, prefs, dirsvc} = Services;
 
@@ -19,9 +19,7 @@ ChromeUtils.domProcessChild.childID || ({
 			obs.removeObserver(self, topic);
 		}, "quit-application-granted");
 		this.handleEvent = e => this[e.type](e);
-		globalThis[Symbol.for('ucf_'+ name)] = this.SingleHTML; //общие функции
-		globalThis[Symbol.for('ucf_TitlePath')] = this.TitlePath;
-		globalThis[Symbol.for('ucf_Succes')] = this.Succes;
+		globalThis[Symbol.for('UcfGlob')] = this.UcfGlob; //общие функции
 	},
 	observe(win) {
 		win.document.getElementById("appMenu-popup").addEventListener("popupshowing", this);
@@ -36,7 +34,7 @@ ChromeUtils.domProcessChild.childID || ({
 		var before = "appMenu-save-file-button2", subviewbutton = "subviewbutton";
 		btn.className = subviewbutton;
 		btn.setAttribute("oncommand", "SingleHTML();");
-		btn.SingleHTML = this.SingleHTML;
+		btn.SingleHTML = this.UcfGlob.SingleHTML;
 		popup.querySelector('toolbarbutton[id^="'+ before +'"]').before(btn);
 	},
 	unload(e) {
@@ -47,40 +45,40 @@ ChromeUtils.domProcessChild.childID || ({
 	getwin(){
 		return this.ownerGlobal || Services.wm.getMostRecentWindow("navigator:browser");
 	},
+UcfGlob: {
+	Flash(id,color = 'rgba(0,200,0,0.3)',style,text,time,ms = 350,win = self.getwin()){
+		id = win.document.getElementById(id || 'urlbar-input-container');
+		id &&= id.style; if(text) this.Status(text,time); //мигание, статус
+		if(style && id) id.filter = style;
+		if(color && id) id.background = color;
+		if(ms && id) win.setTimeout(() => {
+			id.removeProperty('filter'), id.removeProperty('background-color');}, ms);
+	},
+	async Succes(path, w = 1, text, win = self.getwin()){
+		if(w) {w = await win.Downloads.createDownload({source: "about:blank",target: win.FileUtils.File(path)});
+		(await win.Downloads.getList(win.Downloads.ALL)).add(w);
+		await w.refresh(w.succeeded = true);
+		if(w == 1) win.gBrowser.selectedTab.textLabel.style.textDecoration = "overline";} //^отметка
+		this.Flash(0, w ? 'rgba(0,200,0,0.3)' : 'rgba(250,0,0,0.2)',0, w ? text : 0);
+	},
 	async SingleHTML(to = false, win = self.getwin()) {
 		var br = win.gBrowser.selectedBrowser, bc = focus.focusedContentBrowsingContext;
 		if (bc?.top.embedderElement != br) bc = br.browsingContext;
 		var actor = bc?.currentWindowGlobal?.getActor(name);
 		actor && self.save(win, ...await actor.sendQuery(""), to); //htmlAndName
 	},
-	async save(win, data, fname, host, to) {
-		var path = this.TitlePath(to, fname, host, win); //путь в зависимости от опций
-		var dir = path[0], path = path[1];
-		try {dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);}
-			catch(ex) {
-				this.Succes(dir.path, 0); return;}
-		if (!to) { // диалог выбора папки
-			var fp = Cc['@mozilla.org/filepicker;1'].createInstance(Ci.nsIFilePicker);
-			fp.init(parseInt(Services.appinfo.platformVersion) < 125 ? win : win.browsingContext,"", fp.modeSave);
-			fp.defaultString = path.split(/.*[\/|\\]/)[1];
-			fp.displayDirectory = dir;
-			fp.appendFilters(fp.filterHTML); fp.appendFilters(fp.filterAll);
-			var res = await new Promise(fp.open);
-			if (res == fp.returnOK || res == fp.returnReplace)
-				path = fp.file.path
-			else return;
-		}; to = 1;
-		try {await IOUtils.writeUTF8(path, data);} catch {to = 0}
-		await this.Succes(path, to);
-	},
-	async Succes(path, w = 1, er = 'rgba(250,0,0,0.2)', win = self.getwin()){
-		var i = win.document.getElementById('urlbar-input-container');
-		i.style.background = w ? 'rgba(0,200,0,0.3)' : er;
-		win.setTimeout(() => {i.style.removeProperty('background-color')}, 350);
-		if(w == 1) win.gBrowser.selectedTab.textLabel.style.textDecoration = "overline"; //^отметка
-		if(w) {w = await win.Downloads.createDownload({source: "about:blank",target: win.FileUtils.File(path)});
-		(await win.Downloads.getList(win.Downloads.ALL)).add(w);
-		await w.refresh(w.succeeded = true);} //flash DWButton
+	async Status(text,time = 5e3, win = self.getwin()){
+		var StatusPanel = win.StatusPanel;
+		if(StatusPanel.update.tid)
+			win.clearTimeout(StatusPanel.update.tid)
+		else {
+			var {update} = StatusPanel;
+			StatusPanel.update = () => {};
+			StatusPanel.update.ret = () => {
+				StatusPanel.update = update,StatusPanel.update();
+		}}
+		StatusPanel.update.tid = win.setTimeout(StatusPanel.update.ret,time);
+		StatusPanel._label = text;
 	},
 	TitlePath(to, d, h, win = self.getwin(), n = 0, u = 99){ //0 web|2 pic|-№ cut, name, url
 		if(parseInt(to) > 0) [n,to] = [to,n]; if(parseInt(to) < 0) u = Math.abs(to);
@@ -99,6 +97,27 @@ ChromeUtils.domProcessChild.childID || ({
 		to = dir.clone(); to.append(d +'.html');
 		return [dir, to.path, n, d, u, h]; //… имя, +дата, URL, домен
 	},
+},
+	async save(win, data, fname, host, to) {
+		var path = self.UcfGlob.TitlePath(to, fname, host, win); //путь в зависимости от опций
+		var dir = path[0], t = path[2].slice(0,48), path = path[1];
+		try {dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);}
+			catch(ex) {
+				self.UcfGlob.Succes(dir.path, 0); return;}
+		if (!to) { // диалог выбора папки
+			var fp = Cc['@mozilla.org/filepicker;1'].createInstance(Ci.nsIFilePicker);
+			fp.init(parseInt(Services.appinfo.platformVersion) < 125 ? win : win.browsingContext,"", fp.modeSave);
+			fp.defaultString = path.split(/.*[\/|\\]/)[1];
+			fp.displayDirectory = dir;
+			fp.appendFilters(fp.filterHTML); fp.appendFilters(fp.filterAll);
+			var res = await new Promise(fp.open);
+			if (res == fp.returnOK || res == fp.returnReplace)
+				path = fp.file.path
+			else return;
+		}; to = 1;
+		try {await IOUtils.writeUTF8(path, data);} catch {to = 0}
+		await self.UcfGlob.Succes(path, to, '√ страница записана: '+ t);
+	}
 }).init("browser-delayed-startup-finished");
 
 var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG

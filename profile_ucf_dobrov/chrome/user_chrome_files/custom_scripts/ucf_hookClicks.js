@@ -1,4 +1,4 @@
-/* hookMouseKeys © Dumby, mod 3.0 Dobrov. нужен SingleHTML.jsm
+/* hookMouseKeys © Dumby, mod 3.1 Dobrov !нужен скрипт SingleHTML
 меняйте «под себя» Подсказки, Keys нажатия клавиш, Menu команды, Mouse клики мыши, Setup меню опций */
 
 (async init =>{init(); Tag = {[F.D]:`{`+ //подсказки кнопок вкладок меню: справка в help.html
@@ -12,8 +12,7 @@
 ◨ правый клик (Alt+S) ➜ Сохранить\n    в единый Html всё / выделенное
 ◉ колёсико, ${F.tc("Super","Ctrl+Shift")}+S как Текст\n
 ◧ дважды на Фото: найти Похожие
-◧ лев + Shift   Графика вкл/выкл
-◧ + Alt	Диалог выбора вкл/выкл}`,[F.P]: //PanelUI фон кнопки Blue Gray Red Green Yellow
+◧ лев + Shift   Графика вкл/выкл}`,[F.P]: //PanelUI фон кнопки Blue Gray Red Green Yellow
 
 `◧ лев. клик	меню Firefox ${F.ver}{\n︰
 ◧ + Shift	⤾ Вернуть вкладку\n}
@@ -22,9 +21,9 @@
 
 ◨ прав. клик	⇲ Свернуть {︰`/*эксперт*/+ `
 ◨ + Alt		Сведения о системе}`, [F.B]: //запуск команд: Menu.Dict.cmd()
-`\n
-◉ + Shift  Закрыть вкладки слева
-◉ колёсико +Alt	закрыть справа`, [F.C]: //NewTab. SideBar открыт: код нажатий в консоль
+
+`◉ + Shift		Закрыть вкладки слева
+◉ ролик +Alt	…справа от активной`, [F.C]: //NewTab. SideBar открыт: код нажатий в консоль
 `\n
 ◨ прав. клик	Вернуть вкладку
 ◉ колёсико	Оставить 1 текущую`, [F.I]: //identity-box
@@ -112,13 +111,6 @@ Menu = { //массив команд пользователя, alt() клик п
 	},
 	O: { men: 1, //подменю
 		lab: `Опции about:config`, inf: `Быстрые настройки`, img: F.opt,
-		DwNew: {lab: `Улучшения панели загрузок`, inf: `Авто-открытие списка`,
-			cmd(){
-				var p = "browser.download.improvements_to_download_panel", n = ucf.pref(p);
-				ucf.pref(p, !n);
-				ucf.toStatus(`Подтверждение загрузки ${n ? "√ разреш" : "✘ запрещ"}ено`,3e3);
-			}
-		},
 		DwDir: {lab: `папка Загрузки | chrome:`, inf: F.b, img: F.dir,
 			cmd(){
 				Downloads.getSystemDownloadsDirectory().then(path => FileUtils.File(path).launch(),Cu.reportError)},
@@ -150,7 +142,7 @@ Menu = { //массив команд пользователя, alt() клик п
 				var {BrowserToolboxLauncher} = ChromeUtils.import("resource://devtools/client/framework/browser-toolbox/Launcher.jsm");
 				BrowserToolboxLauncher.init();}
 		},
-		"Настройки UserChromeFiles": { sep: 1, img: F.opt, cmd(){Click()}
+		"Настройки UserChromeFiles": {sep: 1, img: F.opt, cmd(){UCF()} //UCFprefs
 		},
 		DelCache: {lab: `Restart браузер, удалить кэш`, img: F.del,
 			cmd(){
@@ -192,6 +184,12 @@ Menu = { //массив команд пользователя, alt() клик п
 			(test = obj.oncommand.bind(null, {target:trg}))();
 			ucf.flash(0,0,'rgba(100,0,225,0.1)',500, F.e);}
 	},
+	Notes: {lab: `приложение «Заметки»`, img: F.ico +"tool-application.svg",
+		cmd(){
+			if(F.os == "win") shell_RunwA("C:\\Windows\\system32\\StikyNot.exe","");
+			if(F.os == "macosx") shell_RunwA("/usr/bin/open", ["-n","-b","com.apple.Stickies"]);
+		}
+	},
 	"запуск скрипта user.js (Alt+x)": {
 		cmd(trg){userjs(trg)}
 	},
@@ -224,14 +222,16 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		2(trg,forward){
 			gBrowser.tabContainer.advanceSelectedTab(forward ? -1 : 1,true)},
 		128(btn){ //СМ
-			if(btn.id)
+			if(btn.id == F.C)
 				gBrowser.removeAllTabsBut(gBrowser.selectedTab)
 			else
 				gBrowser.removeTab(TabAct(btn));}, //вкладка под мышью
-		264(btn){
-			if(!btn.id) TabsDel(1, TabAct(btn))}, //R+Alt закрыть вкладки справа
-		272(btn){
-			if(!btn.id) TabsDel(0, TabAct(btn))}, //R+Shift … слева
+		136(){
+				gBrowser.removeTabsToTheEndFrom(gBrowser.selectedTab, {animate: true});
+			}, //C+Alt закрыть вкладки справа
+		144(){ //C+Shift … слева
+			gBrowser.removeTabsToTheStartFrom(gBrowser.selectedTab, {animate: true});
+			},
 		8(){},16(){},64(){} //выбор
 	},
 	[F.C]: { //newTab
@@ -277,7 +277,6 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 	},
 	[F.D]: {mousedownTarget: true, //не передавать нажатия дальше
 		1(){ Menu.O.DwDir.cmd()}, //д
-		8(){ Menu.O.DwNew.cmd()}, //+Alt
 		16(){Menu.Pics.cmd()},//+Shift
 		128(){Exp()
 			? saveSelToTxt() : //сохранить|выделен. как .txt
@@ -296,7 +295,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		272(btn){btn.ownerGlobal.PlacesCommandHook.showPlacesOrganizer("History")} //R+Shift
 	},
 	[F.I]: { //замок
-		8(){Click()}, //+Alt
+		8(){UCF()}, //+Alt
 		128(){CfgProxy()},
 		16(btn){ //+Shift
 			BrowserPageInfo(btn,"mediaTab") //securityTab feed… perm…
@@ -326,30 +325,26 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		},
 		128(){switchTab()} //С
 	},
+	[F[2]]: {2(trg,forward){zoom(forward)}}, //zoompage
+	[F[3]]: {2(){Mouse[F[2]][2]()}},
 	[F[0]]: { //title-close
 		1(){Help()},
-		128(btn){	btn.ownerGlobal.undoCloseTab()},
+		128(btn){btn.ownerGlobal.undoCloseTab()},
 		256(){minimize()}
 	},
 	[F.A]: {mousedownTarget: true, //AttrView
 		128(){Menu.O.Remote.cmd()}, //C
-		256(){Click()},
+		256(){UCF()},
 		257(){switchTab('about:debugging#/runtime/this-firefox')} //дR
 	},
 	[F.E]: {mousedownTarget: true,
 		1(){Menu.O.DelCache.cmd()}, //д
-		128(){Click()}, //UCFprefs
+		128(){UCF()}, //UCFprefs
 		129(){ //дС
 			switchTab('about:addons')},
 		256(btn){
 			document.getElementById(F.Q).menupopup.openPopup(btn, "after_start");
 		},
-		257(){Mouse[F.A][257]()}
-	},
-	"add-ons-button": {
-		1(){Menu.O.DelCache.cmd()}, //д
-		128(){Click()}, //UCFprefs
-		256(btn){Mouse[F.E][256](btn)},
 		257(){Mouse[F.A][257]()}
 	},
 	[F.Q]: {mousedownTarget: true,
@@ -394,10 +389,8 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		136(){ //С+Alt
 			var n = "browser.display.use_document_fonts",f = ucf.pref(n) ? 0 : 1;
 			ucf.pref(n,f); zoom(0,0,0,(f > 0) ? " + Web-шрифты" : ""); BrowserReload();}
-	},
-	[F[2]]: {2(trg,forward){zoom(forward)}}, //zoompage
-	[F[3]]: {2(){Mouse[F[2]][2]()}},
-};
+	}
+}; Mouse["add-ons-button"] = Mouse[F.E];
 Mus = {}; Object.keys(Mouse).forEach((k) =>{Mus["."+ k] = Mus["#"+ k] = Mouse[k]});
 
 Setup = [{ //about:config меню. refresh=true ⟳ Обновить без кэша, restart=false ↯ Без запроса
@@ -515,10 +508,14 @@ get [F.P](){ //PanelUI delete this[…];
 },
 get [F.B](){
 	var trg = window.event?.target; //get исполняет код
-	trg.tooltipText = trg.label + Tag[F.B];
+	trg.tooltipText = trg.label;
+},
+get [F.B +"s"](){
+	var trg = window.event?.target;
+	trg.tooltipText = Tag[F.B];
 },
 get [F.C](){ //newtab
-	return GetDynamicShortcutTooltipText(F.C) + Tag[F.C];
+	return GetDynamicShortcutTooltipText(F.C) + Tag[F.C] +'\n'+ Tag[F.B];
 },
 get [F.D](){var dw = ucf.dirsvcget("");
 	if(dw) ucf.mode_skin(`${ucf.pref(F.v) > 1 ? "\u{26A1} Графика отключена," : "💾 папка"} [Загрузки] `+ crop(dw, 96,''));
@@ -731,12 +728,6 @@ gClipboard = {write(str,ch = Cc["@mozilla.org/widget/clipboardhelper;1"].getServ
 },
 TabAct = (e) => {return e.closest(".tabbrowser-tab");
 },
-TabsDel = (right = 0,curr = gBrowser.selectedTab) => { //закрыть вкладки слева/справа от активной
-	var tabs = gBrowser.visibleTabs.filter(tab => !tab.pinned), i = tabs.indexOf(curr);
-	var a = (i != -1), b = (a ? i + right : !right * tabs.length);
-	args = right ? [b, tabs.length] : [0,b];
-	tabs.slice(...args).forEach((i) => {gBrowser.removeTab(i)});
-},
 saveSelToTxt = async () => { //в .txt Всё или Выбранное
 	var {length} = saveURL, splice = length > 9, l11 = length == 11, msgName = F.id + ":Save:GetSelection"; //FIX FF103+
 	var receiver = msg => {var txt = "data:text/plain,"+ encodeURIComponent(gBrowser.currentURI.spec +"\n\n"+ msg.data);
@@ -772,8 +763,8 @@ switchTab = (url = 'about:serviceworkers', go) => { //открыть вклад�
 	gBrowser.addTrustedTab(url);
 	gBrowser.selectedTab = gBrowser.visibleTabs[gBrowser.visibleTabs.length -1];
 },
-Click = (id = "ucf-open-about-config-button") => {
-	var n = document.getElementById(id); n && n.click();
+UCF = (p = "user_chrome") => {if (!FileExists(F.s + p +"/prefs.xhtml")) p = "options";
+	window.switchToTabHavingURI(F.s + p +"/prefs.xhtml",true,{relatedToCurrent: true,triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal()});
 },
 tooltip = (id = document.getElementById(F.T), s = "\n◨ правый клик: Без запроса") => {
 	if(id && id.tooltipText.indexOf(s) == -1)
@@ -1170,7 +1161,7 @@ uar = "chrome://devtools/skin/images/"; F = {
 	opt: uar +"settings.svg", con: uar +"aboutdebugging-connect-icon.svg",
 	ai: "data:image/webp;base64,UklGRjwAAABXRUJQVlA4TC8AAAAvD8ADAAoGbSM5Ov6k774XCPFP/0/03/8JGPxzroIzuOW06Ih60Genn1S/gHe+BgA=",
 	qt: "data:image/webp;base64,UklGRkYCAABXRUJQVlA4WAoAAAAQAAAAFwAAFwAAQUxQSJcAAAANcGJr25S8mH4SNGxAgsguPCZ0BcMOiDSNRpvVaCTa3AI2qm2e2ofz7OuwgIiYgMzb4kVjGvegnQFAwXgFVnvcOmtnMJtutAa3Vo4mhRMDpWq8AjfU+yQoYf1/oTkTIdUrknKswNQ5yAdDzqgr4CYbsJWQfEyEU5QNEl2eKFM2AAIbjmSIMjwXPGyEdj6Bdn4mj9KO63sAAFZQOCCIAQAAdAgAnQEqGAAYAD6dRppKgoCqgAE4lsAKwgisgG27uzPePSvBIu/Pr0HJqW+AfoAIHl2DrAnRo/G3JBpTx8yE7L6LFQyD+yUNvuRYAAD+7mwmpaoBcsJ1hVKsMI2ucqid8qndm+WEvH4l4il6lA8FPscgnrRHrnSjjyNcfUV21+TkfqOWKou2UvVsZSl1z+jKs760Vij5XCWF9Uo6TZAhKfrJpeILyQYwq2Ee/g1uyEH/dJMI/91DsVpI6i2vV/Jqpd4/KniJtTm1woLvaotA2ikt3eeBaqlHf8WPe++lSWS7fETjgvzzbflp0Rj+v23kbb9e/VjUcPaD83shRuwzEo6CAO/AGxE+Zwbvv9NDsQT6T+S4CCDOFTuMRVv9/0E4P+uK+Vc3bMfQQD05gY/fes+ZX6ZHkvFdMn7zX8LMVvI59p7F806HPD2lBjs4lWWhQ5ckJDNflZL49370shr3/Q9uMJN9i/NVCu4OT7K3+4+/RkAMnjuY09u+3i4y4CldQG789iIAAAA="
-};
+}; F.ico = uar;
 [`titlebar-button.titlebar-close`,,`zoompage-we_dw-dev-`,,`_531906d3-e22f-4a6c-a102-8057b88a1a63_-`,,`_b9db16a4-6edc-47ec-a1f4-b86292ed211d_-`].forEach((c,i)=>{ //расширения
 if(c){F[i] = i == 0 ? c : c +"BAP"; F[i+1] = i == 0 ? c.replace("."," ") : c +"browser-action";}});
 db.forEach((c,i)=>{
@@ -1188,6 +1179,11 @@ FileExists = (file) => {try { //файл|папка есть?
 		return FileUtils.File(String.raw`${file}`).exists()
 	else return Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).convertChromeURL(Services.io.newURI(file)).QueryInterface(Ci.nsIFileURL).file.exists();
 	} catch {}; return false;
+},
+shell_RunwA = (path, args, file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile), proc = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess)) => {
+		if (!FileExists(path)) return 1;
+    file.initWithPath(path); proc.init(file);
+    proc.runwAsync(args, args.length);
 },
 crop = (s = "",cut = 33,ch = '…\n') => { //обрезать/разбить текст
 	return s.substring(0,cut) +`${s.length > cut - 1 ? `${ch}…${s.substring(s.length - cut + ch.length,s.length)}`: ''}`;
@@ -1243,7 +1239,7 @@ ucf = { //all ChromeOnly-scripts
 		if(found) setFilter(null,window);
 		else gBrowser.selectedBrowser.addEventListener("pageshow",setFilter, {once: true});
 	},
-	toStatus(txt,time = 5e3,StatusPanel = window.StatusPanel){
+	toStatus(txt,time = 5e3, StatusPanel = window.StatusPanel){
 		if(StatusPanel.update.tid)
 			clearTimeout(StatusPanel.update.tid)
 		else {
@@ -1288,14 +1284,13 @@ ucf = { //all ChromeOnly-scripts
 		this.mode_skin(); //разный фон замка для Прокси
 		BrowserReload();
 	},
-	Title(n){try {return Cu.getGlobalForObject(Cu)[Symbol.for("ucf_TitlePath")](n)[3];}
+	Title(n){try {return Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")].TitlePath(n)[3];}
 		catch {return document.title || gBrowser.selectedTab.label}
 	},
 	HTML(){var i = '√ страница записана: ', t = crop(this.Title(),48,''), w = 1,
 		sfile = document.getElementById(F[4]); //addon SingleFile
-		try {Cu.getGlobalForObject(Cu)[Symbol.for("ucf_SingleHTML")](true,window);
+		try {Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")].SingleHTML(true,window);
 		} catch {w = 0; if (sfile) sfile.click();}
-		if(w) this.toStatus(i + t);
 	}
 },
 uar = ucf.ua(true), //real ЮзерАгент

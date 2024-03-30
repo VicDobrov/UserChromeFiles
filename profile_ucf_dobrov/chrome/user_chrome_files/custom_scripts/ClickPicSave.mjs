@@ -123,7 +123,7 @@ if (!ChromeUtils.domProcessChild.childID) {
 				}
 			}));
 			Object.defineProperty(this, "set", {get() { //Загрузки/Фото/Имя вкладки
-				try {var dir = Cu.getGlobalForObject(Cu)[Symbol.for("ucf_TitlePath")](2)[0];}
+				try {var dir = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")].TitlePath(2)[0];}
 					catch {dir = Services.dirsvc.get("DfltDwnld",Ci.nsIFile)}
 				try {dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);} catch{}
 				return dir.path;
@@ -140,15 +140,12 @@ if (!ChromeUtils.domProcessChild.childID) {
 			var {url, contentType, contentDisposition, sx, title,
 				isPrivate, referrerInfo, cookieJarSettings} = msg.data;
 			if (sx && sx > win.mozInnerScreenX + win.innerWidth) return;
-
 			if (title) titles[url] = title;
 			wref = Cu.getWeakReference(win);
-
 			var p = win.Services.prefs;
 			for(var pref in data) {
 				var obj = data[pref], meth = `et${obj.type}Pref`;
 				obj.val = p.prefHasUserValue(pref) ? p["g" + meth](pref) : null;
-				console.log(obj.set);
 				p["s" + meth](pref, obj.set);
 			}
 			try { var args = [url,
@@ -176,7 +173,7 @@ if (!ChromeUtils.domProcessChild.childID) {
 				for(var pref in data)
 					console.log(data[pref].val);
 			}
-			Cu.getGlobalForObject(Cu)[Symbol.for("ucf_Succes")](data["browser.download.dir"].set, 2);
+			Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")].Succes(data["browser.download.dir"].set, 2);
 		}
 		dblclick(win, imgURL) {
 			var gb = win.gBrowser, index = gb.selectedTab._tPos +1;
