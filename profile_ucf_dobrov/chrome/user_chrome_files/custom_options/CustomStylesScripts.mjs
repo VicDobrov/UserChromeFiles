@@ -34,7 +34,6 @@ export var UcfStylesScripts = {
 		{ path: "ucf_hookClicks.js", ucfobj: true }, //общие функции + attrsInspector.js
 		{ path: "ucf_contextsearch.js", ucfobj: true },
 		{ path: "ucf_contextmenuopenwith.js", ucfobj: true },
-		{ path: "ucf_cooks-pass.js", ucfobj: true },
 		{ path: "ucf_BookmarkDir.js", ucfobj: true },
 		{ path: "ucf_LocationBarEnhancer.js", ucfobj: true },
 		{ path: "ucf_tab-update.js", ucfobj: true },

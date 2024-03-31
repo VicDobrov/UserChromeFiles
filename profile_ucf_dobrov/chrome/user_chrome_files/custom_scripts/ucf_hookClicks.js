@@ -63,7 +63,7 @@ Alt + R		Выбор части страницы
 ◧ держать	Обновить всё`, [F.O]: //Щит
 
 `нажатие мыши	Сведения о защите сайта\n
-◨ правый клик	Логины и Пароли
+◨ правый клик	Куки и данные сайта
 ◧ лев. держать	⇆ Web-шрифты
 ◉ колёсико		ServiceWorkers`, [F.S]: //Stop
 
@@ -319,10 +319,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 	[F.O]: { //щит
 		1(){Mouse[F.Q][136]()}, //д Шрифты
 		2(trg,forward){bright(trg,forward)},
-		256(btn){ //R
-			var logins = btn.ownerDocument.getElementById("ucf-logins-sitedata");
-			logins ? logins.click() : switchTab('about:logins');
-		},
+		256(btn){Cookies()},//R куки
 		128(){switchTab()} //С
 	},
 	[F[2]]: {2(trg,forward){zoom(forward)}}, //zoompage
@@ -808,14 +805,22 @@ Translate = (brMM = gBrowser.selectedBrowser.messageManager) => { //перево
 	});
 	brMM.loadFrameScript('data:,sendAsyncMessage("getSelect",content.document.getSelection().toString())',false);
 },
-CfgProxy = (_win = Services.wm.getMostRecentWindow("aTaB:ProxyWin")) => {
-	if(_win) _win.focus()
-	else {
-		_win = window.openDialog("chrome://browser/content/preferences/dialogs/connection.xhtml","_blank","chrome,dialog=no,centerscreen,resizable");
-		_win.addEventListener("DOMContentLoaded",() => {
-			_win.document.documentElement.setAttribute("windowtype","aTaB:ProxyWin");
-		},{once: true});
-		_win.opener = window; _win.opener.gSubDialog = {_dialogs: []};}
+Dialog = async(url = "preferences/dialogs/connection.xhtml", w = "_blank") =>{
+	var win = Services.wm.getMostRecentWindow(w);
+	try {win.focus();} catch {
+		win = window.openDialog("chrome://browser/content/"+ url, w, "chrome,dialog=no,centerscreen,resizable");
+		win.addEventListener("DOMContentLoaded",() =>{win.document.documentElement.setAttribute("windowtype",w)},{once: true});
+		await new Promise(resolve => win.windowRoot.addEventListener("DOMContentLoaded", resolve, {once: true}));
+	}; return win;
+},
+CfgProxy = async() =>{var win = await Dialog(); win.opener = window; win.opener.gSubDialog = {_dialogs: []};
+},
+Cookies = async() =>{var uri = window.gBrowser.selectedBrowser.currentURI;
+	try {var tld = Services.eTLD.getBaseDomain(uri);} catch {var tld = uri.asciiHost}
+	var sb = (await Dialog("preferences/dialogs/siteDataSettings.xhtml", "Browser:SiteDataSettings")).document.querySelector("#searchBox");
+	sb.inputField.setUserInput(tld);
+	await window.SiteDataManager.updateSites();
+	setTimeout(() => sb.editor.selection.collapseToEnd(), 50);
 },
 FavItem = (end = false,def_url = 'ua.ru', s = 0,m = 1)=>{ //first|last url Меню закладок
 	var query = {}, options = {}, guid = PlacesUtils.bookmarks.menuGuid;
@@ -1198,7 +1203,7 @@ tExp = (name,m = Exp(), t,z)=>{ //… {Общий︰Эксперт (m = 1)[︰�
 	return t;
 },
 {prefs} = Services, db = prefs.getDefaultBranch(""),
-UcfGlob = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")], Status = UcfGlob.Status,
+UcfGlob = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")], Status = UcfGlob.Status, //из SingleHTML.mjs
 Icon = (c = '0c0')=>"data:image/svg+xml;charset=utf-8,<svg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='a' x1='16' x2='16' y1='32' gradientUnits='userSpaceOnUse'><stop stop-color='%23"+ c +"'/><stop stop-color='%23fff' offset='.8'/></linearGradient><linearGradient id='b' x2='32' y1='16' gradientTransform='matrix(1 0 0 1 2 2)'><stop stop-opacity='.5'/></linearGradient></defs><circle cx='16' cy='16' r='15' fill='url(%23a)' stroke='url(%23b)' stroke-width='2'/></svg>",
 ucf = { //all ChromeOnly-scripts
 	pref(key,set){ //или key = [key,default]
