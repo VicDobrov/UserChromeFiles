@@ -19,7 +19,8 @@
 ◧ держать	✕ Закрыть браузер
 ◧ +Alt, ◉ ролик  Окно │ Развернуть
 
-◨ прав. клик	⇲ Свернуть {︰`/*эксперт*/+ `
+◨ прав. клик	⇲ Свернуть
+◉ колёсико	Масштаб страницы {︰`/*эксперт*/+ `
 ◨ + Alt		Сведения о системе}`, [F.B]: //запуск команд: Menu.Dict.cmd()
 
 `◉ + Shift		Закрыть вкладки слева
@@ -184,7 +185,7 @@ Menu = { //массив команд пользователя, alt() клик п
 			(test = obj.oncommand.bind(null, {target:trg}))();
 			UcfGlob.Flash(0,'rgba(100,0,225,0.1)',0, F.e);}
 	},
-	Notes: {lab: `приложение «Заметки»`, img: F.ico +"tool-application.svg",
+	Notes: {lab: `приложение «Записки»`, img: F.ico +"tool-application.svg",
 		cmd(){
 			if(F.os == "win") shell_RunwA("C:\\Windows\\system32\\StikyNot.exe","");
 			if(F.os == "macosx") shell_RunwA("/usr/bin/open", ["-n","-b","com.apple.Stickies"]);
@@ -285,11 +286,13 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 	},
 	[F.P]: {mousedownTarget: true, //PanelUI
 		1(btn){goQuitApplication(btn)}, //д
+		2(trg,forward){zoom(forward)}, //wheel
 		16(btn){btn.ownerGlobal.undoCloseTab()}, //L+Shift
 		8(){windowState != STATE_MAXIMIZED ? maximize() : restore()}, //L+Alt
 		128(){windowState != STATE_MAXIMIZED ? maximize() : restore()},
 		129(){BrowserFullScreen()}, //дС
 		136(){this[129]()}, //С+Alt
+		144(){Mouse[F.Q][136]()}, //C+Shift
 		256(){minimize()},
 		264(){switchTab('about:support')}, //R+Alt
 		272(btn){btn.ownerGlobal.PlacesCommandHook.showPlacesOrganizer("History")} //R+Shift
@@ -335,7 +338,8 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		257(){switchTab('about:debugging#/runtime/this-firefox')} //дR
 	},
 	[F.E]: {mousedownTarget: true,
-		1(){Menu.O.DelCache.cmd()}, //д
+		1(){
+			Menu.O.DelCache.cmd()}, //д
 		128(){UCF()}, //UCFprefs
 		129(){ //дС
 			switchTab('about:addons')},

@@ -9,8 +9,8 @@
 // - modify it via the UI (e.g. via about:config in the browser); or
 // - set it within a user.js file in your profile.
 
-user_pref("browser.newtabpage.activity-stream.feeds.section.topstories", false);
 user_pref("browser.newtabpage.activity-stream.feeds.telemetry", false);
+user_pref("browser.newtabpage.activity-stream.feeds.section.topstories", false);
 user_pref("app.update.lastUpdateTime.addon-background-update-timer", 1711610779);
 user_pref("app.update.lastUpdateTime.browser-cleanup-thumbnails", 1711614493);
 user_pref("app.update.lastUpdateTime.region-update-timer", 1711610779);
