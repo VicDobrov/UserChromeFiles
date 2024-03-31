@@ -91,7 +91,7 @@ class MouseImgSaverChild extends JSWindowActorChild {
 	}
 }
 if (!ChromeUtils.domProcessChild.childID) {
-	var esModuleURI = Components.stack.filename;
+	var esModuleURI = Components.stack.filename, UcfGlob = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")];
 	ChromeUtils.registerWindowActor("MouseImgSaver", {
 		allFrames: true,
 		parent: {esModuleURI},
@@ -123,7 +123,7 @@ if (!ChromeUtils.domProcessChild.childID) {
 				}
 			}));
 			Object.defineProperty(this, "set", {get() { //Загрузки/Фото/Имя вкладки
-				try {var dir = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")].TitlePath(2)[0];}
+				try {var dir = UcfGlob.TitlePath(2)[0];}
 					catch {dir = Services.dirsvc.get("DfltDwnld",Ci.nsIFile)}
 				try {dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);} catch{}
 				return dir.path;
@@ -171,7 +171,7 @@ if (!ChromeUtils.domProcessChild.childID) {
 					? p.clearUserPref(pref)
 					: p[`set${data[pref].type}Pref`](pref, data[pref].val);
 			}
-			Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")].Succes(data["browser.download.dir"].set, 2);
+			UcfGlob.Succes(data["browser.download.dir"].set, 2);
 		}
 		dblclick(win, imgURL) {
 			var gb = win.gBrowser, index = gb.selectedTab._tPos +1;
