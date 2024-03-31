@@ -67,7 +67,7 @@ UcfGlob: {
 		var actor = bc?.currentWindowGlobal?.getActor(name);
 		actor && self.save(win, ...await actor.sendQuery(""), to); //htmlAndName
 	},
-	async Status(text,time = 5e3, win = self.getwin()){
+	async Status(text,time, win = self.getwin()){
 		var StatusPanel = win.StatusPanel;
 		if(StatusPanel.update.tid)
 			win.clearTimeout(StatusPanel.update.tid)
@@ -77,7 +77,7 @@ UcfGlob: {
 			StatusPanel.update.ret = () => {
 				StatusPanel.update = update,StatusPanel.update();
 		}}
-		StatusPanel.update.tid = win.setTimeout(StatusPanel.update.ret,time);
+		StatusPanel.update.tid = win.setTimeout(StatusPanel.update.ret,time || 5e3);
 		StatusPanel._label = text;
 	},
 	TitlePath(to, d, h, win = self.getwin(), n = 0, u = 99){ //0 web|2 pic|-№ cut, name, url

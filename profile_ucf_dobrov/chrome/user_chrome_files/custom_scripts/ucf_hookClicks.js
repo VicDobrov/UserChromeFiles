@@ -83,7 +83,7 @@ Alt + R		Выбор части страницы
 
 Menu = { //массив команд пользователя, alt() клик правой кнопкой, upd() изменять строку меню
 	View: {
-		lab: `Мобильный дизайн | для Чтения`, inf: F.b, img: F.con,
+		lab: `Мобильный дизайн | для Чтения`, inf: F.b, img: F.ico +"aboutdebugging-connect-icon.svg",
 		cmd(trg){ //пункт меню с HotKey
 			trg.ownerDocument.getElementById("key_responsiveDesignMode").doCommand();
 			if(gBrowser.selectedBrowser.browsingContext.inRDMPane) BrowserReload();},
@@ -170,7 +170,7 @@ Menu = { //массив команд пользователя, alt() клик п
 		cmd(){
 			var n = ucf.pref(F.v) != 1; ucf.pref(F.v, n ? 1 : 2);
 			ucf.mode_skin(); BrowserReload();
-			ucf.toStatus(`Загрузка изображений ${n ? "√ разреш" : "✘ запрещ"}ено`,3e3);
+			Status(`Загрузка изображений ${n ? "√ разреш" : "✘ запрещ"}ено`,3e3);
 		},
 		alt(){
 			ucf.pref(F.v, 3); BrowserReload();
@@ -182,7 +182,7 @@ Menu = { //массив команд пользователя, alt() клик п
 			try {var exp = ChromeUtils.importESModule(url + "sys.mjs");} catch {exp = ChromeUtils.import(url + "jsm");}
 			var obj = exp.require("devtools/client/menus").menuitems.find(menuitem => menuitem.id == "menu_eyedropper");
 			(test = obj.oncommand.bind(null, {target:trg}))();
-			ucf.flash(0,0,'rgba(100,0,225,0.1)',500, F.e);}
+			UcfGlob.Flash(0,'rgba(100,0,225,0.1)',0, F.e);}
 	},
 	Notes: {lab: `приложение «Заметки»`, img: F.ico +"tool-application.svg",
 		cmd(){
@@ -303,7 +303,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		2(trg,forward){bright(trg,forward,5)}, //яркость
 		10(trg,forward){bright(trg,forward)},
 		256(){gClipboard.write(gURLBar.value);
-			ucf.flash(0,0,'rgba(240,176,0,0.5)',300,"в буфере: "+ gURLBar.value.slice(0,80));}
+			UcfGlob.Flash(0,'rgba(240,176,0,0.5)',0,"в буфере: "+ gURLBar.value.slice(0,80));}
 	},
 	[F.F]: { //favdirs кнопка
 		0(btn){btn.ownerGlobal.SidebarUI.toggle("viewBookmarksSidebar")},
@@ -501,9 +501,9 @@ Over = { //edit подсказки под мышью
 get [F.P](){ //PanelUI delete this[…];
 	ucf.mode_skin(); if(ucf.pref("signon.rememberSignons"))
 		Services.cache2.asyncGetDiskConsumption({onNetworkCacheDiskConsumption(bytes){
-			ucf.toStatus(F.h + ucf.formatBytes(bytes),3e3) //вывод объёма кэша
+			Status(F.h + ucf.formatBytes(bytes),3e3) //вывод объёма кэша
 		}, QueryInterface: ChromeUtils.generateQI(["nsISupportsWeakReference","nsICacheStorageConsumptionObserver"])})
-	else ucf.toStatus(F.i,2e3); //не хранить пароли
+	else Status(F.i,2e3); //не хранить пароли
 	return tExp(F.P);
 },
 get [F.B](){
@@ -526,23 +526,23 @@ get [F.N](){ucf.mode_skin('');
 },
 get "stop-button"(){return GetDynamicShortcutTooltipText("stop-button") +"\n"+ tExp(F.S); //stop
 },
-get "urlbar-input"(){ucf.toStatus(F.a,2500)}, //tab
+get "urlbar-input"(){Status(F.a,2500)}, //tab
 [F.L]: Tag[F.L], "appMenu-print-button2": Tag[F.L], //print
 [F[1]]: Tag[F[0]], //title-close
 get [F.T](){
 	var t = `${ucf.pref("dom.disable_open_during_load") ? "Запрет" : "↯ Разреш"}ить всплывающие окна`;
 	if(!ucf.pref("places.history.enabled")) t = F.j;
 	if(ucf.pref("privacy.sanitize.sanitizeOnShutdown")) t = F.k;
-	ucf.toStatus(t,3e3); return tooltip();
+	Status(t,3e3); return tooltip();
 },
 get [F.A](){return Tag[F.A] + F.p;},
 get "identity-icon-box"(){ //custom hint
 	return tooltip_x(window.event.target, tExp(F.I) + br_val());
 },
-get [F.I](){ucf.toStatus(this.BrExp(),2500); //+mode
+get [F.I](){Status(this.BrExp(),2500); //+mode
 	return tooltip_x(window.event.target, tExp(F.I) + br_val());
 },
-get [F.O](){ucf.toStatus(this.BrExp(),2500); //щит
+get [F.O](){Status(this.BrExp(),2500); //щит
 	var trg = window.event?.target; //custom hint 2
 	return trg.id.endsWith("r") && trg.textContent +'\n'+ tExp(F.O);
 },
@@ -551,7 +551,7 @@ get [F.Q](){
 	if(trg.id == F.Q)
 		zoom(0,0,0,`, ${ucf.pref("browser.tabs.loadInBackground") ? "Не выбирать" : "Переключаться в"} новые вкладки`)
 	else if (trg.id)
-			ucf.toStatus(F.c,9e3);
+			Status(F.c,9e3);
 	try {trg.mstate = trg.config.state + trg.menupopup.state;} catch{} //QuickToggle
 	if(!/open/.test(trg.mstate))
 		return tExp(F.Q)
@@ -563,12 +563,12 @@ get [F.M](){ //reader
 get [F.K](){ //ReaderView
 	return Tag[F.R] + Tag[F.M] + br_val();
 },
-get "ucf_SessionManager"(){ucf.toStatus(F.g);},
+get "ucf_SessionManager"(){Status(F.g);},
 get [F.E](){
-	ucf.toStatus(F.g); return Tag[F.E] + F.p;
+	Status(F.g); return Tag[F.E] + F.p;
 },
 get "add-ons-button"(){
-	ucf.toStatus(F.g); var s = Tag[F.E];
+	Status(F.g); var s = Tag[F.E];
 	return tooltip(window.event.target, s.replace(s.split("\n", 1),"") + F.p);
 },
 get [F[2]](){ //zoompage
@@ -734,7 +734,7 @@ saveSelToTxt = async () => { //в .txt Всё или Выбранное
 		var args = [txt, ucf.Title() +'.txt',null,false,true,null,window.document];
 		splice && args.splice(5,0,null) && l11 && args.splice(1,0,null);
 		saveURL(...args);
-		ucf.toStatus(crop("√ текст сохранён: "+ ucf.Title(),96,''));
+		Status(crop("√ текст сохранён: "+ ucf.Title(),96,''));
 	}
 	messageManager.addMessageListener(msgName,receiver);
 	addDestructor(() => messageManager.removeMessageListener(msgName,receiver));
@@ -781,15 +781,15 @@ tooltip_x = (trg,text = "", ttt = "") => {
 bright = (trg,forward,step = 1,val) => { //wheel
 	val ||= getIntPref(tabr) + (forward ? step : -step);
 	val = val > 100 ? 100 : val < 15 ? 15 : val;
-	ucf.pref(tabr,val); trg.toggleAttribute("rst"); ucf.toStatus(F.l + val +"%",1e3);
+	ucf.pref(tabr,val); trg.toggleAttribute("rst"); Status(F.l + val +"%",1e3);
 },
 br_val = () => ucf.pref([tabr,100]) +"%",
 zoom = (forward,toggle = false, change = true,text = '') => {
 	toggle ? ZoomManager.toggleZoom() : change ? forward ? FullZoom.enlarge() : FullZoom.reduce() : 0;
-	ucf.toStatus("± Масштаб "+ Math.round(ZoomManager.zoom*100) +`%${ucf.pref("browser.zoom.full") ? "" : " (только текст)"}` + text,3e3);
+	Status("± Масштаб "+ Math.round(ZoomManager.zoom*100) +`%${ucf.pref("browser.zoom.full") ? "" : " (только текст)"}` + text,3e3);
 },
 Expert = (m = Boolean(Exp()),p = F.u +'expert') => {
-	ucf.pref(p,!m); ucf.toStatus(Over.BrExp(""),3e3);
+	ucf.pref(p,!m); Status(Over.BrExp(""),3e3);
 },
 Help = (help = F.s +"help.html") => { //помощь
 	(FileExists(help)) ? switchTab(help) : switchTab(F.J);
@@ -1155,10 +1155,9 @@ uar = "chrome://devtools/skin/images/"; F = {
 	id: "ucf_hookExpert", os: AppConstants.platform, ver: Services.appinfo.version.replace(/-.*/,''),
 	tc(m = "⌘",w = "Ctrl+"){return this.os == "macosx" ? m : w},
 	pdi: "chrome://browser/skin/canvas-blocked.svg", eye: uar +"command-eyedropper.svg",
-	upd: uar +"reload.svg", dom: uar +"tool-dom.svg", dir: uar +"folder.svg",
+	upd: uar +"reload.svg", dir: uar +"folder.svg", opt: uar +"settings.svg", //"tool-dom.svg"
 	sec: uar +"security-state-insecure.svg", ok: uar +"check.svg", no: uar +"close.svg",
 	hlp: uar +"help.svg", ie: uar +"globe.svg", nul: uar +"blocked.svg", del: uar +"clear.svg",
-	opt: uar +"settings.svg", con: uar +"aboutdebugging-connect-icon.svg",
 	ai: "data:image/webp;base64,UklGRjwAAABXRUJQVlA4TC8AAAAvD8ADAAoGbSM5Ov6k774XCPFP/0/03/8JGPxzroIzuOW06Ih60Genn1S/gHe+BgA=",
 	qt: "data:image/webp;base64,UklGRkYCAABXRUJQVlA4WAoAAAAQAAAAFwAAFwAAQUxQSJcAAAANcGJr25S8mH4SNGxAgsguPCZ0BcMOiDSNRpvVaCTa3AI2qm2e2ofz7OuwgIiYgMzb4kVjGvegnQFAwXgFVnvcOmtnMJtutAa3Vo4mhRMDpWq8AjfU+yQoYf1/oTkTIdUrknKswNQ5yAdDzqgr4CYbsJWQfEyEU5QNEl2eKFM2AAIbjmSIMjwXPGyEdj6Bdn4mj9KO63sAAFZQOCCIAQAAdAgAnQEqGAAYAD6dRppKgoCqgAE4lsAKwgisgG27uzPePSvBIu/Pr0HJqW+AfoAIHl2DrAnRo/G3JBpTx8yE7L6LFQyD+yUNvuRYAAD+7mwmpaoBcsJ1hVKsMI2ucqid8qndm+WEvH4l4il6lA8FPscgnrRHrnSjjyNcfUV21+TkfqOWKou2UvVsZSl1z+jKs760Vij5XCWF9Uo6TZAhKfrJpeILyQYwq2Ee/g1uyEH/dJMI/91DsVpI6i2vV/Jqpd4/KniJtTm1woLvaotA2ikt3eeBaqlHf8WPe++lSWS7fETjgvzzbflp0Rj+v23kbb9e/VjUcPaD83shRuwzEo6CAO/AGxE+Zwbvv9NDsQT6T+S4CCDOFTuMRVv9/0E4P+uK+Vc3bMfQQD05gY/fes+ZX6ZHkvFdMn7zX8LMVvI59p7F806HPD2lBjs4lWWhQ5ckJDNflZL49370shr3/Q9uMJN9i/NVCu4OT7K3+4+/RkAMnjuY09u+3i4y4CldQG789iIAAAA="
 }; F.ico = uar;
@@ -1199,6 +1198,7 @@ tExp = (name,m = Exp(), t,z)=>{ //… {Общий︰Эксперт (m = 1)[︰�
 	return t;
 },
 {prefs} = Services, db = prefs.getDefaultBranch(""),
+UcfGlob = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")], Status = UcfGlob.Status,
 Icon = (c = '0c0')=>"data:image/svg+xml;charset=utf-8,<svg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='a' x1='16' x2='16' y1='32' gradientUnits='userSpaceOnUse'><stop stop-color='%23"+ c +"'/><stop stop-color='%23fff' offset='.8'/></linearGradient><linearGradient id='b' x2='32' y1='16' gradientTransform='matrix(1 0 0 1 2 2)'><stop stop-opacity='.5'/></linearGradient></defs><circle cx='16' cy='16' r='15' fill='url(%23a)' stroke='url(%23b)' stroke-width='2'/></svg>",
 ucf = { //all ChromeOnly-scripts
 	pref(key,set){ //или key = [key,default]
@@ -1239,41 +1239,22 @@ ucf = { //all ChromeOnly-scripts
 		if(found) setFilter(null,window);
 		else gBrowser.selectedBrowser.addEventListener("pageshow",setFilter, {once: true});
 	},
-	toStatus(txt,time = 5e3, StatusPanel = window.StatusPanel){
-		if(StatusPanel.update.tid)
-			clearTimeout(StatusPanel.update.tid)
-		else {
-			var {update} = StatusPanel;
-			StatusPanel.update = () => {};
-			StatusPanel.update.ret = () => {
-				StatusPanel.update = update,StatusPanel.update();
-		}}
-		StatusPanel.update.tid = setTimeout(StatusPanel.update.ret,time);
-		StatusPanel._label = txt;
-	},
-	flash(id,style,color,ms,text,time = 5e3){ //статус, мигание
-		id = document.getElementById(id || 'urlbar-input-container'); if (!id) return;
-		if(style) id.style.filter = style; if(color) id.style.background = color;
-		if(ms) setTimeout(() => {
-			id.style.removeProperty('filter'),id.style.removeProperty('background-color');},ms);
-		if(text) ucf.toStatus(text,time);
-	},
-	mode_skin(text,p,t,s = 'unset',o = '',z){with(this){setTimeout(()=>{ //подсветка кнопок и подсказки отображают настройки браузера
-		if(pref("dom.security.https_only_mode"))
-			flash(F.N,"drop-shadow(0px 0.5px 0px #F8F)"),o = ', только HTTPS'
-		else flash(F.N,"none");
+	mode_skin(text,p,t,s = 'unset',o = '',z,f = [0,0,0]){ //настройки FF меняют подсветку кнопок и подсказки
+		with(this){setTimeout(()=>{if(pref("dom.security.https_only_mode"))
+			UcfGlob.Flash(F.N,0,"drop-shadow(0px 0.5px 0px #F8F)",...f),o = ', только HTTPS'
+		else UcfGlob.Flash(F.N,0,"none",...f);
 		if(ua() && (ua() != ua(true))) o = o +', чужой ЮзерАгент';
 		z = pref("network.proxy.no_proxies_on") == "" ? "" : ', Есть сайты-исключения';
 		p = p || pref(F.x);
-		if(p == 1) t = ['sepia(100%) saturate(150%) brightness(0.9)', 'Ручная настройка прокси'+ z];
-		else if(p == 2) t = ['hue-rotate(120deg) saturate(70%)',F.d + z],s = 'hue-rotate(270deg) brightness(95%)';
-		else if(p == 4) t = ['hue-rotate(250deg) brightness(0.95) saturate(150%)','Сеть - автонастройка прокси'+ z];
-		else if(p == 0) t = ['saturate(0%) brightness(0.95)','Настройки сети - системные'+ z];
+		if(p == 1) t = ['sepia(100%) saturate(300%) brightness(0.9)', 'Ручная настройка прокси'+ z];
+		else if(p == 2) t = ['hue-rotate(120deg)',F.d + z],s = 'hue-rotate(270deg) brightness(95%)';
+		else if(p == 4) t = ['hue-rotate(250deg) saturate(150%)','Сеть - автонастройка прокси'+ z];
+		else if(p == 0) t = ['saturate(0%) brightness(0.93)','Настройки сети - системные'+ z];
 		else t = [s,'Сеть работает без прокси']; //серый фон кнопки
-		flash(F.D, pref(F.v) > 1 ? "hue-rotate(180deg) drop-shadow(0px 0.5px 0px #F68)" : "none");
-		flash(F.Q,s); flash(F.P,t[0]);
+		UcfGlob.Flash(F.D,0, pref(F.v) > 1 ? "hue-rotate(180deg) drop-shadow(0px 0.5px 0px #F68)" : "none",...f);
+		UcfGlob.Flash(F.Q,0,s,...f); UcfGlob.Flash(F.P,0,t[0],...f);
 		z = typeof(text); if (z == 'string')
-			toStatus(text ? text : "\u{26A1}"+ t[1] + o,5e3); //светофор
+			Status(text ? text : "\u{26A1}"+ t[1] + o,5e3); //светофор
 	},250)}},
 	switchProxy(pac = F.w){
 		var t = F.x,u = F.y;
@@ -1284,12 +1265,12 @@ ucf = { //all ChromeOnly-scripts
 		this.mode_skin(); //разный фон замка для Прокси
 		BrowserReload();
 	},
-	Title(n){try {return Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")].TitlePath(n)[3];}
+	Title(n){try {return UcfGlob.TitlePath(n)[3];}
 		catch {return document.title || gBrowser.selectedTab.label}
 	},
 	HTML(){var i = '√ страница записана: ', t = crop(this.Title(),48,''), w = 1,
 		sfile = document.getElementById(F[4]); //addon SingleFile
-		try {Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")].SingleHTML(true,window);
+		try {UcfGlob.SingleHTML(true,window);
 		} catch {w = 0; if (sfile) sfile.click();}
 	}
 },
