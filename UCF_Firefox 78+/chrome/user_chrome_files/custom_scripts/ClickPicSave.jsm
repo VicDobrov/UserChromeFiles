@@ -1,5 +1,7 @@
-var EXPORTED_SYMBOLS = ["MouseImgSaverChild", "MouseImgSaverParent"]; // © Dumby, mod Dobrov сохранить картинку колёсиком или перетащив вправо; DBL поиск похожих. нужен SingleHTML.jsm
+var EXPORTED_SYMBOLS = ["MouseImgSaverChild", "MouseImgSaverParent"]; // © Dumby, mod Dobrov сохранить картинку колёсиком или перетащив вправо; DBL поиск похожих. (!) нужен SingleHTML.jsm
 
+var Services = globalThis.Services || ChromeUtils.import("resource://gre/modules/Services.jsm").Services;
+var UcfGlob = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")];
 var u = {get it() {delete this.it;
 	return this.it = Cc["@mozilla.org/image/tools;1"].getService(Ci.imgITools);
 }};
@@ -44,7 +46,6 @@ class MouseImgSaverChild extends JSWindowActorChild {
 		var dt = e.dataTransfer, {trg} = this;
 		this.drag();
 		dt.mozUserCancelled || this.send(trg, e.screenX); //сохранить
-		// dt.mozUserCancelled || this.sendAsyncMessage("dragend", (trg.currentRequestFinalURI || uri).spec);
 	}
 	auxclick(trg) { //СКМ
 		trg.matches(":any-link :scope") || this.send(trg);
@@ -56,15 +57,11 @@ class MouseImgSaverChild extends JSWindowActorChild {
 	send(trg, sx) {
 		var uri = trg.currentURI;
 		if (!uri) return;
-
 		var doc = trg.ownerDocument;
-		var cookieJarSettings = u.E10SUtils
-			.serializeCookieJarSettings(doc.cookieJarSettings);
-
+		var cookieJarSettings = u.E10SUtils.serializeCookieJarSettings(doc.cookieJarSettings);
 		var referrerInfo = Cc["@mozilla.org/referrer-info;1"].createInstance(Ci.nsIReferrerInfo);
 		referrerInfo.initWithElement(trg);
 		referrerInfo = u.E10SUtils.serializeReferrerInfo(referrerInfo);
-
 		var contentType = null, contentDisposition = null;
 		try {
 			var props = u.it.getImgCacheForDocument(doc).findEntryProperties(uri, doc);
@@ -72,7 +69,6 @@ class MouseImgSaverChild extends JSWindowActorChild {
 			try {contentType = props.get("type", cs).data;} catch {}
 			try {contentDisposition = props.get("content-disposition", cs).data;} catch {}
 		} catch {}
-
 		this.sendAsyncMessage("", {
 			title: trg.closest("[title]")?.title,
 			url: (trg.currentRequestFinalURI || uri).spec,
@@ -118,9 +114,9 @@ if (!ChromeUtils.domProcessChild.childID) {
 				}
 			}));
 			Object.defineProperty(this, "set", {get() { //Загрузки/Фото/Имя вкладки
-				try {var dir = Cu.getGlobalForObject(Cu)[Symbol.for("TitlePath")](2)[0];}
-					catch {dir = Services.dirsvc.get("DfltDwnld", Ci.nsIFile)}
-				dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);
+				try {var dir = UcfGlob.TitlePath(2)[0];}
+					catch {dir = Services.dirsvc.get("DfltDwnld",Ci.nsIFile)}
+				try {dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);} catch{}
 				return dir.path;
 			}});
 			return this.set;
@@ -135,7 +131,6 @@ if (!ChromeUtils.domProcessChild.childID) {
 			var {url, contentType, contentDisposition, sx, title,
 				isPrivate, referrerInfo, cookieJarSettings} = msg.data;
 			if (sx && sx > win.mozInnerScreenX + win.innerWidth) return;
-
 			if (title) titles[url] = title;
 			wref = Cu.getWeakReference(win);
 			var p = win.Services.prefs;
@@ -161,14 +156,13 @@ if (!ChromeUtils.domProcessChild.childID) {
 				win.document.nodePrincipal],
 				{length} = win.internalSave, lfix = length >15;
 				lfix && args.splice(1, 0, null); //FIX FF113+
-				win.internalSave(...args);
+				try {win.internalSave(...args);} catch{console.log("ERROR")}
 			} finally {
 				for(var pref in data) data[pref].val === null
 					? p.clearUserPref(pref)
 					: p[`set${data[pref].type}Pref`](pref, data[pref].val);
 			}
-		var id = win.document.getElementById('urlbar-input-container');
-		id.style.background = 'rgba(0,200,0,0.3)'; win.setTimeout(() => id.style.removeProperty('background-color'), 350);
+			UcfGlob.Succes(data["browser.download.dir"].set, 2);
 		}
 		dblclick(win, imgURL) {
 			var gb = win.gBrowser, index = gb.selectedTab._tPos +1;

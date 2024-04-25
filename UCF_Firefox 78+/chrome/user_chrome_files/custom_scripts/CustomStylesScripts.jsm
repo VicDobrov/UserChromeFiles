@@ -33,7 +33,7 @@ var UcfStylesScripts = {
 	*/
 	scriptschrome: { // Для докум. окна браузера [ChromeOnly]
 		domload: [ // По событию "DOMContentLoaded"
-		// { path: "UserScript.js", ucfobj: true },
+			{ path: "ucf_hookClicks.js", ucfobj: true }, //+ attrsInspector.js
 		],
 		load: [ // По событию "load"
 			{ path: "special_widgets.js", ucfobj: true }, // <-- Special Widgets
@@ -52,7 +52,7 @@ var UcfStylesScripts = {
 		{ path: "custom_script.js" }, // пусто
 		{ path: "ucf_addons-control.js" },
 		{ func: mjsmLoad("SingleHTML.jsm") },
-		{ func: mjsmLoad("ClickPicSave.jsm") }, // нужен SingleHTML
+		{ func: mjsmLoad("ClickPicSave.jsm") },
 	],
 	/** ************************▲ Настройки ▲************************ */
 };
