@@ -54,12 +54,15 @@ UcfGlob: {
 		if(ms && id) win.setTimeout(() => {
 			id.removeProperty('filter'), id.removeProperty('background-color');}, ms);
 	},
-	async Succes(path, w = 1, text, win = self.getwin()){
-		if(w) {w = await win.Downloads.createDownload({source: "about:blank",target: win.FileUtils.File(path)});
+	async Succes(path, w = 1, text, win = self.win, s,i){
+		this.Flash(0, w ? 'rgba(0,200,0,0.3)' : 'rgba(250,0,0,0.2)',0, w ? text : 0);
+		if(!w) return; s = `${w == 1 ? "und" : "ov"}erline`;
+		i = win.gBrowser.selectedTab.textLabel.style;
+		if(!i.textDecoration.includes(s)) i.textDecoration = i.textDecoration +" "+ s;
+		if(w != 1) return; //ClickPicSave, иначе FakeDownload
+		w = await win.Downloads.createDownload({source: "about:blank",target: win.FileUtils.File(path)});
 		(await win.Downloads.getList(win.Downloads.ALL)).add(w);
 		await w.refresh(w.succeeded = true);
-		if(w == 1) win.gBrowser.selectedTab.textLabel.style.textDecoration = "overline";} //^отметка
-		this.Flash(0, w ? 'rgba(0,200,0,0.3)' : 'rgba(250,0,0,0.2)',0, w ? text : 0);
 	},
 	async SingleHTML(to = false, win = self.getwin()) {
 		var br = win.gBrowser.selectedBrowser, bc = focus.focusedContentBrowsingContext;
