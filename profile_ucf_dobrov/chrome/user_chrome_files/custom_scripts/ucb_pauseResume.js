@@ -1,10 +1,10 @@
-setTimeout(() => { //при старте браузера
-	(async (win, addon) => { // ucf_hookClicks.js подключен?
-		if (win.document.getElementById("nav-bar").tooltip.indexOf("ucf") < 0)
-			Cc["@mozilla.org/alerts-service;1"].getService(Ci.nsIAlertsService).showAlertNotification(null,"User Chrome Files",`Скрипт ucf_hookClicks.js не загружен!\n(или вы открыли новое окно Firefox)`,false);
-		if (addon.value) //extension Reader View ? скрыть штатный Read View в url-bar
-			Services.prefs.setBoolPref("reader.parse-on-load.enabled", !(await addon).isActive);
-	})(Services.wm.getMostRecentWindow("navigator:browser"), AddonManager.getAddonByID("{2495d258-41e7-4cd5-bc7d-ac15981f064e}"));}, AppConstants.platform == "win" ? 9e3 : 3e3);
+setTimeout(() => {(async (win) => { //старт браузера: ucf_hookClicks.js подключен?
+	warn =(txt,title)=> Cc["@mozilla.org/alerts-service;1"].getService(Ci.nsIAlertsService).showAlertNotification(null,"Ошибка "+ title, "Не загружен скрипт "+ txt,false);
+	if (win.document.getElementById("nav-bar").tooltip.indexOf("ucf") < 0)
+		warn(`ucf_hookClicks.js\n(или открыто новое окно Firefox)`, "UserScripts");
+	if(typeof Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")] != "object")
+		warn(`ucf_global-SaveHTML.mjs`,`глобальных функций`);
+})(Services.wm.getMostRecentWindow("navigator:browser"));}, AppConstants.platform == "win" ? 9e3 : 3e3);
 
 (async ({DownloadsViewUI}, origfunc = DownloadsViewUI.DownloadElementShell.prototype.connect) => {
 	DownloadsViewUI.DownloadElementShell.prototype.connect = function connect() {

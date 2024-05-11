@@ -1,4 +1,3 @@
-
 export var UcfPrefs = {
     // ▼ Default settings ▼
     vertical_top_bottom_bar_enable: true,
@@ -36,6 +35,13 @@ export var UcfPrefs = {
     get global() {
         delete this.global;
         return this.global = globalThis;
+    },
+    get customSandbox() {
+        delete this.customSandbox;
+        var scope = this.user_chrome?.customSandbox;
+        if (!scope)
+            scope = this.user_chrome?._initCustom();
+        return this.customSandbox = scope;
     },
     get L10nRegistry() {
         delete this.L10nRegistry;
