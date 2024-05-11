@@ -126,12 +126,10 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 			cmd(){
 				var p = "fission.autostart"; Pref(p, !Pref(p));
 			},
-			upd(){
-				var i = F.sec;
+			upd(){ var i = F.sec;
 				if(Pref("fission.autostart"))
 					i = i.replace("-in","-");
-				this.image = i;
-			},
+				this.image = i;}
 		},
 		"Сведения о браузере": { sep: 1,
 			cmd(){toTab('about:support')}, img: "resource://gre-resources/password.svg"
@@ -156,8 +154,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 				if(cancelQuit.data) return false;
 				Services.appinfo.invalidateCachesOnRestart();
 				var restart = Services.startup;
-				restart.quit(restart.eAttemptQuit | restart.eRestart);}
-		}
+				restart.quit(restart.eAttemptQuit | restart.eRestart);}}
 	},
 	VPN: {lab: "VPN Антизапрет | Настройки Proxy", inf: F.w +"\nCensor Tracker только отключается",
 		upd(){ //обновлять строку перед показом меню
@@ -166,9 +163,8 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 		cmd(){switchProxy()},
 		alt(){CfgProxy()}
 	},
-	Pics: {
-		upd(){ //обновлять строку меню
-			var val = Pref(F.v), s = val == 1, i = F.pdi;
+	Pics: { alt(){ Pref(F.v, 3); BrowserReloadEx();},
+		upd(){ var val = Pref(F.v), s = val == 1, i = F.pdi;
 			this.label = `Графика страниц – ${s ? "включена" : val == 3 ? "только сайт" : "запрещена"}`;
 			this.image = s ? i.replace("-blocked","") : i || F.nul;
 			this.tooltipText = `правый Клик: кроме сторонних\n${F.v} = ${val}`;
@@ -176,11 +172,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 		cmd(){
 			var n = Pref(F.v) != 1; Pref(F.v, n ? 1 : 2);
 			mode_skin(); BrowserReloadEx();
-			Status(`Загрузка изображений ${n ? "√ разреш" : "✘ запрещ"}ено`,3e3);
-		},
-		alt(){
-			Pref(F.v, 3); BrowserReloadEx();
-		},
+			Status(`Загрузка изображений ${n ? "√ разреш" : "✘ запрещ"}ено`,3e3);}
 	},
 	EyeDrop: {lab: `Пипетка цвета, Линза`, img: F.eye, sep: 1,
 		cmd(btn){
@@ -195,12 +187,10 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 			var h = document.getElementById("nav-bar").ucf_mousedrag;
 			h ||= F.q + s;
 			Services.prompt.alert(null,"Справка по жестам мыши",`Перетащите фото вправо, чтобы сохранить\n\n`+ h);},
-		cmd(){
-			Help();
-		}
+		cmd(){Help()}
 	},
 	"запуск скрипта User.js (Alt+x)": {cmd(btn){userjs(btn)}},
-	MyMenu: {
+	MyMenu: { inf: "зависит от операционной системы",
 		lab: "приложение «Записки»", img: F.ico +"tool-application.svg",
 		cmd(){
 			F.os == "win" && UcfGlob.RunwA("C:\\Windows\\system32\\StikyNot.exe");
@@ -405,8 +395,8 @@ var Setup = [{ //about:config меню. refresh=true ⟳ Обновить без
 	pref: ["browser.safebrowsing.downloads.remote.block_dangerous", "Опасные файлы, сайты",,"browser.safebrowsing.downloads.remote.block_dangerous_host"], Def3el: true, Yellow: false,
 	keys: [[true, "Запрет",,,`Pref('browser.safebrowsing.downloads.remote.block_dangerous_host',true)`], [false, "Открыть",,,`Pref('browser.safebrowsing.downloads.remote.block_dangerous_host',false)`]]
 },{ //pref,lab,key,hint,[val,str],code | keys:val,lab,dat,+hint,code,pref_my | icon:значок
-	pref: [F.S, "Clipboard: перехват сайтом",,"Некоторые сайты управляют буфером обмена"], Def3el: true,
-	keys: [[true, "Да"], [false, "Нет"]]
+	pref: [F.S, "Сайты",,"Некоторым сайтам нужен доступ к Clipboard"], Def3el: false, Yellow: true,
+	keys: [[true, "управлять буфером обмена"], [false, "не изменять буфер обмена"]]
 },{
 	pref: [F.u +"savedirs", "Загрузки",,'Пути сохранения Сайтов и Графики\nСинтаксис «Html/subdir|Pics/subdir»\nsubdir: пусто | 0 заголовок | 1 домен',
 		["", "всё в общей папке"]], Gray: "", Blue: "-Web|1|-Images|0", Def3el: "Сайт||Фото|0", Yellow: "Site||Photo|0",
