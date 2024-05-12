@@ -1,7 +1,6 @@
-(this.contextmenuopenwith = {
+(this.contextmenuopenwith = { //на основе forum.mozilla-russia.org/viewtopic.php?pid=809407#p809407
 	_eventListeners: [],
-	init(that) {
-		var Hint = "Открыть выделенный текст или ссылку\nПравый клик | Shift - ссылка из буфера",
+	init(that) { var Hint = "Открыть выделенный текст или ссылку\nПравый клик | Shift - ссылка из буфера",
 		selector = "#context-sep-selectall", // вставить пункты меню перед этим селектором
 		attricon = true, // false: без иконок атрибут "image"
 		submenu = false, /* подменю программ для ссылок
@@ -32,7 +31,7 @@
 			{ name: 'Открыть в |Microsoft Edge', path: 'C:\\Windows\\explorer.exe', args: `"microsoft-edge:%OpenURI "`}
 		],
 		macosx = [
-			{	name: 'Загрузчик видео yt-dlp', path: '/usr/bin/osascript',
+			{	name: '|Видео загрузчик yt-dlp', path: '/usr/bin/osascript',
 				args: `-e "tell app %quotTerminal%quot to activate do script %quotyt-dlp '%OpenURI' && say 'Download complete'; exit%quot"`,
 				hint: 'опции --downloader ffmpeg…',
 				roll: `-e "tell app %quotTerminal%quot to activate do script %quotyt-dlp --downloader ffmpeg --hls-use-mpegts '%OpenURI' && say 'Download complete'; exit%quot"`,
@@ -86,12 +85,13 @@
 		};
 		var popup = document.querySelector("#contentAreaContextMenu");
 		var create = e => {
-			if (e.target != popup || gContextMenu.webExtBrowserType === "popup") return;
+			if (e.target != popup || gContextMenu.webExtBrowserType === "popup" ||
+				(gContextMenu.isContentSelected || gContextMenu.onTextInput) && !gContextMenu.linkURL) return;
 			popup.removeEventListener("popupshowing", create);
 			this._eventListeners.shift();
-			var contextsep = popup.querySelector(`:scope > ${selector}`) || popup.querySelector(":scope > menuseparator:last-of-type");
+			var contextsel = popup.querySelector(`:scope > ${selector}`) || popup.querySelector(":scope > menuseparator:last-of-type");
 			var fragment = document.createDocumentFragment();
-			if (length == 1) submenu = false;
+			if (arrOS.length == 1) submenu = false;
 			var itemId = 0;
 			arrOS.forEach(item => {
 				let name = item.name.split('|'), {path, args, roll, hint} = item;
@@ -106,14 +106,13 @@
 				mitem.setAttribute("label", `${name}`);
 				mitem.apppath = path; mitem.roll = roll;
 				mitem.tooltipText = Hint + (hint || "");
-				mitem.appargs = args || "";
+				mitem.appargs = args;
 				if (attricon)
 					mitem.setAttribute("image", iconpath);
 				fragment.append(mitem);
 				addListener(mitem, "command", function command(e) {
 					try {
-						let trg = e.currentTarget, file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
-						let args = trg.appargs;
+						let trg = e.currentTarget, args = trg.appargs, file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
 						if (trg.roll && e.button == 1)
 							args = trg.roll;
 						file.initWithPath(trg.apppath);
@@ -135,7 +134,6 @@
 									args.push(getURL(e.shiftKey || e.button == 2));
 							} else
 								args = [getURL(e.shiftKey || e.button == 2)];
-console.log(args);
 							process.runwAsync(args, args.length);
 						} else
 							file.launch();
@@ -153,7 +151,7 @@ console.log(args);
 					let mpopup = document.createXULElement("menupopup");
 					mpopup.append(fragment);
 					rootmenu.append(mpopup);
-					contextsep.before(rootmenu);
+					contextsel.before(rootmenu);
 				}
 				funcpopupshowing = () => {
 					rootmenu.hidden = false;
@@ -162,7 +160,7 @@ console.log(args);
 					rootmenu.hidden = true;
 				};
 			} else {
-				contextsep.before(fragment);
+				contextsel.before(fragment);
 				funcpopupshowing = () => {
 					for(let arr of this._eventListeners) {
 						if (arr[2].name === "command")
@@ -177,7 +175,8 @@ console.log(args);
 				};
 			}
 			addListener(popup, "popupshowing", function popupshowing(e) {
-				if (e.target != popup || gContextMenu.webExtBrowserType === "popup") return;
+				if (e.target != popup || gContextMenu.webExtBrowserType === "popup" ||
+					(gContextMenu.isContentSelected || gContextMenu.onTextInput) && !gContextMenu.linkURL) return;
 				funcpopupshowing();
 			});
 			addListener(popup, "popuphiding", function popuphiding(e) {
