@@ -46,6 +46,26 @@ ChromeUtils.domProcessChild.childID || ({
 	get win(){
 		return this.ownerGlobal || Services.wm.getMostRecentWindow("navigator:browser");
 	},
+	async save(win, data, fname, host, to) {
+		var path = self.UcfGlob.TitlePath(to, fname, host, win); //путь в зависимости от опций
+		var dir = path[0], t = path[2].slice(0,48), path = path[1];
+		try {dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);}
+			catch(ex) {
+				self.UcfGlob.Succes(dir.path, 0); return;}
+		if (!to) { // диалог выбора папки
+			var fp = Cc['@mozilla.org/filepicker;1'].createInstance(Ci.nsIFilePicker);
+			fp.init(parseInt(Services.appinfo.platformVersion) < 125 ? win : win.browsingContext,"", fp.modeSave);
+			fp.defaultString = path.split(/.*[\/|\\]/)[1];
+			fp.displayDirectory = dir;
+			fp.appendFilters(fp.filterHTML); fp.appendFilters(fp.filterAll);
+			var res = await new Promise(fp.open);
+			if (res == fp.returnOK || res == fp.returnReplace)
+				path = fp.file.path
+			else return;
+		}; to = 1;
+		try {await IOUtils.writeUTF8(path, data);} catch {to = 0}
+		await self.UcfGlob.Succes(path, to, '√ страница записана: '+ t);
+	},
 UcfGlob: {
 	Pref(key,set){ //или key = [key,default]
 		if(!Array.isArray(key)) key = [key];
@@ -91,12 +111,15 @@ UcfGlob: {
 		if(ms && id) win.setTimeout(() => {
 			id.removeProperty('filter'), id.removeProperty('background-color');}, ms);
 	},
-	async Succes(path, w = 1, text, win = self.win){
-		if(w) {w = await win.Downloads.createDownload({source: "about:blank",target: win.FileUtils.File(path)});
+	async Succes(path, w = 1, text, win = self.win, s,i){
+		this.Flash(0, w ? 'rgba(0,200,0,0.3)' : 'rgba(250,0,0,0.2)',0, w ? text : 0);
+		if(!w) return; s = `${w == 1 ? "und" : "ov"}erline`;
+		i = win.gBrowser.selectedTab.textLabel.style;
+		if(!i.textDecoration.includes(s)) i.textDecoration = i.textDecoration +" "+ s;
+		if(w != 1) return; //ClickPicSave, иначе FakeDownload
+		w = await win.Downloads.createDownload({source: "about:blank",target: win.FileUtils.File(path)});
 		(await win.Downloads.getList(win.Downloads.ALL)).add(w);
 		await w.refresh(w.succeeded = true);
-		if(w == 1) win.gBrowser.selectedTab.textLabel.style.textDecoration = "overline";} //^отметка
-		this.Flash(0, w ? 'rgba(0,200,0,0.3)' : 'rgba(250,0,0,0.2)',0, w ? text : 0);
 	},
 	async SingleHTML(to = false, win = self.win) {
 		var br = win.gBrowser.selectedBrowser, bc = focus.focusedContentBrowsingContext;
@@ -148,30 +171,12 @@ UcfGlob: {
     try{proc.init(file);} catch{console.error(F.q + path); return 1;}
     proc.runwAsync(args, args.length);
   }
-},
-	async save(win, data, fname, host, to) {
-		var path = self.UcfGlob.TitlePath(to, fname, host, win); //путь в зависимости от опций
-		var dir = path[0], t = path[2].slice(0,48), path = path[1];
-		try {dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);}
-			catch(ex) {
-				self.UcfGlob.Succes(dir.path, 0); return;}
-		if (!to) { // диалог выбора папки
-			var fp = Cc['@mozilla.org/filepicker;1'].createInstance(Ci.nsIFilePicker);
-			fp.init(parseInt(Services.appinfo.platformVersion) < 125 ? win : win.browsingContext,"", fp.modeSave);
-			fp.defaultString = path.split(/.*[\/|\\]/)[1];
-			fp.displayDirectory = dir;
-			fp.appendFilters(fp.filterHTML); fp.appendFilters(fp.filterAll);
-			var res = await new Promise(fp.open);
-			if (res == fp.returnOK || res == fp.returnReplace)
-				path = fp.file.path
-			else return;
-		}; to = 1;
-		try {await IOUtils.writeUTF8(path, data);} catch {to = 0}
-		await self.UcfGlob.Succes(path, to, '√ страница записана: '+ t);
-	}
+}
+
 }).init("browser-delayed-startup-finished");
 
 var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
+
 	var resolveURL = function (url, base) {
 		try { return io.newURI(url, null, io.newURI(base)).spec;} catch {}
 	},
@@ -193,7 +198,7 @@ var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
 				canvas.width = img.naturalWidth || img.width || 128;
 				canvas.height = img.naturalHeight || img.height || 128;
 				canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-				src = canvas.toDataURL(/\.jpe?g/i.test(src) ? 'image/jpeg' : 'image/png');
+				src = canvas.toDataURL(/\.jpe?g/i.test(src) ? 'image/jpeg' : 'image/png'); //\.svg/i.test(src) ? 'image/svg+xml'
 			} catch (e) {};
 			if (img != obj) img.src = 'about:blank';
 		};
