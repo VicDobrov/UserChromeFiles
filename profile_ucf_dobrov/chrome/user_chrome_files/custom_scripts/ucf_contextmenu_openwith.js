@@ -47,7 +47,7 @@
 				args: `-b com.apple.Safari -u "%OpenURI"`,
 				icon: 'chrome://branding/content/icon32.png'},
 		];
-		try {var arrOS = eval(AppConstants.platform);} catch {};
+		try {var arrOS = eval(AppConstants.platform);} catch {return};
 		if (!arrOS.length) return;
 		var addListener = (...arr) => {
 			var elm = arr[0];
