@@ -5,7 +5,7 @@
 		attricon = true, // false: без иконок атрибут "image"
 		submenu = false, /* подменю программ для ссылок
 
-	name: 'Prefix или пусто|Имя', path: 'путь', Необязательно: iconpath: 'иконка',
+	name: 'Prefix или пусто|Имя', path: 'путь', Необязательно: icon: 'иконка',
 	args: `опции через пробел "в двойных кавычках считаются одной"`,
 	roll: аналог args, выполняется средним кликом (+Shift: адрес из буфера)
 	hint: подсказка в строке меню для roll
@@ -13,13 +13,13 @@
 
 		linux = [
 			{ name: 'Ссылку в |плеер VLC', path: '/usr/bin/vlc',
-				iconpath: 'moz-icon://stock/vlc?size=menu'
+				icon: 'moz-icon://stock/vlc?size=menu'
 			},
 			{ name: 'Скачать в |Yt-dlp', path: '/usr/bin/konsole', //предпочтительно .mp4 hevc|h265|avc|h264 <=1080
 				args: `--hold --workdir ~/Загрузки -e "yt-dlp -f %quotbv[height<=1080][ext=mp4][vcodec~='^(hevc|h265|avc|h264)']+ba[ext~='(aac|m4a)']/best[height<=1080][ext=mp4]/best[height<=1080]/best%quot %OpenURI"`,
 				hint: 'скачать в FFmpeg',
 				roll: `--hold --workdir ~/Загрузки -e "ffmpeg -i %OpenURI -c copy -f mp4 video.mp4"`,
-				iconpath: 'moz-icon://stock/youtube-dl?size=menu'}
+				icon: 'moz-icon://stock/youtube-dl?size=menu'}
 		],
 		win = [
 			{	name: 'Ссылку в |плеер VLC', path: 'C:\\Program Files\\VideoLAN\\VLC\\vlc.exe',
@@ -35,20 +35,19 @@
 				args: `-e "tell app %quotTerminal%quot to activate do script %quotyt-dlp '%OpenURI' && say 'Download complete'; exit%quot"`,
 				hint: 'опции --downloader ffmpeg…',
 				roll: `-e "tell app %quotTerminal%quot to activate do script %quotyt-dlp --downloader ffmpeg --hls-use-mpegts '%OpenURI' && say 'Download complete'; exit%quot"`,
-				iconpath: 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4TC0AAAAvD8ADEA8QEfMfQlFt29T7MhRBFNGIJsqLYPhnqEJE/8P8772bd+qxBfOVCwIA'
+				icon: 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4TC0AAAAvD8ADEA8QEfMfQlFt29T7MhRBFNGIJsqLYPhnqEJE/8P8772bd+qxBfOVCwIA'
 			},
 			{	name: 'Ссылку в |плеер MPV', path: '/usr/bin/osascript', //FIX only mpv
 				args: `-e "tell app %quotTerminal%quot to do script %quotopen -b io.mpv '%OpenURI' --args '--ytdl-format=bestvideo[height<=?720][fps<=?30]+bestaudio/best[height<=?720][fps<=?30]'; exit%quot" -e "tell app %quotSystem Events%quot to set visible of process %quotTerminal%quot to false"`,
 				hint: 'скачать книгу в Elib2Ebook',
 				roll: `-e "tell app %quotTerminal%quot to do script %quotcd $HOME/Downloads; Elib2Ebook -f epub -u '%OpenURI' && say 'Download complete'; exit%quot"`,
-				iconpath: 'moz-icon://file:///System/Applications/Automator.app?size=16'
+				icon: 'moz-icon://file:///System/Applications/Automator.app?size=16'
 			},
 			{	name: 'Открыть в браузере |Safari', path: '/usr/bin/open',
 				args: `-b com.apple.Safari -u "%OpenURI"`,
-				iconpath: 'chrome://branding/content/icon32.png'
-			},
+				icon: 'chrome://branding/content/icon32.png'},
 		];
-		try {var arrOS = eval(AppConstants.platform);} catch {return}
+		try {var arrOS = eval(AppConstants.platform);} catch {};
 		if (!arrOS.length) return;
 		var addListener = (...arr) => {
 			var elm = arr[0];
@@ -99,7 +98,7 @@
 				if (submenu) name.shift();
 				name = name.join('');
 				if (hint) hint = '\nКолёсико: '+ hint;
-				var iconpath = item.iconpath || `moz-icon://file://${path}?size=16`;
+				var icon = item.icon || `moz-icon://file://${path}?size=16`;
 				let mitem = document.createXULElement("menuitem");
 				mitem.id = `ucf-menu-open-with-${++itemId}`;
 				mitem.className = "menuitem-iconic ucf-menu-open-with";
@@ -108,7 +107,7 @@
 				mitem.tooltipText = Hint + (hint || "");
 				mitem.appargs = args;
 				if (attricon)
-					mitem.setAttribute("image", iconpath);
+					mitem.setAttribute("image", icon);
 				fragment.append(mitem);
 				addListener(mitem, "command", function command(e) {
 					try {
