@@ -395,7 +395,7 @@ var Setup = [{ //about:config меню. refresh=true ⟳ Обновить без
 	pref: ["browser.safebrowsing.downloads.remote.block_dangerous", "Опасные файлы, сайты",,"browser.safebrowsing.downloads.remote.block_dangerous_host"], Def3el: true, Yellow: false,
 	keys: [[true, "Запрет",,,`Pref('browser.safebrowsing.downloads.remote.block_dangerous_host',true)`], [false, "Открыть",,,`Pref('browser.safebrowsing.downloads.remote.block_dangerous_host',false)`]]
 },{ //pref,lab,key,hint,[val,str],code | keys:val,lab,dat,+hint,code,pref_my | icon:значок
-	pref: [F.S, "Сайты",,"Некоторым сайтам нужен доступ к Clipboard"], Def3el: false, Yellow: true,
+	pref: [F.S, "Сайт",,"Некоторым сайтам нужен доступ к Clipboard"], Def3el: false, Yellow: true,
 	keys: [[true, "управлять буфером обмена"], [false, "не изменять буфер обмена"]]
 },{
 	pref: [F.u +"savedirs", "Загрузки",,'Пути сохранения Сайтов и Графики\nСинтаксис «Html/subdir|Pics/subdir»\nsubdir: пусто | 0 заголовок | 1 домен',
@@ -458,7 +458,7 @@ var Setup = [{ //about:config меню. refresh=true ⟳ Обновить без
 },(()=>{
 if(parseInt(F.ver) > 114) return { //новый FF
 	pref: ["browser.translations.enable", "Встроенный перевод сайтов"], Def3el: true, Gray: false, refresh: true,
-	keys: [[true, "Да"], [false, "Откл",,,`mode_skin('Перевод отключен для новых вкладок')`]]
+	keys: [[true, "Да"], [false, "Откл",,,`Status('Перевод отключен для новых вкладок')`]]
 }; else return {
 	pref: ["media.peerconnection.enabled", "WebRTC ваш реальный IP"], Def3el: false,
 	keys: [[true, "Выдать"], [false, "Скрыть"]]
@@ -512,10 +512,11 @@ get [F.C](){ //newtab
 	return GetDynamicShortcutTooltipText(F.C) + Tag[F.C] +'\n\n'+ Tag[F.B];
 },
 get [F.D](){var dw = UcfGlob.dirGet("DfltDwnld", 1);
-	if(dw) mode_skin(`${Pref(F.v) > 1 ? "\u{26A1} Графика отключена," : "💾 папка"} [Загрузки] `+ crop(dw, 96,''));
+	if(dw) Status(`${Pref(F.v) > 1 ? "\u{26A1} Графика отключена," : "💾 папка"} Загрузки: `+ crop(dw, 96,''));
 	return GetDynamicShortcutTooltipText(F.D) +"\n"+ tExp(F.D);
 },
-get [F.N](){mode_skin('');
+get [F.N](){
+	mode_skin('');
 	return GetDynamicShortcutTooltipText(F.N) +"\n\n"+ Tag[F.N] +"\n"+ tExp("wheel-stop");
 },
 get "stop-button"(){return GetDynamicShortcutTooltipText("stop-button") +"\n"+ tExp("wheel-stop");
@@ -531,7 +532,10 @@ get [F.T](){
 	if(Pref("privacy.sanitize.sanitizeOnShutdown")) t = F.k;
 	Status(t,3e3); return tooltip();
 },
-get [F.R](){return Tag[F.R] + F.p;},
+get [F.R](){
+	Status("📋 "+ readFromClip().replace(/[\r?\n?]|\s+/g,' ').trim(), 3e3);
+	return Tag[F.R] + F.p;
+},
 get "identity-icon-box"(){ //custom hint
 	return tooltip_x(window.event.target, tExp(F.I) + br_val());
 },
@@ -697,26 +701,22 @@ var addDestructor = nextDestructor => { //для saveSelToTxt
 		try {destructor();} catch(ex){Cu.reportError(ex)}
 		nextDestructor();
 }},
-mode_skin = (text,p,t,s = 'unset',o = '',z,f = [0,0,0]) => { //настройки FF меняют подсветку кнопок и подсказки
-	setTimeout(()=>{if(Pref("dom.security.https_only_mode"))
-		UcfGlob.Flash(F.N,0,"drop-shadow(0px 0.5px 0px #F8F)",...f),o = ', только HTTPS'
-	else UcfGlob.Flash(F.N,0,"none",...f);
+mode_skin = (txt,p = Pref(F.x),t,s = 'unset',o = '',z) => { //опции FF меняют подсветку кнопок, подсказки
+	setTimeout(()=>{ UcfGlob.Flash(F.O,p == 2 ? "magenta" : s,0,-1); z = s;
+		UcfGlob.Flash(F.D,0, Pref(F.v) > 1 ? 'hue-rotate(180deg) drop-shadow(0px 0.5px 0px #F68)' : 'none',-1);
+	if(Pref("dom.security.https_only_mode")) z = 'drop-shadow(0px 0.5px 0px #F8F)', o = ', только HTTPS'
+	UcfGlob.Flash(F.N,0,z,-1); t = [s,'Сеть работает без прокси']; //серый фон PanelUI
 	if(ua() && (ua() != ua(true))) o = o +', чужой ЮзерАгент';
-	z = Pref("network.proxy.no_proxies_on") == "" ? "" : ' + сайты-исключения';
-	p = p || Pref(F.x);
-	if(p == 1) t = ['sepia(100%) saturate(300%) brightness(0.9)', 'Ручная настройка прокси'+ z];
-	else if(p == 2) t = ['hue-rotate(120deg)',F.d + z],s = 'hue-rotate(270deg) brightness(95%)';
+	z = Pref("network.proxy.no_proxies_on") ? ' + сайты-исключения' : '';
+	if(p == 0) t = ['saturate(0%) brightness(0.93)','Настройки сети - системные'+ z];
+	else if(p == 1) t = ['sepia(100%) saturate(300%) brightness(0.9)', 'Ручная настройка прокси'+ z];
+	else if(p == 2) t = ['hue-rotate(120deg)',F.d + z], s = 'hue-rotate(270deg) brightness(95%)';
 	else if(p == 4) t = ['hue-rotate(250deg) saturate(150%)','Сеть - автонастройка прокси'+ z];
-	else if(p == 0) t = ['saturate(0%) brightness(0.93)','Настройки сети - системные'+ z];
-	else t = [s,'Сеть работает без прокси']; //серый фон кнопки
-	UcfGlob.Flash(F.D,0, Pref(F.v) > 1 ? "hue-rotate(180deg) drop-shadow(0px 0.5px 0px #F68)" : "none",...f);
-	UcfGlob.Flash(F.Q,0,s,...f); UcfGlob.Flash(F.P,0,t[0],...f);
-	typeof(text) == 'string' && Status(text || "\u{26A1}"+ t[1] + o,5e3);
-},250)
+	UcfGlob.Flash(F.P,0,t[0],-1), UcfGlob.Flash(F.Q,0,s,-1); 
+	typeof txt == "string" && Status(txt || "\u{26A1}"+ t[1] + o,5e3);},250)
 }
 
-mode_skin(); //подсветка кнопок и подсказки отображают настройки браузера
-[['ui.prefersReducedMotion',0],['browser.download.alwaysOpenPanel',false], //animation Fix
+mode_skin(); [['ui.prefersReducedMotion',0],['browser.download.alwaysOpenPanel',false], //animation Fix
 ['browser.download.autohideButton',false]].forEach((p)=>Pref(...p)); //lockPref опций
 getIntPref = (p) => prefs.getIntPref(p,100),
 tabr = F.u +"opacity",url = `resource://${tabr}/`, //bright tabs
@@ -829,6 +829,17 @@ Translate = (brMM = gBrowser.selectedBrowser.messageManager) => { //перево
 	brMM.removeMessageListener('getSelect',listener,true);
 	});
 	brMM.loadFrameScript('data:,sendAsyncMessage("getSelect",content.document.getSelection().toString())',false);
+},
+readFromClip = ({clipboard} = Services, data = {}) => {
+	try {let trans = Cc["@mozilla.org/widget/transferable;1"].createInstance(Ci.nsITransferable),
+		flavor = `text/${parseInt(Services.appinfo.platformVersion) >= 111 ? "plain" : "unicode"}`;
+		trans.init(docShell.QueryInterface(Ci.nsILoadContext));
+		trans.addDataFlavor(flavor);
+		clipboard.getData(trans, clipboard.kGlobalClipboard);
+		trans.getTransferData(flavor, data);
+		if (data.value)
+			return data.value.QueryInterface(Ci.nsISupportsString).data;
+	} catch {return ""}
 },
 Dialog = async(url = "preferences/dialogs/connection.xhtml", w = "_blank") =>{
 	var win = Services.wm.getMostRecentWindow(w);

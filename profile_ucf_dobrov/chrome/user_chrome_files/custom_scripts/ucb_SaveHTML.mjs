@@ -101,16 +101,31 @@ UcfGlob: {
 		d.slice(1, d.length).forEach((c) => f.append(c));
 		if(r) return f.path; f.exists() && f.launch();
 	},
-	Flash(id,color = 'rgba(0,200,0,0.3)',style,text,time,ms = 350,win = self.win){
+	async Status(text,time, win = self.win){
+		var StatusPanel = win.StatusPanel;
+		if(StatusPanel.update.tid)
+			win.clearTimeout(StatusPanel.update.tid)
+		else {
+			var {update} = StatusPanel;
+			StatusPanel.update = () => {};
+			StatusPanel.update.ret = () => {
+				StatusPanel.update = update,StatusPanel.update();
+		}}
+		StatusPanel.update.tid = win.setTimeout(StatusPanel.update.ret,time || 5e3);
+		StatusPanel._label = text;
+	},
+	Flash(id,color = 'rgba(0,200,0,0.3)',style,txt,time,ms = 350,win = self.win){
 		id = win.document.getElementById(id || 'urlbar-input-container');
-		id &&= id.style; if(text) this.Status(text,time); //мигание, статус
+		id &&= id.style; if(isNaN(Number(txt)))
+			this.Status(txt,time); //мигание, статус
 		if(style && id) id.filter = style;
-		if(color && id) id.background = color;
-		if(ms && id) win.setTimeout(() => {
-			id.removeProperty('filter'), id.removeProperty('background-color');}, ms);
+		if(color && id) if(txt < 0)
+			id.fill = color; else id.background = color;
+		if(!(txt < 0) && ms && id) win.setTimeout(
+			()=> ["filter","background","fill"].forEach((c)=> id.removeProperty(c)), ms);
 	},
 	async Succes(path, w = 1, text, win = self.win, s,i){
-		this.Flash(0, w ? 'rgba(0,200,0,0.3)' : 'rgba(250,0,0,0.2)',0, w ? text : 0);
+		this.Flash(0, w ? undefined : 'rgba(250,0,0,0.2)',0, w ? text : 0);
 		if(!w) return; s = `${w == 1 ? "und" : "ov"}erline`;
 		i = win.gBrowser.selectedTab.textLabel.style;
 		if(!i.textDecoration.includes(s)) i.textDecoration = i.textDecoration +" "+ s;
@@ -124,19 +139,6 @@ UcfGlob: {
 		if (bc?.top.embedderElement != br) bc = br.browsingContext;
 		var actor = bc?.currentWindowGlobal?.getActor(name);
 		actor && self.save(win, ...await actor.sendQuery(""), to); //htmlAndName
-	},
-	async Status(text,time, win = self.win){
-		var StatusPanel = win.StatusPanel;
-		if(StatusPanel.update.tid)
-			win.clearTimeout(StatusPanel.update.tid)
-		else {
-			var {update} = StatusPanel;
-			StatusPanel.update = () => {};
-			StatusPanel.update.ret = () => {
-				StatusPanel.update = update,StatusPanel.update();
-		}}
-		StatusPanel.update.tid = win.setTimeout(StatusPanel.update.ret,time || 5e3);
-		StatusPanel._label = text;
 	},
 	TitlePath(to, d, h, win = self.win, n = 0, u = 99){ //0 web|2 pic|-№ cut, name, url
 		if(parseInt(to) > 0) [n,to] = [to,n]; if(parseInt(to) < 0) u = Math.abs(to);

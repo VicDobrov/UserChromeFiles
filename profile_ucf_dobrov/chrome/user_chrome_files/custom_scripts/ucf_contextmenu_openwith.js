@@ -68,8 +68,7 @@
 			} catch (ex) {}
 			return url;
 		};
-		var getCurrentURL = () => {
-			var url = gBrowser.selectedBrowser.currentURI.displaySpec;
+		var getCurrentURL = (url = gBrowser.selectedBrowser.currentURI.displaySpec) => {
 			try {
 				let _url = ReaderMode.getOriginalUrl(url);
 				if (_url)
