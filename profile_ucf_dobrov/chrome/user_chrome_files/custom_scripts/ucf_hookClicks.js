@@ -701,14 +701,15 @@ var addDestructor = nextDestructor => { //для saveSelToTxt
 		try {destructor();} catch(ex){Cu.reportError(ex)}
 		nextDestructor();
 }},
-mode_skin = (txt,p = Pref(F.x),t,s = 'unset',o = '',z) => { //опции FF меняют подсветку кнопок, подсказки
-	setTimeout(()=>{ UcfGlob.Flash(F.O,p == 2 ? "magenta" : s,0,-1); z = s;
-		UcfGlob.Flash(F.D,0, Pref(F.v) > 1 ? 'hue-rotate(180deg) drop-shadow(0px 0.5px 0px #F68)' : 'none',-1);
+mode_skin = (txt,p = Pref(F.x),t,s = 'unset',o = '',z) => {setTimeout(()=>{ //опции FF меняют подсветку кнопок, подсказки
+	UcfGlob.Flash(F.O,p == 2 ? "magenta" : s,0,-1); z = s;
+	UcfGlob.Flash(F.D,0, Pref(F.v) > 1 ? 'hue-rotate(180deg) drop-shadow(0px 0.5px 0px #F68)' : 'none',-1);
 	if(Pref("dom.security.https_only_mode")) z = 'drop-shadow(0px 0.5px 0px #F8F)', o = ', только HTTPS'
-	UcfGlob.Flash(F.N,0,z,-1); t = [s,'Сеть работает без прокси']; //серый фон PanelUI
+	UcfGlob.Flash(F.N,0,z,-1); 
 	if(ua() && (ua() != ua(true))) o = o +', чужой ЮзерАгент';
 	z = Pref("network.proxy.no_proxies_on") ? ' + сайты-исключения' : '';
-	if(p == 0) t = ['saturate(0%) brightness(0.93)','Настройки сети - системные'+ z];
+	t = ['saturate(0%) brightness(0.93)','Настройки сети - системные'+ z];
+	if(p == 0) t = [s,'Сеть работает без прокси']; //серый фон PanelUI
 	else if(p == 1) t = ['sepia(100%) saturate(300%) brightness(0.9)', 'Ручная настройка прокси'+ z];
 	else if(p == 2) t = ['hue-rotate(120deg)',F.d + z], s = 'hue-rotate(270deg) brightness(95%)';
 	else if(p == 4) t = ['hue-rotate(250deg) saturate(150%)','Сеть - автонастройка прокси'+ z];
