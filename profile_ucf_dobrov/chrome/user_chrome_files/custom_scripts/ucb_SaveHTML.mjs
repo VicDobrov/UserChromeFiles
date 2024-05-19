@@ -83,16 +83,6 @@ UcfGlob: {
 		win.gBrowser.addTrustedTab(url);
 		win.gBrowser.selectedTab = win.gBrowser.visibleTabs[win.gBrowser.visibleTabs.length -1];
 	},
-	aboutCfg(filter, win = self.win){ //на опцию
-		win.gURLBar.value.startsWith("about:config") && this.toTab(win.gURLBar.value);
-		var setFilter = (e,input = (e?.target || win.content.document).getElementById("about-config-search")) => {try {
-			if(e || input.value != filter) input.setUserInput(filter);} catch{}
-		},
-		found = win.switchToTabHavingURI("about:config",true, {relatedToCurrent: true,
-			triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal()});
-		if(found) setFilter(null,win);
-		else win.gBrowser.selectedBrowser.addEventListener("pageshow",setFilter, {once: true});
-	},
 	dirGet(){ //dir [, subdirs]. last arg ? 1 ret path : open
 		var f, d = [...arguments], c = Ci.nsIFile, e = "DfltDwnld", r = (d[d.length-1] == 1);
 		try {var b = prefs.getComplexValue("browser.download.dir",c);} catch {b = dirsvc.get(e,c)}

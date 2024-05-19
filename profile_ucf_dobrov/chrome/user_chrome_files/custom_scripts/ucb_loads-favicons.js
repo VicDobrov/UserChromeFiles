@@ -1,13 +1,13 @@
-(async () => { // forum.mozilla-russia.org/viewtopic.php?pid=794944#p794944
-	var id = "ucf-loads-favicons",
+(async (
+	id = "ucf-loads-favicons",
 	label = "Восстановить фавиконки",
 	tooltiptext = "Восстановить фавиконки закладок",
-	img = "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path style='fill:none;stroke:context-fill rgb(142, 142, 152);stroke-opacity:context-fill-opacity;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round;' d='M3.6.6v14.8L8 11l4.4 4.4V.6z'/></svg>",
+	img = "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><path style='fill:none;stroke:context-fill rgb(142, 142, 152);stroke-opacity:context-fill-opacity;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round;' d='M3.6.6v14.8L8 11l4.4 4.4V.6z'/></svg>",
 	maxrequests = 50, // Максимальное количество параллельных запросов
 	maxtimeout = 30, // Длительность до прерывания запроса в секундах
-	alertnotification = true; // Уведомление о завершении поиска фавиконок для закладок
+	alertnotification = true, // Уведомление о завершении поиска фавиконок для закладок
 
-	var favicons = {
+	favicons = {
 		_favrunning: false,
 		get alertsService() {
 			delete this.alertsService;
@@ -15,7 +15,7 @@
 		},
 		showAlert(title, val) {
 			try {
-				this.alertsService.showAlertNotification(img, title, val, false);
+				this.alertsService.showAlertNotification(null, title, val, false);
 			} catch(e) {}
 		},
 		favSearchStart() {
@@ -162,15 +162,18 @@
 						node.style.setProperty(a, atr[a]);
 				}
 		},
-	};
+	}
+) => {Services.io.getProtocolHandler("resource")
+	.QueryInterface(Ci.nsIResProtocolHandler)
+	.setSubstitution(`${id}-img`, Services.io.newURI(img));
 	CustomizableUI.createWidget({
-		id: id,
-		label: label,
-		tooltiptext: tooltiptext,
+		id,
+		label,
+		tooltiptext,
 		localized: false,
 		defaultArea: CustomizableUI.AREA_NAVBAR,
 		onCreated(btn) {
-			btn.style.setProperty("list-style-image", `url("${img}")`, "important");
+			btn.style.setProperty("list-style-image", `url("resource://${id}-img")`, "important");
 			if (favicons._favrunning)
 				btn.style.setProperty("fill", "color-mix(in srgb, currentColor 20%, #e31b5d)");
 		},

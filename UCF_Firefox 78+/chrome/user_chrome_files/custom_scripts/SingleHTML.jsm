@@ -85,16 +85,6 @@ UcfGlob: {
 		win.gBrowser.addTrustedTab(url);
 		win.gBrowser.selectedTab = win.gBrowser.visibleTabs[win.gBrowser.visibleTabs.length -1];
 	},
-	aboutCfg(filter, win = self.win){ //на опцию
-		win.gURLBar.value.startsWith("about:config") && this.toTab(win.gURLBar.value);
-		var setFilter = (e,input = (e?.target || win.content.document).getElementById("about-config-search")) => {try {
-			if(e || input.value != filter) input.setUserInput(filter);} catch{}
-		},
-		found = win.switchToTabHavingURI("about:config",true, {relatedToCurrent: true,
-			triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal()});
-		if(found) setFilter(null,win);
-		else win.gBrowser.selectedBrowser.addEventListener("pageshow",setFilter, {once: true});
-	},
 	dirGet(){ //dir [, subdirs]. last arg ? 1 ret path : open
 		var f, d = [...arguments], c = Ci.nsIFile, e = "DfltDwnld", r = (d[d.length-1] == 1);
 		try {var b = prefs.getComplexValue("browser.download.dir",c);} catch {b = dirsvc.get(e,c)}
@@ -102,30 +92,6 @@ UcfGlob: {
 		else try {f = dirsvc.get(d[0], c);} catch{f = b}
 		d.slice(1, d.length).forEach((c) => f.append(c));
 		if(r) return f.path; f.exists() && f.launch();
-	},
-	Flash(id,color = 'rgba(0,200,0,0.3)',style,text,time,ms = 350,win = self.win){
-		id = win.document.getElementById(id || 'urlbar-input-container');
-		id &&= id.style; if(text) this.Status(text,time); //мигание, статус
-		if(style && id) id.filter = style;
-		if(color && id) id.background = color;
-		if(ms && id) win.setTimeout(() => {
-			id.removeProperty('filter'), id.removeProperty('background-color');}, ms);
-	},
-	async Succes(path, w = 1, text, win = self.win, s,i){
-		this.Flash(0, w ? 'rgba(0,200,0,0.3)' : 'rgba(250,0,0,0.2)',0, w ? text : 0);
-		if(!w) return; s = `${w == 1 ? "und" : "ov"}erline`;
-		i = win.gBrowser.selectedTab.textLabel.style;
-		if(!i.textDecoration.includes(s)) i.textDecoration = i.textDecoration +" "+ s;
-		if(w != 1) return; //ClickPicSave, иначе FakeDownload
-		w = await win.Downloads.createDownload({source: "about:blank",target: win.FileUtils.File(path)});
-		(await win.Downloads.getList(win.Downloads.ALL)).add(w);
-		await w.refresh(w.succeeded = true);
-	},
-	async SingleHTML(to = false, win = self.win) {
-		var br = win.gBrowser.selectedBrowser, bc = focus.focusedContentBrowsingContext;
-		if (bc?.top.embedderElement != br) bc = br.browsingContext;
-		var actor = bc?.currentWindowGlobal?.getActor(name);
-		actor && self.save(win, ...await actor.sendQuery(""), to); //htmlAndName
 	},
 	async Status(text,time, win = self.win){
 		var StatusPanel = win.StatusPanel;
@@ -139,6 +105,32 @@ UcfGlob: {
 		}}
 		StatusPanel.update.tid = win.setTimeout(StatusPanel.update.ret,time || 5e3);
 		StatusPanel._label = text;
+	},
+	Flash(id,color = 'rgba(0,200,0,0.3)',style,txt,time,ms = 350,win = self.win){
+		id = win.document.getElementById(id || 'urlbar-input-container');
+		id &&= id.style; if(isNaN(Number(txt)))
+			this.Status(txt,time); //мигание, статус
+		if(style && id) id.filter = style;
+		if(color && id) if(txt < 0)
+			id.fill = color; else id.background = color;
+		if(!(txt < 0) && ms && id) win.setTimeout(
+			()=> ["filter","background","fill"].forEach((c)=> id.removeProperty(c)), ms);
+	},
+	async Succes(path, w = 1, text, win = self.win, s,i){
+		this.Flash(0, w ? undefined : 'rgba(250,0,0,0.2)',0, w ? text : 0);
+		if(!w) return; s = `${w == 1 ? "und" : "ov"}erline`;
+		i = win.gBrowser.selectedTab.textLabel.style;
+		if(!i.textDecoration.includes(s)) i.textDecoration = i.textDecoration +" "+ s;
+		if(w != 1) return; //ClickPicSave, иначе FakeDownload
+		w = await win.Downloads.createDownload({source: "about:blank",target: win.FileUtils.File(path)});
+		(await win.Downloads.getList(win.Downloads.ALL)).add(w);
+		await w.refresh(w.succeeded = true);
+	},
+	async SingleHTML(to = false, win = self.win) {
+		var br = win.gBrowser.selectedBrowser, bc = focus.focusedContentBrowsingContext;
+		if (bc?.top.embedderElement != br) bc = br.browsingContext;
+		var actor = bc?.currentWindowGlobal?.getActor(name);
+		actor && self.save(win, ...await actor.sendQuery(""), to); //htmlAndName
 	},
 	TitlePath(to, d, h, win = self.win, n = 0, u = 99){ //0 web|2 pic|-№ cut, name, url
 		if(parseInt(to) > 0) [n,to] = [to,n]; if(parseInt(to) < 0) u = Math.abs(to);

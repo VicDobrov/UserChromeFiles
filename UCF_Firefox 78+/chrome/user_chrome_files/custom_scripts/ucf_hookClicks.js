@@ -37,7 +37,7 @@
 `Левый клик	★ Закладки\n◧ + Alt		Домашняя папка
 Правый		⟳ История\n◨ + Alt		Папка установки\n
 ◉ колёсико	⬇︎ Загрузки
-◉ ролик +Alt	UserChromeFiles`, [F.Q]: //QuickToggle ◨ + Alt посл.закладка меню
+◉ ролик +Alt	UserChromeFiles`, [F.Q]: //SetupMenu ◨ + Alt посл.закладка меню
 
 `левая кнопка ◧ мыши «Журнал»\n
 ◉ колёсико	меню «Действия»
@@ -348,8 +348,8 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 				btn.cmd[n] && btn.cmd[n](btn);
 			} else if (btn.className == "menu-iconic"){
 				Node.hidePopup();
-				UcfGlob.aboutCfg(btn.pref.pref); //go параметр
-			} else mode_skin();
+				aboutCfg(btn.pref.pref); //go параметр
+			}; mode_skin();
 		},
 		2(trg,forward){zoom(forward)}, //wheel
 		1(btn){ //д
@@ -366,7 +366,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 				btn.cmd[n] && btn.cmd[n](btn);
 			mode_skin();
 		},
-		129(btn){userjs(btn,"")}, //дC консоль
+		129(btn){if(btn.id) userjs(btn,"");}, //дC консоль
 		256(btn, n){ //config Menu
 			if(btn.id == F.Q) setTimeout(()=> {
 				with(btn.config)
@@ -401,7 +401,7 @@ var Setup = [{ //about:config меню. refresh=true ⟳ Обновить без
 	pref: [F.u +"savedirs", "Загрузки",,'Пути сохранения Сайтов и Графики\nСинтаксис «Html/subdir|Pics/subdir»\nsubdir: пусто | 0 заголовок | 1 домен',
 		["", "всё в общей папке"]], Gray: "", Blue: "-Web|1|-Images|0", Def3el: "Сайт||Фото|0", Yellow: "Site||Photo|0",
 	keys: [ //сохранение Html/Pics. [Загрузки]/"_Html/subdir|_Pics/subdir" subdir: пусто | 0 заголовок | 1 домен
-		["Сайт||Фото|", F.t,,"ключ в about:config",,F.u +"savedirs_my"],
+		[Pref([F.u +"savedirs_my", "Сайт||Фото|"]), F.t,,"ключ в about:config",,F.u +"savedirs_my"],
 		["Сайт||Фото|0", "Сайт|Фото/имя…"],
 		["Site||Photo|0", "Site|Pics/имя"],
 		["-Web|1|-Images|0", "-Web/сайт|-Images/имя"],
@@ -420,7 +420,7 @@ var Setup = [{ //about:config меню. refresh=true ⟳ Обновить без
 },{
 	pref: [F.x, "Режим прокси", "р"], Gray: 0, Def3el: 5, Blue: 4, Yellow: 2, refresh: true,
 	keys: [[5, "системный", "5"],
-		[2, "Автонастройка", "2", "about:config pacfile"],
+		[2, "Автоконфиг PAC", "2", "about:config PAC файл"],
 		[1, "Ручная настройка", "1", "Используется "+ F.y],
 		[4, "Автоопределение", "4"],
 		[0, "Без прокси", "0", F.m]]
@@ -552,7 +552,7 @@ get [F.Q](){
 		zoom(0,0,0,`, ${Pref("browser.tabs.loadInBackground") ? "Не выбирать" : "Переключаться в"} новые вкладки`)
 	else if (trg.id)
 			Status(F.c,9e3);
-	try {trg.mstate = trg.config.state + trg.menupopup.state;} catch{} //QuickToggle
+	try {trg.mstate = trg.config.state + trg.menupopup.state;} catch{} //SetupMenu
 	if(!/open/.test(trg.mstate))
 		return tExp(F.Q)
 	else trg.tooltipText = "";
@@ -701,19 +701,19 @@ var addDestructor = nextDestructor => { //для saveSelToTxt
 		try {destructor();} catch(ex){Cu.reportError(ex)}
 		nextDestructor();
 }},
-mode_skin = (txt,p = Pref(F.x),t,s = 'unset',o = '',z) => { //опции FF меняют подсветку кнопок, подсказки
-	setTimeout(()=>{ UcfGlob.Flash(F.O,p == 2 ? "magenta" : s,0,-1); z = s;
-		UcfGlob.Flash(F.D,0, Pref(F.v) > 1 ? 'hue-rotate(180deg) drop-shadow(0px 0.5px 0px #F68)' : 'none',-1);
+mode_skin = (txt,t,s = 'unset',o = '') => {setTimeout(()=>{ //опции FF меняют подсветку кнопок
+	var p = Pref(F.x), z = s; UcfGlob.Flash(F.O,p == 2 ? "magenta" : s,0,-1);
+	UcfGlob.Flash(F.D,0, Pref(F.v) > 1 ? 'hue-rotate(180deg) drop-shadow(0px 0.5px 0px #F68)' : 'none',-1);
 	if(Pref("dom.security.https_only_mode")) z = 'drop-shadow(0px 0.5px 0px #F8F)', o = ', только HTTPS'
-	UcfGlob.Flash(F.N,0,z,-1); t = [s,'Сеть работает без прокси']; //серый фон PanelUI
+	UcfGlob.Flash(F.N,0,z,-1); t = [s,'Настройки сети - системные'];
+	if(p == 0) t = ['saturate(0%) brightness(0.93)','Сеть работает без прокси'];
+	else if(p == 1) t = ['sepia(100%) saturate(300%) brightness(0.9)', 'Ручная настройка прокси'];
+	else if(p == 2) t = ['hue-rotate(120deg)',F.d], s = 'hue-rotate(270deg) brightness(95%)'; //фон PanelUI
+	else if(p == 4) t = ['hue-rotate(250deg) saturate(150%)','Сеть - автонастройка прокси'];
+	UcfGlob.Flash(F.P,0,t[0],-1), UcfGlob.Flash(F.Q,0,s,-1); 
 	if(ua() && (ua() != ua(true))) o = o +', чужой ЮзерАгент';
 	z = Pref("network.proxy.no_proxies_on") ? ' + сайты-исключения' : '';
-	if(p == 0) t = ['saturate(0%) brightness(0.93)','Настройки сети - системные'+ z];
-	else if(p == 1) t = ['sepia(100%) saturate(300%) brightness(0.9)', 'Ручная настройка прокси'+ z];
-	else if(p == 2) t = ['hue-rotate(120deg)',F.d + z], s = 'hue-rotate(270deg) brightness(95%)';
-	else if(p == 4) t = ['hue-rotate(250deg) saturate(150%)','Сеть - автонастройка прокси'+ z];
-	UcfGlob.Flash(F.P,0,t[0],-1), UcfGlob.Flash(F.Q,0,s,-1); 
-	typeof txt == "string" && Status(txt || "\u{26A1}"+ t[1] + o,5e3);},250)
+	typeof txt == "string" && Status(txt || "\u{26A1}"+ t[1] + z + o,5e3);},250)
 }
 
 mode_skin(); [['ui.prefersReducedMotion',0],['browser.download.alwaysOpenPanel',false], //animation Fix
@@ -840,6 +840,16 @@ readFromClip = ({clipboard} = Services, data = {}) => {
 		if (data.value)
 			return data.value.QueryInterface(Ci.nsISupportsString).data;
 	} catch {return ""}
+},
+aboutCfg = (filter) => { //на опцию
+	gURLBar.value.startsWith("about:config") && toTab(gURLBar.value);
+	var setFilter = (e,input = (e?.target || window.content.document).getElementById("about-config-search")) => {try {
+		if(e || input.value != filter) input.setUserInput(filter);} catch{}
+	},
+	found = window.switchToTabHavingURI("about:config",true, {relatedToCurrent: true,
+		triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal()});
+	if(found) setFilter(null,window);
+	else gBrowser.selectedBrowser.addEventListener("pageshow",setFilter, {once: true});
 },
 Dialog = async(url = "preferences/dialogs/connection.xhtml", w = "_blank") =>{
 	var win = Services.wm.getMostRecentWindow(w);
@@ -1047,21 +1057,23 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 		var menuitem = doc.createXULElement("menuitem");
 		with (menuitem)
 			setAttribute("type","radio"), setAttribute("closemenu","none"), setAttribute("label", popup.parentNode.pref.vals[val] = lab), key && setAttribute("accesskey", key); menuitem.alt = false;
-		var info = (trg, val, hint) => {
-			var tip = trg.val = val === "" ? F.r : val;
-			if(hint) tip += "\n" + hint;
+		var info = (trg, vl, inf) => {
+			var tip = trg.val = vl === "" ? F.r : vl;
+			if(inf) tip += "\n" + inf;
 			trg.tooltipText = `${tip != undefined ? tip +"\n\n" : ""}`+ F.f;
 		}
 		if(alt)
 			menuitem.opt = alt,
 			menuitem.alt = (trg) => {
 				delete pref.vals[trg.val];
-				try{let k = trg.val = pref.get(trg.opt);} catch{k = trg.val}
+				// try{var k = pref.get(trg.opt);} catch{k = trg.val}
+				try{var k = trg.val = pref.get(trg.opt);} catch{k = trg.val}
+				// trg.val = k;
 				pref.set(trg.opt, k), pref.vals[trg.val] = F.t;
 				info(trg, k);
 				return k;
 			}
-		info(menuitem, val, hint);
+		info(menuitem, val, hint); //здесь правильно
 		popup.append(menuitem);
 	}},
 	openPopup(popup){
@@ -1178,6 +1190,7 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 				else def.style.setProperty("font-style","italic","important");
 		}
 		for(var node of trg.children) if ("val" in node){
+
 			if(!pref.val && pref.val != "" && pref.undef)
 				pref.val = pref.undef[0]; //опции нет ? вернуть default
 			if(findChecked && node.val == pref.val){
