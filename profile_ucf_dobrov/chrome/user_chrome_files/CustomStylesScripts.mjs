@@ -61,7 +61,7 @@ export var UcfStylesScripts = {
         { path: "ucb_loads-favicons.js" },
         { path: "ucb_fav-export-html.js" },
         { path: "ucb_pauseResume.js" }, //+check functions
-        { func: mjsmLoad("ucb_SaveHTML.mjs") },
+        { func: mjsmLoad("ucb_SaveHTML.mjs") }, //общие функции
         { func: mjsmLoad("ClickPicSave.mjs") },
         { func: `${mjsmLoad("UCFTitleChanged.mjs")}.registerUCFTitleChanged();` },
     ],

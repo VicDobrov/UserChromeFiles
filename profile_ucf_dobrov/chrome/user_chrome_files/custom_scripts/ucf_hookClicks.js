@@ -149,7 +149,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 		},
 		DelCache: {lab: `Restart браузер, удалить кэш`, img: F.ico +"clear.svg",
 			cmd(){
-				if(!UcfGlob.maybeRestart(s, ()=>true)) return;
+				if(!UcfGlob.maybeRestart(false, ()=>true)) return;
 				Services.appinfo.invalidateCachesOnRestart();
 				with(Services.startup) quit(eAttemptQuit | eRestart);}}
 	},
