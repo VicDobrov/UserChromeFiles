@@ -176,7 +176,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 			var url = `resource://devtools/shared/${parseInt(F.ver) > 95 ? "loader/" : ""}Loader.`;
 			try {var exp = ChromeUtils.importESModule(url + "sys.mjs");} catch {exp = ChromeUtils.import(url + "jsm");}
 			var obj = exp.require("devtools/client/menus").menuitems.find(menuitem => menuitem.id == "menu_eyedropper");
-			(test = obj.oncommand.bind(null, {target: btn}))();
+			(obj.oncommand.bind(null, {target: btn}))();
 			UcfGlob.Flash(0,'rgba(100,0,225,0.1)',0, F.e);}
 	},
 	"Краткая справка | Жесты мыши": { inf: F.b, img: F.ico +"help.svg",
@@ -738,6 +738,17 @@ var css_USER = css => { //локальные функции
 gClipboard = {write(str,ch = Cc["@mozilla.org/widget/clipboardhelper;1"].getService(Ci.nsIClipboardHelper)){
 		(this.write = str => ch.copyStringToClipboard(str,Services.clipboard.kGlobalClipboard))(str);}
 },
+readFromClip = ({clipboard} = Services, data = {}) => {
+	try {let trans = Cc["@mozilla.org/widget/transferable;1"].createInstance(Ci.nsITransferable),
+		flavor = `text/${parseInt(Services.appinfo.platformVersion) >= 111 ? "plain" : "unicode"}`;
+		trans.init(docShell.QueryInterface(Ci.nsILoadContext));
+		trans.addDataFlavor(flavor);
+		clipboard.getData(trans, clipboard.kGlobalClipboard);
+		trans.getTransferData(flavor, data);
+		if (data.value)
+			return data.value.QueryInterface(Ci.nsISupportsString).data;
+	} catch {return ""}
+},
 crop = (z = "",cut = 30,ch = '…\n') => { //обрезать/разбить текст
 	var e = z.substring(cut).slice(-cut);
 	return z.substring(0,cut) + (e ? ch +"…"+ e : "");
@@ -748,6 +759,14 @@ TabAct = e => {return e.closest(".tabbrowser-tab");
 },
 Title = n => {try {return UcfGlob.TitlePath(n)[3];}
 	catch {return document.title || gBrowser.selectedTab.label}
+},
+aboutCfg = (filter, win = window) => { //на опцию
+	var setFilter = (e, wnd, input = (e?.target || wnd.content.document).getElementById("about-config-search")) => {try {
+		if(e || input.value != filter) input.setUserInput(filter);} catch{}},
+	found = win.switchToTabHavingURI("about:config", true, {relatedToCurrent: true,
+		triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal()});
+	if (found) setFilter(null, win);
+	else gBrowser.selectedBrowser.addEventListener("pageshow", setFilter, {once: true});
 },
 saveSelToTxt = async () => { //в .txt Всё или Выбранное
 	var {length} = saveURL, splice = length > 9, l11 = length == 11, msgName = F.id + ":Save:GetSelection"; //FIX FF103+
@@ -826,27 +845,6 @@ Translate = (brMM = gBrowser.selectedBrowser.messageManager) => { //перево
 	brMM.removeMessageListener('getSelect',listener,true);
 	});
 	brMM.loadFrameScript('data:,sendAsyncMessage("getSelect",content.document.getSelection().toString())',false);
-},
-readFromClip = ({clipboard} = Services, data = {}) => {
-	try {let trans = Cc["@mozilla.org/widget/transferable;1"].createInstance(Ci.nsITransferable),
-		flavor = `text/${parseInt(Services.appinfo.platformVersion) >= 111 ? "plain" : "unicode"}`;
-		trans.init(docShell.QueryInterface(Ci.nsILoadContext));
-		trans.addDataFlavor(flavor);
-		clipboard.getData(trans, clipboard.kGlobalClipboard);
-		trans.getTransferData(flavor, data);
-		if (data.value)
-			return data.value.QueryInterface(Ci.nsISupportsString).data;
-	} catch {return ""}
-},
-aboutCfg = (filter) => { //на опцию
-	gURLBar.value.startsWith("about:config") && toTab(gURLBar.value);
-	var setFilter = (e,input = (e?.target || window.content.document).getElementById("about-config-search")) => {try {
-		if(e || input.value != filter) input.setUserInput(filter);} catch{}
-	},
-	found = window.switchToTabHavingURI("about:config",true, {relatedToCurrent: true,
-		triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal()});
-	if(found) setFilter(null,window);
-	else gBrowser.selectedBrowser.addEventListener("pageshow",setFilter, {once: true});
 },
 Dialog = async(url = "preferences/dialogs/connection.xhtml", w = "_blank") =>{
 	var win = Services.wm.getMostRecentWindow(w);
