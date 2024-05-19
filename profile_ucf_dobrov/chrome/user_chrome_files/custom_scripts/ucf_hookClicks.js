@@ -1066,12 +1066,9 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 			menuitem.opt = alt,
 			menuitem.alt = (trg) => {
 				delete pref.vals[trg.val];
-				// try{var k = pref.get(trg.opt);} catch{k = trg.val}
 				try{var k = trg.val = pref.get(trg.opt);} catch{k = trg.val}
-				// trg.val = k;
 				pref.set(trg.opt, k), pref.vals[trg.val] = F.t;
-				info(trg, k);
-				return k;
+				info(trg, k);	return k;
 			}
 		info(menuitem, val, hint); //здесь правильно
 		popup.append(menuitem);
