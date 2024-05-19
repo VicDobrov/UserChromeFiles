@@ -12,7 +12,7 @@
 ◨ правый клик (Alt+S) ➜ Сохранить\n    в единый Html всё / выделенное
 ◉ колёсико, ${F.tc("Super","Ctrl+Shift")}+S как Текст\n
 ◧ дважды на Фото: найти Похожие
-◧ лев + Shift   Графика вкл/выкл}`,[F.P]: //PanelUI фон кнопки Blue Gray Red Green Yellow
+◧ лев + Shift   Графика вкл/выкл}`,[F.P]: //PanelUI фон кнопки Blue Gray Red зел жёлт
 
 `◧ лев. клик	меню Firefox ${F.ver}{\n︰
 ◧ + Shift	⤾ Вернуть вкладку\n}
@@ -149,12 +149,9 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 		},
 		DelCache: {lab: `Restart браузер, удалить кэш`, img: F.ico +"clear.svg",
 			cmd(){
-				var cancelQuit = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
-				Services.obs.notifyObservers(cancelQuit,"quit-application-requested","restart");
-				if(cancelQuit.data) return false;
+				if(!UcfGlob.maybeRestart(s, ()=>true)) return;
 				Services.appinfo.invalidateCachesOnRestart();
-				var restart = Services.startup;
-				restart.quit(restart.eAttemptQuit | restart.eRestart);}}
+				with(Services.startup) quit(eAttemptQuit | eRestart);}}
 	},
 	VPN: {lab: "VPN Антизапрет | Настройки Proxy", inf: F.w +"\nCensor Tracker только отключается",
 		upd(){ //обновлять строку перед показом меню
@@ -179,7 +176,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 			var url = `resource://devtools/shared/${parseInt(F.ver) > 95 ? "loader/" : ""}Loader.`;
 			try {var exp = ChromeUtils.importESModule(url + "sys.mjs");} catch {exp = ChromeUtils.import(url + "jsm");}
 			var obj = exp.require("devtools/client/menus").menuitems.find(menuitem => menuitem.id == "menu_eyedropper");
-			(test = obj.oncommand.bind(null, {target: btn}))();
+			(obj.oncommand.bind(null, {target: btn}))();
 			UcfGlob.Flash(0,'rgba(100,0,225,0.1)',0, F.e);}
 	},
 	"Краткая справка | Жесты мыши": { inf: F.b, img: F.ico +"help.svg",
@@ -609,8 +606,8 @@ keydown_win = e => { //перехват клавиш, учитывая поля 
 		for(var [func,p,i] of KB)
 			if(i ^ docShell.isCommandEnabled("cmd_insertText"))
 				p && e.preventDefault(), func(e, gBrowser.selectedTab); //запуск по сочетанию
-	if(!Debug()) return; //показ клавиш
-	console.log('■ key '+ e.code + ('_'+ (e.metaKey*8 + e.ctrlKey*4 + e.shiftKey*2 + e.altKey)).replace('_0',''));
+	Debug() && //показ клавиш
+		console.log('■ key '+ e.code + ('_'+ (e.metaKey*8 + e.ctrlKey*4 + e.shiftKey*2 + e.altKey)).replace('_0',''));
 },
 listener = { //действия мыши, перехват существующих
 	handleEvent(e){
@@ -1066,12 +1063,9 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 			menuitem.opt = alt,
 			menuitem.alt = (trg) => {
 				delete pref.vals[trg.val];
-				// try{var k = pref.get(trg.opt);} catch{k = trg.val}
 				try{var k = trg.val = pref.get(trg.opt);} catch{k = trg.val}
-				// trg.val = k;
 				pref.set(trg.opt, k), pref.vals[trg.val] = F.t;
-				info(trg, k);
-				return k;
+				info(trg, k);	return k;
 			}
 		info(menuitem, val, hint); //здесь правильно
 		popup.append(menuitem);
@@ -1090,27 +1084,16 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 		}
 		popup.openPopup(btn);
 	},
-	maybeRestart(node, conf){
-		if(conf && !Services.prompt.confirm(null, this.label, "Перезапустить браузер?")) return;
-		var cancel = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
-		Services.obs.notifyObservers(cancel, "quit-application-requested", "restart");
-		return cancel.data ? Services.prompt.alert(null, this.label, "Запрос на выход отменён.") : this.restart();
-	},
-	async restart(){
-		var meth = Services.appinfo.inSafeMode ? "restartInSafeMode" : "quit";
-		Services.startup[meth](Ci.nsIAppStartup.eAttemptQuit | Ci.nsIAppStartup.eRestart);
-	},
 	regexpRefresh: /^(?:view-source:)?(?:https?|ftp)/,
-	maybeRe(node, fe){
-		var {pref} = node;
+	maybeRe(node, fe){ var {pref} = node, win = node.ownerGlobal;
 		if("restart" in pref){
-			if(this.maybeRestart(node, pref.restart)) return;
+			if(UcfGlob.maybeRestart(pref.restart)) return;
 		}
 		else this.popupshowing(fe, node.parentNode);
 		if("refresh" in pref){
-			var win = node.ownerGlobal;
-			if(this.regexpRefresh.test(win.gBrowser.currentURI.spec)) pref.refresh
-				? BrowserReloadEx(true) : BrowserReloadEx();}
+			if(this.regexpRefresh.test(win.gBrowser.currentURI.spec))
+				pref.refresh ? BrowserReloadEx(true) : BrowserReloadEx();
+		}
 	},
 	maybeClosePopup(e, trg){
 		(e.shiftKey || e.button == 1) || trg.parentNode.hidePopup();
