@@ -1,4 +1,4 @@
-(async (pid, mp, self) => CustomizableUI.createWidget((self = { id: "ucf_SessionManager", tooltiptext:
+(async (pid, mp, self) => CustomizableUI.createWidget((self = { id: "SessionManager", tooltiptext:
 `Менеджер сессий: запись раз в 0.15 мин\n
 Правый клик на Имени сессии:
 	Выделить и Открывать при запуске

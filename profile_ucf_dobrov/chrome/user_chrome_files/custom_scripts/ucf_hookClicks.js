@@ -122,7 +122,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 			alt(){UcfGlob.dirGet("UChrm")}
 		},
 		"Режим полной изоляции сайтов": {
-			inf: "Сайт не «узнает» ваши действия в других вкладках",
+			inf: `Сайт не «узнает» ваши действия в других вкладках`,
 			cmd(){
 				var p = "fission.autostart"; Pref(p, !Pref(p));
 			},
@@ -153,10 +153,9 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 				Services.appinfo.invalidateCachesOnRestart();
 				with(Services.startup) quit(eAttemptQuit | eRestart);}}
 	},
-	VPN: {lab: "VPN Антизапрет | Настройки Proxy", inf: F.w +"\nCensor Tracker только отключается",
-		upd(){ //обновлять строку перед показом меню
-			this.image = Pref(F.x) == 2 ? F.ok : F.no;
-		},
+	VPN: {lab: `VPN Антизапрет | Настройки Proxy`, inf: F.w +"\nCensor Tracker только отключается",
+		upd(){
+			this.image = Pref(F.x) == 2 ? F.ok : F.no;},
 		cmd(){switchProxy()},
 		alt(){CfgProxy()}
 	},
@@ -187,7 +186,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 		cmd(){Help()}
 	},
 	"запуск скрипта User.js (Alt+x)": {cmd(btn){userjs(btn)}},
-	MyMenu: { inf: "зависит от операционной системы",
+	MyMenu: { inf: `зависит от операционной системы`,
 		lab: "приложение «Записки»", img: F.ico +"tool-application.svg",
 		cmd(){
 			F.os == "win" && UcfGlob.RunwA("C:\\Windows\\system32\\StikyNot.exe");
@@ -389,8 +388,8 @@ var Setup = [{ //about:config меню. refresh=true ⟳ Обновить без
 	pref: ["dom.disable_open_during_load", "Всплывающие окна",,"dom.disable_beforeunload\nЗапрос страниц о закрытии\n\nОпции "+ F.m +": Cерые"], Def3el: true, Yellow: false,
 	keys: [[true, "Блокировать",,,`Pref('dom.disable_beforeunload',true)`], [false, "Разрешить",,,`Pref('dom.disable_beforeunload',false)`]], //icon: F.pdi
 },{ //серый значок: опция не задана или есть Gray. Сирень: юзер, Жёлт: Yellow, Не равно Def3el: Красный цвет
-	pref: ["browser.safebrowsing.downloads.remote.block_dangerous", "Опасные файлы, сайты",,"browser.safebrowsing.downloads.remote.block_dangerous_host"], Def3el: true, Yellow: false,
-	keys: [[true, "Запрет",,,`Pref('browser.safebrowsing.downloads.remote.block_dangerous_host',true)`], [false, "Открыть",,,`Pref('browser.safebrowsing.downloads.remote.block_dangerous_host',false)`]]
+	pref: [F.t, "Опасные файлы, сайты",,F.t +"_host"], Def3el: true, Yellow: false,
+	keys: [[true, "Запрет",,,`Pref(F.t +'_host',true)`], [false, "Открыть",,,`Pref(F.t +'_host',false)`]]
 },{ //pref,lab,key,hint,[val,str],code | keys:val,lab,dat,+hint,code,pref_my | icon:значок
 	pref: [F.S, "Сайт",,"Некоторым сайтам нужен доступ к Clipboard"], Def3el: false, Yellow: true,
 	keys: [[true, "управлять буфером обмена"], [false, "не изменять буфер обмена"]]
@@ -398,7 +397,7 @@ var Setup = [{ //about:config меню. refresh=true ⟳ Обновить без
 	pref: [F.u +"savedirs", "Загрузки",,'Пути сохранения Сайтов и Графики\nСинтаксис «Html/subdir|Pics/subdir»\nsubdir: пусто | 0 заголовок | 1 домен',
 		["", "всё в общей папке"]], Gray: "", Blue: "-Web|1|-Images|0", Def3el: "Сайт||Фото|0", Yellow: "Site||Photo|0",
 	keys: [ //сохранение Html/Pics. [Загрузки]/"_Html/subdir|_Pics/subdir" subdir: пусто | 0 заголовок | 1 домен
-		[Pref([F.u +"savedirs_my", "Сайт||Фото|"]), F.t,,"ключ в about:config",,F.u +"savedirs_my"],
+		[Pref([F.u +"savedirs_my", "Сайт||Фото|"]), F.g,,"ключ в about:config",,F.u +"savedirs_my"],
 		["Сайт||Фото|0", "Сайт|Фото/имя…"],
 		["Site||Photo|0", "Site|Pics/имя"],
 		["-Web|1|-Images|0", "-Web/сайт|-Images/имя"],
@@ -439,8 +438,8 @@ var Setup = [{ //about:config меню. refresh=true ⟳ Обновить без
 },{
 	pref: ["gfx.webrender.force-disabled", "Ускорять отрисовку страниц",,"gfx.webrender.compositor.force-enabled\ngfx.webrender.all\n\nАппаратная отрисовка видеокартой,\nотключите при проблемах с графикой"],
 	Def3el: false, Yellow: true, Gray: undefined, restart: true, keys: [
-	[true, "Нет",,,`[['gfx.webrender.compositor.force-enabled', false], ['gfx.webrender.all', false]].map((a) =>{Pref(...a)})`],
-	[false, "Да",,,`[['gfx.webrender.compositor.force-enabled', true], ['gfx.webrender.all', true]].map((a) =>{Pref(...a)})`]]
+		[false, "Да",,,`[['gfx.webrender.compositor.force-enabled', true], ['gfx.webrender.all', true]].map((a) =>{Pref(...a)})`],
+		[true, "Нет",,,`[['gfx.webrender.compositor.force-enabled', false],['gfx.webrender.all', false]].map((a) =>{Pref(...a)})`]]
 },null,{
 	pref: ["media.autoplay.default", "Авто-play аудио/видео"], Def3el: 0, Yellow: 2, Gray: 5, refresh: true,
 	keys: [
@@ -478,7 +477,7 @@ if(parseInt(F.ver) > 114) return { //новый FF
 	pref: [F.z, "User Agent",,"Изменяет вид сайтов", [ua(true),"встроенный"]],
 		refresh: true, Def3el: ua(true), Yellow: F.G + F.H,
 	keys: [
-	[ua(0, F.z +"_my"), F.t,,,,F.z +"_my"], //alt-ключ
+	[ua(0, F.z +"_my"), F.g,,,,F.z +"_my"], //alt-ключ
 	[F.G + F.H,"Yandex MacOS"],
 	["Opera/9.80 (Windows NT 6.2; Win64; x64) Presto/2.12 Version/12.16", "Opera12 W8"],
 	[F.G +"Windows; U; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)", "MSIE 6.0 Windows"],
@@ -529,19 +528,12 @@ get [F.T](){
 	if(Pref("privacy.sanitize.sanitizeOnShutdown")) t = F.k;
 	Status(t,3e3); return tooltip();
 },
-get [F.R](){
-	Status("📋 "+ readFromClip().replace(/[\r?\n?]|\s+/g,' ').trim(), 3e3);
-	return Tag[F.R] + F.p;
-},
 get "identity-icon-box"(){ //custom hint
 	return tooltip_x(window.event.target, tExp(F.I) + br_val());
 },
-get [F.I](){Status(this.BrExp(),2500); //+mode
-	return tooltip_x(window.event.target, tExp(F.I) + br_val());
-},
+get [F.I](){Status(this.BrExp(),2500)},
 get [F.O](){Status(this.BrExp(),2500); //щит
-	var trg = window.event?.target; //custom hint 2
-	return trg.id.endsWith("r") && trg.textContent +'\n'+ tExp(F.O);
+	return tooltip_x(window.event.target, tExp(F.O) + br_val());
 },
 get [F.Q](){
 	var trg = window.event?.target;
@@ -560,13 +552,15 @@ get [F.M](){ //reader
 get [F.A + F.K](){ //ReaderView
 	return Tag["ReaderView"] + Tag[F.M] + br_val();
 },
-get "ucf_SessionManager"(){Status(F.g);},
+get SessionManager(){Status("Период сохранения сессий в меню «Быстрые опции»");},
 get [F.E](){
-	Status(F.g); return Tag[F.E] + F.p;
+	this.clipboard; return Tag[F.E] + F.p;
 },
-get "add-ons-button"(){
-	Status(F.g); var s = Tag[F.E];
+get "add-ons-button"(){this.clipboard; var s = Tag[F.E];
 	return tooltip(window.event.target, s.replace(s.split("\n", 1),"") + F.p);
+},
+get [F.R](){this.clipboard;
+	return Tag[F.R] + F.p;
 },
 get [F[2]](){ //zoompage
 	return tooltip_x(window.event.target,"⩉ Ролик ±	Изменить масштаб");
@@ -574,7 +568,9 @@ get [F[2]](){ //zoompage
 [F[4]]: F.n, [F[5]]: F.n, //SingleFile
 [F[6]]: F.o, [F[7]]: F.o, //VDH
 BrExp(t = F.l + br_val()){
-	return t +` ${Exp() ? "Экспертный" : "Простой"} режим кнопок`}
+	return t +` ${Exp() ? "Экспертный" : "Простой"} режим кнопок`},
+get clipboard(){
+	Status("📋 "+ readFromClip().replace(/[\r?\n?]|\s+/g,' ').trim(),3e3);}
 };
 
 ((obj,del,re) => { //парсинг блока клавиш ускоряет обработку нажатий
@@ -873,7 +869,7 @@ Cookies = async() =>{var uri = window.gBrowser.selectedBrowser.currentURI;
 	await window.SiteDataManager.updateSites();
 	setTimeout(() => sb.editor.selection.collapseToEnd(), 50);
 },
-BrowserReloadEx = (skip) =>{
+BrowserReloadEx = skip =>{
 	if(parseInt(F.ver) < 126)
 		skip ? BrowserReloadSkipCache() : BrowserReload();
 	else 
@@ -1068,7 +1064,7 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 			menuitem.alt = (trg) => {
 				delete pref.vals[trg.val];
 				try{var k = trg.val = pref.get(trg.opt);} catch{k = trg.val}
-				pref.set(trg.opt, k), pref.vals[trg.val] = F.t;
+				pref.set(trg.opt, k), pref.vals[trg.val] = F.g;
 				info(trg, k);	return k;
 			}
 		info(menuitem, val, hint); //здесь правильно
@@ -1216,7 +1212,7 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 
 })
 (()=>{ //перенос кода в конец
-var ua = 'Очистить панель колёсиком мыши|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|◧ + Shift, Колёсико: не закрывать|период сохранения сессий меняйте в меню кнопки «Быстрые опции»|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|☀ Яркость сайтов |по-умолчанию|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tзапуск скрипта User.js|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|ваши данные…|extensions.user_chrome_files.|permissions.default.image|https://p.thenewone.lol:8443/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|browser.cache.memory.max_entry_size'.split('|'),
+var ua = 'Очистить панель колёсиком мыши|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|◧ + Shift, Колёсико: не закрывать|ваши данные…|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|☀ Яркость сайтов |по-умолчанию|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tзапуск скрипта User.js|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|permissions.default.image|https://p.thenewone.lol:8443/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|browser.cache.memory.max_entry_size'.split('|'),
 io = "chrome://devtools/skin/images/", F = { id: "ucf_hookExpert", 
 	os: AppConstants.platform, ver: Services.appinfo.version.replace(/-.*/,''),
 	tc(m = "⌘",w = "Ctrl+"){return this.os == "macosx" ? m : w}, reos: /_(?:win|linux|macosx)$/,
