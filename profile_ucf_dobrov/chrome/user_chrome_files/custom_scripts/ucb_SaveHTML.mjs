@@ -65,6 +65,16 @@ ChromeUtils.domProcessChild.childID || ({
 		await self.UcfGlob.Succes(path, to, '√ страница записана: '+ t);
 	},
 UcfGlob: {
+	async restart() {
+		var meth = Services.appinfo.inSafeMode ? "restartInSafeMode" : "quit";
+		Services.startup[meth](Ci.nsIAppStartup.eAttemptQuit | Ci.nsIAppStartup.eRestart);
+	},
+	maybeRestart(conf, exe = this.restart, lab = Services.appinfo.vendor){
+		if (conf && !Services.prompt.confirm(null, lab, "Перезапустить браузер?")) return;
+		let cancel = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
+		Services.obs.notifyObservers(cancel, "quit-application-requested", "restart");
+		return cancel.data ? Services.prompt.alert(null, lab, "Запрос на выход отменён.") : exe();
+	},
 	Pref(key,set){ //или key = [key,default]
 		if(!Array.isArray(key)) key = [key];
 		var t = prefs.getPrefType(key[0]), m = {b:"Bool",n:"Int",s:"String"};
