@@ -609,8 +609,8 @@ keydown_win = e => { //перехват клавиш, учитывая поля 
 		for(var [func,p,i] of KB)
 			if(i ^ docShell.isCommandEnabled("cmd_insertText"))
 				p && e.preventDefault(), func(e, gBrowser.selectedTab); //запуск по сочетанию
-	if(!Debug()) return; //показ клавиш
-	console.log('■ key '+ e.code + ('_'+ (e.metaKey*8 + e.ctrlKey*4 + e.shiftKey*2 + e.altKey)).replace('_0',''));
+	Debug() && //показ клавиш
+		console.log('■ key '+ e.code + ('_'+ (e.metaKey*8 + e.ctrlKey*4 + e.shiftKey*2 + e.altKey)).replace('_0',''));
 },
 listener = { //действия мыши, перехват существующих
 	handleEvent(e){
