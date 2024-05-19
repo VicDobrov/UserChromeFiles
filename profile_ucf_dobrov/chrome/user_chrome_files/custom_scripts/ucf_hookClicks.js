@@ -81,7 +81,7 @@ Alt + R		Выбор части страницы
 `◧ лев. клик	Расширения\n◨ прав. клик	меню «Действия»\n\n◉ колёсико`},
 
 Menu = { //команды юзера: alt правый клик, mid колёсико, upd обновлять строку
-	View: { //имя курсивом: есть подсказка, обводка: изменяемые строки
+	View: { //имя курсивом без подсказки, обводка: изменяемые строки
 		lab: `Мобильный дизайн | для Чтения`, inf: F.b, //подсказка
 		img: F.ico +"aboutdebugging-connect-icon.svg",
 		alt(btn){ // вложенные Sub-меню не допускаются
@@ -110,7 +110,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 		cmd(){Translate()}
 	},
 	O: { men: 1, img: F.opt, //подменю, любая вложенность
-		lab: `Опции about:config`, inf: `Правый клик: about-page`, alt(){toTab("about:about")},
+		lab: `Опции about:config | Страницы`, inf: `Правый клик: about-page`, alt(){toTab("about:about")},
 		js: {lab: "Выполнять скрипты Java", inf: "Поддержка графики, рекламы\nдействия горячих клавиш",
 			upd(){this.image = Pref("javascript.enabled") ? F.ok : F.no;
 			},
@@ -160,7 +160,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 		cmd(){switchProxy()},
 		alt(){CfgProxy()}
 	},
-	Pics: { alt(){ Pref(F.v, 3); BrowserReloadEx();},
+	Pics: { alt(){ Pref(F.v, 3); BrowserReloadEx();}, inf: 1,
 		upd(){ var val = Pref(F.v), s = val == 1, i = F.pdi;
 			this.label = `Графика страниц – ${s ? "включена" : val == 3 ? "только сайт" : "запрещена"}`;
 			this.image = s ? i.replace("-blocked","") : i || F.nul;
@@ -989,8 +989,8 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 			var item = this.m(name); item.className = name;
 			item.setAttribute("label", lab || key);
 			item.alt = alt; //RClick в ucf_hookClicks.js {Mouse…
-			if (inf)
-				item.tooltipText = inf, item.style.setProperty("font-style", "italic", "important");
+			if (inf) item.tooltipText = inf;
+			else item.style.setProperty("font-style", "italic", "important");
 			if(img || /this\.image.*=/.test(upd))
 				item.className = name + "-iconic", item.setAttribute("image", img || F.io +"blocked.svg");
 			item.cmd = []; item.cmd[0] = cmd; item.cmd[128] = mid; item.cmd[256] = alt; //клики {Mouse…
