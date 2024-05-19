@@ -83,18 +83,18 @@ Alt + R		Выбор части страницы
 Menu = { //команды юзера: alt правый клик, mid колёсико, upd обновлять строку
 	View: { //имя курсивом без подсказки, обводка: изменяемые строки
 		lab: `Мобильный дизайн | для Чтения`, inf: F.b, //подсказка
-		img: F.ico +"aboutdebugging-connect-icon.svg",
+		img: F.Z +"aboutdebugging-connect-icon.svg",
 		alt(btn){ // вложенные Sub-меню не допускаются
 			btn.ownerDocument.getElementById("key_toggleReaderMode").doCommand()}, //штатный Режим чтения
 		cmd(btn){
 			btn.ownerDocument.getElementById("key_responsiveDesignMode").doCommand(); //пункт меню с HotKey
 			gBrowser.selectedBrowser.browsingContext.inRDMPane && BrowserReloadEx();},
 	},
-	HTML: {lab: `Экспорт сайта в единый HTML`, img: F.ico +"globe.svg",
+	HTML: {lab: `Экспорт сайта в единый HTML`, img: F.Z +"globe.svg",
 		inf: `используя скрипт SaveHTML\nили расширение SingleFile`,
 		cmd(){ HTML()}
 	},
-	Tab: {lab: `Вернуть вкладку | Обновить все`, inf: F.b, img: F.ico +"reload.svg",
+	Tab: {lab: `Вернуть вкладку | Обновить все`, inf: F.b, img: F.Z +"reload.svg",
 		cmd(btn){btn.ownerGlobal.undoCloseTab()},
 		alt(){
 			with (gBrowser) selectAllTabs(),reloadMultiSelectedTabs(),clearMultiSelectedTabs()}
@@ -147,7 +147,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 		},
 		"Настройки UserChromeFiles": {sep: 1, img: F.opt, cmd(){UCF()} //UCFprefs
 		},
-		DelCache: {lab: `Restart браузер, удалить кэш`, img: F.ico +"clear.svg",
+		DelCache: {lab: `Restart браузер, удалить кэш`, img: F.Z +"clear.svg",
 			cmd(){
 				if(!UcfGlob.maybeRestart(false, ()=>true)) return;
 				Services.appinfo.invalidateCachesOnRestart();
@@ -160,7 +160,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 		alt(){CfgProxy()}
 	},
 	Pics: { alt(){ Pref(F.v, 3); BrowserReloadEx();}, inf: 1,
-		upd(){ var val = Pref(F.v), s = val == 1, i = F.pdi;
+		upd(){ var val = Pref(F.v), s = val == 1, i = F.X;
 			this.label = `Графика страниц – ${s ? "включена" : val == 3 ? "только сайт" : "запрещена"}`;
 			this.image = s ? i.replace("-blocked","") : i || F.nul;
 			this.tooltipText = `правый Клик: кроме сторонних\n${F.v} = ${val}`;
@@ -178,7 +178,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 			(obj.oncommand.bind(null, {target: btn}))();
 			UcfGlob.Flash(0,'rgba(100,0,225,0.1)',0, F.e);}
 	},
-	"Краткая справка | Жесты мыши": { inf: F.b, img: F.ico +"help.svg",
+	"Краткая справка | Жесты мыши": { inf: F.b, img: F.Z +"help.svg",
 		alt(s = "ucf_mousedrag.js"){
 			var h = document.getElementById("nav-bar").ucf_mousedrag;
 			h ||= F.q + s;
@@ -187,7 +187,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 	},
 	"запуск скрипта User.js (Alt+x)": {cmd(btn){userjs(btn)}},
 	MyMenu: { inf: `зависит от операционной системы`,
-		lab: "приложение «Записки»", img: F.ico +"tool-application.svg",
+		lab: "приложение «Записки»", img: F.Z +"tool-application.svg",
 		cmd(){
 			F.os == "win" && UcfGlob.RunwA("C:\\Windows\\system32\\StikyNot.exe");
 			F.os == "macosx" && UcfGlob.RunwA("/usr/bin/open", "-n","-b","com.apple.Stickies");
@@ -384,10 +384,10 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 }; Mouse["add-ons-button"] = Mouse[F.E];
 Object.keys(Mouse).forEach((k) =>{Mus["."+ k] = Mus["#"+ k] = Mouse[k]});
 
-var Setup = [{ //about:config меню. refresh=true ⟳ Обновить без кэша. restart=false ↯ Без запроса. Изменено: курсив 
+var Setup = [{ //about:config меню. refresh=true ⟳ Обновить без кэша. restart=false ↯ Без запроса, Изменено: курсив
 	pref: ["dom.disable_open_during_load", "Всплывающие окна",,"dom.disable_beforeunload\nЗапрос страниц о закрытии\n\nОпции "+ F.m +": Cерые"], Def3el: true, Yellow: false,
-	keys: [[true, "Блокировать",,,`Pref('dom.disable_beforeunload',true)`], [false, "Разрешить",,,`Pref('dom.disable_beforeunload',false)`]], //icon: F.pdi
-},{ //серый значок: опция не задана или есть Gray. Сирень: юзер, Жёлт: Yellow, Не равно Def3el: Красный цвет
+	keys: [[true, "Блокировать",,,`Pref('dom.disable_beforeunload',true)`], [false, "Разрешить",,,`Pref('dom.disable_beforeunload',false)`]],
+},{ //серый значок: опция не задана|или Gray. Сирень: юзер, Жёлт: Yellow, Не равно Def3el: Красный, Обводка: не по-умолчанию
 	pref: [F.t, "Опасные файлы, сайты",,F.t +"_host"], Def3el: true, Yellow: false,
 	keys: [[true, "Запрет",,,`Pref(F.t +'_host',true)`], [false, "Открыть",,,`Pref(F.t +'_host',false)`]]
 },{ //pref,lab,key,hint,[val,str],code | keys:val,lab,dat,+hint,code,pref_my | icon:значок
@@ -462,11 +462,11 @@ if(parseInt(F.ver) > 114) return { //новый FF
 	pref: ["network.http.sendRefererHeader", "Referer: для чего"], Def3el: 2, Yellow: 1,
 	keys: [[0, "Ни для чего", "0"], [1, "Только ссылки", "1"], [2, "Ссылки, графика", "2"]]
 },{
-	pref: ["browser.cache.disk.capacity", "Кэш браузера",,`\n${F.X}:\nДиск и память: 5120\nтолько Память: -1`,,`[[F.U,true],[F.V,true],[F.W,true]].map((a)=>{Pref(...a)})`],
+	pref: ["browser.cache.disk.capacity", "Кэш браузера",,`\n${F.Y}:\nДиск и память: 5120\nтолько Память: -1`,,`[[F.U,true],[F.V,true],[F.W,true]].map((a)=>{Pref(...a)})`],
 	Def3el: 1048576, Yellow: 0, Gray: 5e5, Blue: 25e4, restart: true,
 	keys: [[5e5, F.m,,"500 Мб авторазмер"],
-	[1048576, "Диск и Память",,,`Pref(F.X, 5120)`],
-	[0, "только Память",,,`[[F.V,false], [F.X,-1]].map((a)=>{Pref(...a)})`],
+	[1048576, "Диск и Память",,,`Pref(F.Y, 5120)`],
+	[0, "только Память",,,`[[F.V,false], [F.Y,-1]].map((a)=>{Pref(...a)})`],
 	[2097152, "только Диск",,,`Pref(F.U,false)`],
 	[25e4, "250 Мб на диске",,"Ограничить размер кэша",`Pref(F.W,false)`],
 	[1000000, "1 Гб максимум",,,`Pref(F.W,false)`]]
@@ -559,8 +559,7 @@ get [F.E](){
 get "add-ons-button"(){this.clipboard; var s = Tag[F.E];
 	return tooltip(window.event.target, s.replace(s.split("\n", 1),"") + F.p);
 },
-get [F.R](){this.clipboard;
-	return Tag[F.R] + F.p;
+get [F.R](){return Tag[F.R] + F.p;
 },
 get [F[2]](){ //zoompage
 	return tooltip_x(window.event.target,"⩉ Ролик ±	Изменить масштаб");
@@ -1212,11 +1211,11 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 
 })
 (()=>{ //перенос кода в конец
-var ua = 'Очистить панель колёсиком мыши|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|◧ + Shift, Колёсико: не закрывать|ваши данные…|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|☀ Яркость сайтов |по-умолчанию|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tзапуск скрипта User.js|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|permissions.default.image|https://p.thenewone.lol:8443/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|browser.cache.memory.max_entry_size'.split('|'),
-io = "chrome://devtools/skin/images/", F = { id: "ucf_hookExpert", 
+var ua = 'Очистить панель колёсиком мыши|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|◧ + Shift, Колёсико: не закрывать|ваши данные…|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|☀ Яркость сайтов |по-умолчанию|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tзапуск скрипта User.js|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|permissions.default.image|https://p.thenewone.lol:8443/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|chrome://browser/skin/canvas-blocked.svg|browser.cache.memory.max_entry_size'.split('|'),
+io = "chrome://devtools/skin/images/", F = {Z: io, id: "ucf_hookExpert",
 	os: AppConstants.platform, ver: Services.appinfo.version.replace(/-.*/,''),
 	tc(m = "⌘",w = "Ctrl+"){return this.os == "macosx" ? m : w}, reos: /_(?:win|linux|macosx)$/,
-	pdi: "chrome://browser/skin/canvas-blocked.svg", eye: io +"command-eyedropper.svg",
+	eye: io +"command-eyedropper.svg",
 	dir: io +"folder.svg", opt: io +"settings.svg", nul: io +"blocked.svg", //"tool-dom.svg"
 	ok: io +"check.svg", no: io +"close.svg", sec: io +"security-state-insecure.svg",
 	ai: "data:image/webp;base64,UklGRjwAAABXRUJQVlA4TC8AAAAvD8ADAAoGbSM5Ov6k774XCPFP/0/03/8JGPxzroIzuOW06Ih60Genn1S/gHe+BgA=",
@@ -1226,7 +1225,7 @@ io = "chrome://devtools/skin/images/", F = { id: "ucf_hookExpert",
 if(c){F[i] = i == 0 ? c : c +"BAP"; F[i+1] = i == 0 ? c.replace("."," ") : c +"browser-action";}});
 ua.forEach((c,i)=>{
 	if(i == 0) k = 97; if(i == 26) k = 39; F[String.fromCharCode(i+k)] = c;
-}); F.as = F.s +"custom_scripts/"+ F.R +".js"; F.ico = io;
+}); F.as = F.s +"custom_scripts/"+ F.R +".js";
 var UcfGlob = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")], //из ucf_global.mjs
 {prefs, io} = Services, {Status, Pref} = UcfGlob,
 Exp =()=>{
