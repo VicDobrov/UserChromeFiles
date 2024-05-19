@@ -151,8 +151,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 			cmd(){
 				if(!UcfGlob.maybeRestart(s, ()=>true)) return;
 				Services.appinfo.invalidateCachesOnRestart();
-				var restart = Services.startup;
-				restart.quit(restart.eAttemptQuit | restart.eRestart);}}
+				with(Services.startup) quit(eAttemptQuit | eRestart);}}
 	},
 	VPN: {lab: "VPN Антизапрет | Настройки Proxy", inf: F.w +"\nCensor Tracker только отключается",
 		upd(){ //обновлять строку перед показом меню
