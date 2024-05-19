@@ -1,4 +1,4 @@
-/* hookMouseKeys © Dumby, mod 3.5 Dobrov !нужен скрипт ucf_global-SaveHTML
+/* hookMouseKeys © Dumby, mod 3.7 Dobrov !нужен скрипт ucf_global-SaveHTML
 меняйте «под себя» Подсказки, Keys нажатия клавиш, Menu команды, Mouse клики мыши, Setup опции */
 
 (async F=>{eval(F.toString().slice(4)); var Tag = {[F.D]: //tooltips кнопок, меню: справка в help.html
