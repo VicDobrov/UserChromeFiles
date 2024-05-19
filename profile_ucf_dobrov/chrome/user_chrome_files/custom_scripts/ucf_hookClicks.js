@@ -757,6 +757,13 @@ hints = new Map([ //опция Setup отсутствует ? вернуть с�
 	[F.u +"savedirs", crop(UcfGlob.dirGet("DfltDwnld", 1),33)], [F.z, ua(true)]]),
 TabAct = e => {return e.closest(".tabbrowser-tab");
 },
+toTab = (url = 'about:serviceworkers', go) =>{ //открыть вкладку | закрыть её | выбрать
+	for(var tab of gBrowser.visibleTabs)
+		if(tab.linkedBrowser.currentURI.spec == url)
+			{go ? gBrowser.selectedTab = tab : gBrowser.removeTab(tab); return;}
+	gBrowser.addTrustedTab(url);
+	gBrowser.selectedTab = gBrowser.visibleTabs[gBrowser.visibleTabs.length -1];
+},
 Title = n => {try {return UcfGlob.TitlePath(n)[3];}
 	catch {return document.title || gBrowser.selectedTab.label}
 },
@@ -985,8 +992,7 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 			if (inf)
 				item.tooltipText = inf, item.style.setProperty("font-style", "italic", "important");
 			if(img || /this\.image.*=/.test(upd))
-				item.className = name + "-iconic", item.setAttribute("image", img || "chrome://devtools/skin/images/blocked.svg");
-			// men || (item.cmd = cmd) && item.setAttribute("oncommand", "this.cmd(event);"); //Left, Middle Click
+				item.className = name + "-iconic", item.setAttribute("image", img || F.io +"blocked.svg");
 			item.cmd = []; item.cmd[0] = cmd; item.cmd[128] = mid; item.cmd[256] = alt; //клики {Mouse…
 			popup.append(item);
 			if(upd){ //выделить обновляемый пункт меню
@@ -1226,7 +1232,7 @@ ua.forEach((c,i)=>{
 	if(i == 0) k = 97; if(i == 26) k = 39; F[String.fromCharCode(i+k)] = c;
 }); F.as = F.s +"custom_scripts/"+ F.R +".js"; F.ico = io;
 var UcfGlob = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")], //из ucf_global.mjs
-{prefs, io} = Services, {Status, toTab, Pref} = UcfGlob,
+{prefs, io} = Services, {Status, Pref} = UcfGlob,
 Exp =()=>{
 	return Number(prefs.getBoolPref(F.u +'expert',false))
 },

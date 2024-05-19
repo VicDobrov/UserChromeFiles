@@ -48,9 +48,9 @@ ChromeUtils.domProcessChild.childID || ({
 		var path = self.UcfGlob.TitlePath(to, fname, host, win); //путь в зависимости от опций
 		var dir = path[0], t = path[2].slice(0,48), path = path[1];
 		try {dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);}
-			catch(ex) {
+			catch(ex){
 				self.UcfGlob.Succes(dir.path, 0); return;}
-		if (!to) { // диалог выбора папки
+		if (!to){ // диалог выбора папки
 			var fp = Cc['@mozilla.org/filepicker;1'].createInstance(Ci.nsIFilePicker);
 			fp.init(parseInt(Services.appinfo.platformVersion) < 125 ? win : win.browsingContext,"", fp.modeSave);
 			fp.defaultString = path.split(/.*[\/|\\]/)[1];
@@ -65,7 +65,7 @@ ChromeUtils.domProcessChild.childID || ({
 		await self.UcfGlob.Succes(path, to, '√ страница записана: '+ t);
 	},
 UcfGlob: {
-	async restart() {
+	async restart(){
 		var meth = Services.appinfo.inSafeMode ? "restartInSafeMode" : "quit";
 		Services.startup[meth](Ci.nsIAppStartup.eAttemptQuit | Ci.nsIAppStartup.eRestart);
 	},
@@ -85,13 +85,6 @@ UcfGlob: {
 			prefs[`set${t}Pref`](key[0],set)
 		else set = prefs[`get${t}Pref`](...key);
 		return set;
-	},
-	toTab(url = 'about:serviceworkers', go, win = self.win){ //открыть вкладку | закрыть её | выбрать
-		for(var tab of win.gBrowser.visibleTabs)
-			if(tab.linkedBrowser.currentURI.spec == url)
-				{go ? win.gBrowser.selectedTab = tab : win.gBrowser.removeTab(tab); return;}
-		win.gBrowser.addTrustedTab(url);
-		win.gBrowser.selectedTab = win.gBrowser.visibleTabs[win.gBrowser.visibleTabs.length -1];
 	},
 	dirGet(){ //dir [, subdirs]. last arg ? 1 ret path : open
 		var f, d = [...arguments], c = Ci.nsIFile, e = "DfltDwnld", r = (d[d.length-1] == 1);
@@ -134,7 +127,7 @@ UcfGlob: {
 		(await win.Downloads.getList(win.Downloads.ALL)).add(w);
 		await w.refresh(w.succeeded = true);
 	},
-	async SingleHTML(to = false, win = self.win) {
+	async SingleHTML(to = false, win = self.win){
 		var br = win.gBrowser.selectedBrowser, bc = focus.focusedContentBrowsingContext;
 		if (bc?.top.embedderElement != br) bc = br.browsingContext;
 		var actor = bc?.currentWindowGlobal?.getActor(name);
@@ -161,7 +154,7 @@ UcfGlob: {
 		if(path.startsWith("chrome://"))
 			path = Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).convertChromeURL(io.newURI(path)).spec;
 		path = path.replace(/.+?:\/\//,"").replace(/%20/g," ");
-		if (win.AppConstants.platform == "win") {
+		if (win.AppConstants.platform == "win"){
 			path = path.replace(/^\/?/,"").replace(/\//g,"\\\\");}
 		try {return win.FileUtils.File(String.raw`${path}`).exists();
 		} catch {}; return false;
@@ -172,11 +165,9 @@ UcfGlob: {
     proc.runwAsync(args, args.length);
   }
 }
-
 }).init("browser-delayed-startup-finished");
 
 var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
-
 	var resolveURL = function (url, base) {
 		try { return io.newURI(url, null, io.newURI(base)).spec;} catch {}
 	},
@@ -312,7 +303,6 @@ var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
 		if (script.childNodes.length) this.nextSibling.appendChild(script);
 	};
 	head.copyScript(win.wrappedJSObject || win);
-
 	head.copyStyle = function (s) {
 		if (!s) return;
 		var style = doc.createElement('style');
@@ -338,7 +328,6 @@ var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
 	};
 	for (var j = 0; j < sheets.length; j++) head.copyStyle(sheets[j]);
 	head.appendChild(doc.createTextNode('\n'));
-
 	var doctype = '', dt = doc.doctype;
 	if (dt && dt.name) {
 		doctype += '<!DOCTYPE ' + dt.name;
