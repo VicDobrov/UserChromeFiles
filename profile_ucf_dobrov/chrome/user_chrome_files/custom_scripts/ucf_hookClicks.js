@@ -88,7 +88,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 			btn.ownerDocument.getElementById("key_toggleReaderMode").doCommand()}, //штатный Режим чтения
 		cmd(btn){
 			btn.ownerDocument.getElementById("key_responsiveDesignMode").doCommand(); //пункт меню с HotKey
-			gBrowser.selectedBrowser.browsingContext.inRDMPane && BrowserReloadEx();},
+			gBrowser.selectedBrowser.browsingContext.inRDMPane && BrowserEx("reload");},
 	},
 	HTML: {lab: `Экспорт сайта в единый HTML`, img: F.Z +"globe.svg",
 		inf: `используя скрипт SaveHTML\nили расширение SingleFile`,
@@ -159,7 +159,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 		cmd(){switchProxy()},
 		alt(){CfgProxy()}
 	},
-	Pics: { alt(){ Pref(F.v, 3); BrowserReloadEx();}, inf: 1,
+	Pics: { alt(){ Pref(F.v, 3); BrowserEx("reload");}, inf: 1,
 		upd(){ var val = Pref(F.v), s = val == 1, i = F.X;
 			this.label = `Графика страниц – ${s ? "включена" : val == 3 ? "только сайт" : "запрещена"}`;
 			this.image = s ? i.replace("-blocked","") : i || F.nul;
@@ -167,7 +167,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 		},
 		cmd(){
 			var n = Pref(F.v) != 1; Pref(F.v, n ? 1 : 2);
-			mode_skin(); BrowserReloadEx();
+			mode_skin(); BrowserEx("reload");
 			Status(`Загрузка изображений ${n ? "√ разреш" : "✘ запрещ"}ено`,3e3);}
 	},
 	EyeDrop: {lab: `Пипетка цвета, Линза`, img: F.eye, sep: 1,
@@ -256,7 +256,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 	[F.N]: { //reload
 		1(){Menu.Tab.alt()}, //д
 		128(){for (var i = 0; i < gBrowser.tabs.length; i++) gBrowser.getBrowserAtIndex(i).stop()}, //СМ
-		256(){BrowserReloadSkipCache()}, //R
+		256(){BrowserEx("reloadSkipCache")}, //R
 		257(){switchProxy()} //дR
 	},
 	[F.D]: {mousedownTarget: true, //не передавать нажатия дальше
@@ -273,7 +273,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		16(btn){btn.ownerGlobal.undoCloseTab()}, //L+Shift
 		8(){windowState != STATE_MAXIMIZED ? maximize() : restore()}, //L+Alt
 		128(){windowState != STATE_MAXIMIZED ? maximize() : restore()},
-		129(){BrowserFullScreen()}, //дС
+		129(){BrowserEx("fullScreen")}, //дС
 		136(){this[129]()}, //С+Alt
 		144(){Mouse[F.Q][136]()}, //C+Shift
 		256(){minimize()},
@@ -284,7 +284,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		8(){UCF()}, //+Alt
 		128(btn){Menu.View.cmd(btn)},
 		16(btn){ //+Shift
-			BrowserPageInfo(btn,"mediaTab") //securityTab feed… perm…
+			BrowserEx("pageInfo", btn,"mediaTab") //securityTab feed… perm…
 		},
 		2(trg,forward){bright(trg,forward,5)}, //яркость
 		10(trg,forward){bright(trg,forward)},
@@ -343,8 +343,8 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 			if (btn.cmd){ //UserMenu
 				btn.cmd[n] && btn.cmd[n](btn);
 			} else if (btn.className == "menu-iconic"){
-				Node.hidePopup();
 				aboutCfg(btn.pref.pref); //go параметр
+				Last && Last.hidePopup();
 			}; mode_skin();
 		},
 		2(trg,forward){zoom(forward)}, //wheel
@@ -379,7 +379,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		},
 		136(){ //С+Alt
 			var n = "browser.display.use_document_fonts",f = Pref(n) ? 0 : 1;
-			Pref(n,f); zoom(0,0,0,(f > 0) ? " + Web-шрифты" : ""); BrowserReloadEx();}
+			Pref(n,f); zoom(0,0,0,(f > 0) ? " + Web-шрифты" : ""); BrowserEx("reload");}
 	}
 }; Mouse["add-ons-button"] = Mouse[F.E];
 Object.keys(Mouse).forEach((k) =>{Mus["."+ k] = Mus["#"+ k] = Mouse[k]});
@@ -608,7 +608,7 @@ listener = { //действия мыши, перехват существующ�
 	handleEvent(e){
 		if(this.skip || e.detail > 1) return;
 		var trg = e.target, id = trg.id || trg.className; //trg.tagName;
-		if(trg.id) Node = trg;
+		if(trg.id) Last = trg;
 		if(e.type == "mouseenter"){
 			var hint = Over[id] || Over[(trg = trg.parentNode).id];
 			if(hint) trg.tooltipText = hint; return; //update
@@ -725,6 +725,12 @@ var observer = () => st.setProperty("opacity", getIntPref(tabr)/100,"important")
 prefs.addObserver(tabr,observer);
 this.removePrefObs = () => prefs.removeObserver(tabr,observer); //end bright
 
+function BrowserEx(){
+	let args = [...arguments], b = args.shift();
+	eval(`${parseInt(Services.appinfo.version) < 126
+		? "Browser"+ b[0].toUpperCase() + b.slice(1)
+		: "BrowserCommands."+ b}(...args)`);
+}
 var css_USER = css => { //локальные функции
 	var style = UcfGlob.FileOk(css) ? io.newURI(css) : makeURI('data:text/css;charset=utf-8,'+ encodeURIComponent(css));
 	var args = [style,sss.USER_SHEET]; //стиль: файл или CSS
@@ -868,12 +874,6 @@ Cookies = async() =>{var uri = window.gBrowser.selectedBrowser.currentURI;
 	await window.SiteDataManager.updateSites();
 	setTimeout(() => sb.editor.selection.collapseToEnd(), 50);
 },
-BrowserReloadEx = skip =>{
-	if(parseInt(F.ver) < 126)
-		skip ? BrowserReloadSkipCache() : BrowserReload();
-	else 
-		skip ? BrowserCommands.reloadSkipCache() : BrowserCommands.reload();
-},
 switchProxy = (pac = F.w) => {
 	var t = F.x,u = F.y;
 	if(Pref(t) != 2) //выключить
@@ -881,7 +881,7 @@ switchProxy = (pac = F.w) => {
 	else
 		Pref(t,5), Pref(u,"localhost");
 	mode_skin(); //разный фон замка для Прокси
-	BrowserReloadEx();
+	BrowserEx("reload");
 },
 FavItem = (end = false,def_url = 'ua.ru', s = 0,m = 1)=>{ //first|last url Меню закладок
 	var query = {}, options = {}, guid = PlacesUtils.bookmarks.menuGuid;
@@ -1091,7 +1091,7 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 		else this.popupshowing(fe, node.parentNode);
 		if("refresh" in pref){
 			if(this.regexpRefresh.test(win.gBrowser.currentURI.spec))
-				pref.refresh ? BrowserReloadEx(true) : BrowserReloadEx();
+				pref.refresh ? BrowserEx("reloadSkipCache") : BrowserEx("reload");
 		}
 	},
 	maybeClosePopup(e, trg){
@@ -1220,7 +1220,7 @@ io = "chrome://devtools/skin/images/", F = {Z: io, id: "ucf_hookExpert",
 	ok: io +"check.svg", no: io +"close.svg", sec: io +"security-state-insecure.svg",
 	ai: "data:image/webp;base64,UklGRjwAAABXRUJQVlA4TC8AAAAvD8ADAAoGbSM5Ov6k774XCPFP/0/03/8JGPxzroIzuOW06Ih60Genn1S/gHe+BgA=",
 	qt: "data:image/webp;base64,UklGRkYCAABXRUJQVlA4WAoAAAAQAAAAFwAAFwAAQUxQSJcAAAANcGJr25S8mH4SNGxAgsguPCZ0BcMOiDSNRpvVaCTa3AI2qm2e2ofz7OuwgIiYgMzb4kVjGvegnQFAwXgFVnvcOmtnMJtutAa3Vo4mhRMDpWq8AjfU+yQoYf1/oTkTIdUrknKswNQ5yAdDzqgr4CYbsJWQfEyEU5QNEl2eKFM2AAIbjmSIMjwXPGyEdj6Bdn4mj9KO63sAAFZQOCCIAQAAdAgAnQEqGAAYAD6dRppKgoCqgAE4lsAKwgisgG27uzPePSvBIu/Pr0HJqW+AfoAIHl2DrAnRo/G3JBpTx8yE7L6LFQyD+yUNvuRYAAD+7mwmpaoBcsJ1hVKsMI2ucqid8qndm+WEvH4l4il6lA8FPscgnrRHrnSjjyNcfUV21+TkfqOWKou2UvVsZSl1z+jKs760Vij5XCWF9Uo6TZAhKfrJpeILyQYwq2Ee/g1uyEH/dJMI/91DsVpI6i2vV/Jqpd4/KniJtTm1woLvaotA2ikt3eeBaqlHf8WPe++lSWS7fETjgvzzbflp0Rj+v23kbb9e/VjUcPaD83shRuwzEo6CAO/AGxE+Zwbvv9NDsQT6T+S4CCDOFTuMRVv9/0E4P+uK+Vc3bMfQQD05gY/fes+ZX6ZHkvFdMn7zX8LMVvI59p7F806HPD2lBjs4lWWhQ5ckJDNflZL49370shr3/Q9uMJN9i/NVCu4OT7K3+4+/RkAMnjuY09u+3i4y4CldQG789iIAAAA="
-}, Mus = {};
+}, Last, Mus = {};
 ['titlebar-button.titlebar-close',,'zoompage-we_dw-dev-',,'_531906d3-e22f-4a6c-a102-8057b88a1a63_-',,'_b9db16a4-6edc-47ec-a1f4-b86292ed211d_-'].forEach((c,i)=>{ //addons
 if(c){F[i] = i == 0 ? c : c +"BAP"; F[i+1] = i == 0 ? c.replace("."," ") : c +"browser-action";}});
 ua.forEach((c,i)=>{
