@@ -1,5 +1,6 @@
-/* hookMouseKeys © Dumby, mod 3.7 Dobrov !нужен скрипт ucf_global-SaveHTML
-меняйте «под себя» Подсказки, Keys нажатия клавиш, Menu команды, Mouse клики мыши, Setup опции */
+/* hookMouseKeys © Dumby, mod 3.7 Dobrov !нужен скрипт ucb_SaveHTML
+меняйте «под себя» Подсказки, Keys нажатия клавиш, Menu команды, Mouse клики мыши, Setup опции
+можно изменить/запомнить js-код последних 2-х строк Menu команд и строк "ваши данные…" Setup */
 
 (async F=>{eval(F.toString().slice(4)); var Tag = {[F.D]: //tooltips кнопок, меню: справка в help.html
 `{
@@ -185,13 +186,22 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 			Services.prompt.alert(null,"Справка по жестам мыши",`Перетащите фото вправо, чтобы сохранить\n\n`+ h);},
 		cmd(){Help()}
 	},
-	"запуск скрипта User.js (Alt+x)": {cmd(btn){userjs(btn)}},
-	MyMenu: { inf: `зависит от операционной системы`,
-		lab: "приложение «Записки»", img: F.Z +"tool-application.svg",
-		cmd(){
-			F.os == "win" && UcfGlob.RunwA("C:\\Windows\\system32\\StikyNot.exe");
-			F.os == "macosx" && UcfGlob.RunwA("/usr/bin/open", "-n","-b","com.apple.Stickies");
-			F.os == "linux" && UcfGlob.RunwA("/usr/bin/osmo");}
+	Run: { //код пользователя (Alt+x)
+		upd(js = Pref([F.u +"my_run", F.run])){
+			js &&= js.split('║'); if(Array.isArray(js) && js.length < 4)
+				js = F.run.split('║'); 
+			Pref(F.u +"my_run",js.join("║")); F.js = js;
+			this.label = js[0] +" (Alt+x)",this.tooltipText = F.a + js[1]; this.run = js[1];
+		},
+		alt(){aboutCfg(F.u +"my_run")}, //править js-код
+		cmd(btn){eval(btn.run)}
+	},
+	Run2: { img: F.Z +"tool-application.svg",
+		upd(js = F.js.slice(2,4)){
+			this.label = js[0], this.tooltipText = F.a + js[1]; this.run = js[1];
+		},
+		alt(){aboutCfg(F.u +"my_run")},
+		cmd(btn){eval(btn.run)}
 	}},
 
 Keys = { //перехват-клавиш KeyA[_mod][_OS](e,t){код} и KeyB: "KeyA"
@@ -397,7 +407,7 @@ var Setup = [{ //about:config меню. refresh=true ⟳ Обновить без
 	pref: [F.u +"savedirs", "Загрузки",,'Пути сохранения Сайтов и Графики\nСинтаксис «Html/subdir|Pics/subdir»\nsubdir: пусто | 0 заголовок | 1 домен',
 		["", "всё в общей папке"]], Gray: "", Blue: "-Web|1|-Images|0", Def3el: "Сайт||Фото|0", Yellow: "Site||Photo|0",
 	keys: [ //сохранение Html/Pics. [Загрузки]/"_Html/subdir|_Pics/subdir" subdir: пусто | 0 заголовок | 1 домен
-		[Pref([F.u +"savedirs_my", "Сайт||Фото|"]), F.g,,"ключ в about:config",,F.u +"savedirs_my"],
+		[Pref([F.u +"savedirs_my", "Сайт||Фото|"]), F.g,,"значение можно изменить «под себя»",,F.u +"savedirs_my"],
 		["Сайт||Фото|0", "Сайт|Фото/имя…"],
 		["Site||Photo|0", "Site|Pics/имя"],
 		["-Web|1|-Images|0", "-Web/сайт|-Images/имя"],
@@ -511,13 +521,12 @@ get [F.D](){var dw = UcfGlob.dirGet("DfltDwnld", 1);
 	if(dw) Status(`${Pref(F.v) > 1 ? "\u{26A1} Графика отключена," : "💾 папка"} Загрузки: `+ crop(dw, 96,''));
 	return GetDynamicShortcutTooltipText(F.D) +"\n"+ tExp(F.D);
 },
-get [F.N](){
-	mode_skin('');
+get [F.N](){ mode_skin('');
 	return GetDynamicShortcutTooltipText(F.N) +"\n\n"+ Tag[F.N] +"\n"+ tExp("wheel-stop");
 },
 get "stop-button"(){return GetDynamicShortcutTooltipText("stop-button") +"\n"+ tExp("wheel-stop");
 },
-get "urlbar-input"(){Status(F.a,2500)}, //tab
+get "urlbar-input"(){Status("Очистить панель колёсиком мыши",2500)}, //tab
 [F.L]: Tag[F.L], "appMenu-print-button2": Tag[F.L], //print
 get [F[1]](){ //title-close
 	Status("правый клик: Свернуть, колёсико: Восстановить вкладку",3e3); Tag[F[0]];
@@ -1056,7 +1065,8 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 		var info = (trg, vl, inf) => {
 			var tip = trg.val = vl === "" ? F.r : vl;
 			if(inf) tip += "\n" + inf;
-			trg.tooltipText = `${tip != undefined ? tip +"\n\n" : ""}`+ F.f;
+			trg.tooltipText = `${tip != undefined ? tip +"\n\n" : ""}`+ (
+				menuitem.alt ? "Клик в главной строке откроет правку опции" : F.f);
 		}
 		if(alt)
 			menuitem.opt = alt,
@@ -1064,9 +1074,9 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 				delete pref.vals[trg.val];
 				try{var k = trg.val = pref.get(trg.opt);} catch{k = trg.val}
 				pref.set(trg.opt, k), pref.vals[trg.val] = F.g;
-				info(trg, k);	return k;
+				info(trg, k, trg.hint);	return k;
 			}
-		info(menuitem, val, hint); //здесь правильно
+		menuitem.hint = hint, info(menuitem, val, hint);
 		popup.append(menuitem);
 	}},
 	openPopup(popup){
@@ -1211,7 +1221,7 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 
 })
 (()=>{ //перенос кода в конец
-var ua = 'Очистить панель колёсиком мыши|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|◧ + Shift, Колёсико: не закрывать|ваши данные…|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|☀ Яркость сайтов |по-умолчанию|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tзапуск скрипта User.js|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|permissions.default.image|https://p.thenewone.lol:8443/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|chrome://browser/skin/canvas-blocked.svg|browser.cache.memory.max_entry_size'.split('|'),
+var ua = 'Правый клик: ввод строки вида "Заголовок ║ Java-код"\n\n|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|◧ + Shift, Колёсико: не закрывать|ваши данные…|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|☀ Яркость сайтов |по-умолчанию|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tзапуск скрипта User.js|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|permissions.default.image|https://p.thenewone.lol:8443/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|chrome://browser/skin/canvas-blocked.svg|browser.cache.memory.max_entry_size'.split('|'),
 io = "chrome://devtools/skin/images/", F = {Z: io, id: "ucf_hookExpert",
 	os: AppConstants.platform, ver: Services.appinfo.version.replace(/-.*/,''),
 	tc(m = "⌘",w = "Ctrl+"){return this.os == "macosx" ? m : w}, reos: /_(?:win|linux|macosx)$/,
@@ -1226,9 +1236,12 @@ if(c){F[i] = i == 0 ? c : c +"BAP"; F[i+1] = i == 0 ? c.replace("."," ") : c +"b
 ua.forEach((c,i)=>{
 	if(i == 0) k = 97; if(i == 26) k = 39; F[String.fromCharCode(i+k)] = c;
 }); F.as = F.s +"custom_scripts/"+ F.R +".js";
-var UcfGlob = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")], //из ucf_global.mjs
-{prefs, io} = Services, {Status, Pref} = UcfGlob,
-Exp =()=>{
+var UcfGlob = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")], //из ucb_SaveHTML
+{prefs, io} = Services, {Status, Pref} = UcfGlob, ua = `"/usr/bin/osmo"`; //linux
+if(F.os == "win") ua = `"C:\\Windows\\system32\\StikyNot.exe"` //ваши команды
+else if(F.os == "macosx") ua = `"/usr/bin/open","-b","com.apple.Stickies"`;
+F.run = `запуск скрипта User.js ║userjs(btn) ║приложение «Записки» ║UcfGlob.RunwA(${ua})`;
+var Exp =()=>{
 	return Number(prefs.getBoolPref(F.u +'expert',false))
 },
 tExp = (name,m = Exp(), t,z)=>{ //… {Общий︰Эксперт (m = 1)[︰…]}
