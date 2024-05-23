@@ -31,7 +31,7 @@ user_chrome_files_sandbox = {
 		}
 		try {
 			Components.manager.QueryInterface(Ci.nsIComponentRegistrar).autoRegister(file);
-			Services.scriptloader.loadSubScript("chrome://user_chrome_files/content/user_chrome.js", globalThis, "UTF-8");
+			Services.scriptloader.loadSubScript("chrome://user_chrome_files/content/user_chrome.js", globalThis);
 		} catch(ex) {
 			this.removeObs();
 			return;

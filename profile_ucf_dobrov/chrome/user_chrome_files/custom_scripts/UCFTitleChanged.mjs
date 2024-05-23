@@ -2,7 +2,7 @@ export {registerUCFTitleChanged, UCFTitleChangedChild};
 
 var reg = /^Скачать |-\sПоиск\sв\sGoogle$| \| Форум Mozilla Россия$/;
 
-function registerUCFTitleChanged() { // исправление заголовка вкладки
+function registerUCFTitleChanged() { // замены в именах вкладок
 	var esModuleURI = Components.stack.filename;
 	ChromeUtils.registerWindowActor("UCFTitleChanged", {
 		child: {
