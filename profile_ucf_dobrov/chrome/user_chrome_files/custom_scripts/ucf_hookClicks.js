@@ -190,8 +190,8 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 		upd(js = Pref([F.u +"my-js", F.run])){
 			js &&= js.split('║'); if(Array.isArray(js) && js.length < 4)
 				js = F.run.split('║'); 
-			Pref(F.u +"my-js",js.join("║")); F.js = js;
-			Menu.App.upd(js, this);
+			Pref(F.u +"my-js",js.join("║"));
+			Menu.App.upd(val = F.js = js, this);
 		},
 		alt(){aboutCfg(F.u +"my-js")}, //править js-код
 		cmd(btn){eval(btn.run)}, img: F.Z +"command-console.svg",
