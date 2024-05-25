@@ -1,6 +1,6 @@
 /* hookMouseKeys © Dumby, mod 3.7 Dobrov, нужен ucb_SaveHTML, справка в help.html
-меняйте здесь Подсказки, Keys нажатия клавиш, Mouse клики мыши, Menu команд и Setup
-Правый клик: изменить 2 нижние команды Menu и строки "ваши данные…" в меню Setup */
+меняйте здесь Подсказки, Keys нажатия клавиш, Mouse клики мыши, моё Menu, Setup
+Правый клик: изменить 2 нижние команды Menu и строки "ваши данные…" меню Setup */
 
 (async F=>{eval(F.toString().slice(4)); var Tag = {[F.D]: //tooltips кнопок, меню: справка в help.html
 `{
@@ -41,7 +41,7 @@
 ◉ ролик +Alt	UserChromeFiles`, [F.Q]: //SetupMenu ◨ + Alt посл.закладка меню
 
 `  левый клик ◧ мыши «Журнал»\n
-◉ колёсико	меню «Действия»
+◉ колёсико	открыть «моё Меню»
 ◨ пр. клик	Быстрые настройки
 ◨ держать	Пипетка цвета, линза\n
 ◧ лев. + Alt	Библиотека
@@ -79,7 +79,7 @@ Alt + R		Выбор части страницы
 `	Атрибут-Инспектор
 ◉ колёсико	Инструменты браузера\n\n◨ пр. клик`, [F.E]: //extensions
 
-`	Расширения\n◨ прав. клик	меню «Действия»\n\n◉ колёсико`},
+`	Расширения\n◨ прав. клик	«моё Меню»\n\n◉ колёсико`},
 
 Menu = { //команды юзера: alt правый клик, mid колёсико, upd обновлять строку
 	View: { //имя курсивом без подсказки, обводка: изменяемые строки
@@ -186,26 +186,32 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 			Services.prompt.alert(null,"Справка по жестам мыши",`Перетащите фото вправо, чтобы сохранить\n\n`+ h);},
 		cmd(){Help()}
 	},
-	Run: { //код пользователя (Alt+x)
-		upd(js = Pref([F.u +"my-js", F.run])){
-			js &&= js.split('║'); if(Array.isArray(js) && js.length < 4)
-				js = F.run.split('║'); 
-			Pref(F.u +"my-js",js.join("║"));
-			Menu.App.upd(val = F.js = js, this);
-		},
-		alt(){aboutCfg(F.u +"my-js")}, //править js-код
-		cmd(btn){eval(btn.run)}, img: F.Z +"command-console.svg",
-	},
 	App: { img: F.Z +"tool-application.svg",
+		upd(js = Menu.Run.exe()){
+			Menu.Run.upd(js, this);
+		},
+		alt(){Menu.Run.alt()},
+		cmd(btn){eval(btn.run)},
+	},
+	Run: { img: F.Z +"command-console.svg", //HotKey Alt+x
+		exe(js = Pref([F.u +"my-js", F.run])){
+			js &&= js.split('║');
+			if(Array.isArray(js) && js.length < 4)
+				js = F.run.split('║');
+			Pref(F.u +"my-js", js.join("║"));
+			return F.js = js;
+		},
 		upd(js = F.js.slice(2,4), trg = this){
 			trg.label = js[0].trim(); trg.tooltipText = F.a + js[1]; trg.run = js[1];
 		},
-		alt(){Menu.Run.alt()},
-		cmd(btn){eval(btn.run)}
+		alt(){aboutCfg(F.u +"my-js")}, //ваш код
+		cmd(btn){
+			eval(btn.run || Menu.Run.exe()[3])}
 	}},
 
 Keys = { //перехват-клавиш KeyA[_mod][_OS](e,t){код} и KeyB: "KeyA"
-	KeyX_1(e,t){Userjs(e)}, // Alt+X запуск внешнего JS-кода
+	KeyX_1(){ //Alt+X старт посл. строки: Моё меню
+		Menu.Run.cmd(document.getElementById(F.Q).menupopup.lastChild)},
 	KeyS_6(){saveSelToTxt()}, // Ctrl+Shift+S
 	KeyS_15_macosx: "KeyS_6", // Super+S
 	KeyS_1(e,t){HTML()}, //Alt+S | e: Event, t: gBrowser.selectedTab
@@ -373,7 +379,9 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 				btn.cmd[n] && btn.cmd[n](btn);
 			mode_skin();
 		},
-		129(btn){if(btn.id) Userjs(btn,"");}, //дC консоль
+		129(btn){
+			if(btn.id) Userjs(btn);
+		}, //дC консоль
 		256(btn, n){
 			if(btn.id == F.Q) //SetupMenu
 				btn.config.menu_open_close(btn, btn.config);
@@ -1207,7 +1215,7 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 
 })
 (()=>{ //перенос кода в конец
-var ua = 'Правый клик: ввод строки вида "Заголовок ║ Java-код"\n\n|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|◧ + Shift, Колёсико: не закрывать|ваши данные…|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|☀ Яркость сайтов |по-умолчанию|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tзапуск скрипта User.js|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|permissions.default.image|https://p.thenewone.lol:8443/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|chrome://browser/skin/canvas-blocked.svg|browser.cache.memory.max_entry_size'.split('|'),
+var ua = 'Правый клик: ввод строки вида "Заголовок ║ Java-код"\n\n|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор: сдвиг на 1 точку|◧ + Shift, Колёсико: не закрывать|ваши данные…|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|☀ Яркость сайтов |по-умолчанию|SingleFile (Alt+Ctrl+S)\nСохранить сайт в единый Html|Video DownloadHelper\nСкачивание проигрываемого видео|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\tМоё меню: посл. строка|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|permissions.default.image|https://p.thenewone.lol:8443/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|chrome://browser/skin/canvas-blocked.svg|browser.cache.memory.max_entry_size'.split('|'),
 io = "chrome://devtools/skin/images/", F = {Z: io, id: "ucf_hookExpert",
 	os: AppConstants.platform, ver: Services.appinfo.version.replace(/-.*/,''),
 	tc(m = "⌘",w = "Ctrl+"){return this.os == "macosx" ? m : w}, reos: /_(?:win|linux|macosx)$/,
@@ -1226,7 +1234,7 @@ var UcfGlob = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")], //из ucb_SaveH
 {prefs, io} = Services, {Status, Pref} = UcfGlob, ua = `"/usr/bin/osmo"`; //linux
 if(F.os == "win") ua = `"C:\\Windows\\system32\\StikyNot.exe"` //ваши команды
 else if(F.os == "macosx") ua = `"/usr/bin/open","-b","com.apple.Stickies"`;
-F.run = `запуск скрипта User.js (Alt+x) ║Userjs(btn) ║приложение «Записки» ║UcfGlob.RunwA(${ua})`;
+F.run = `приложение «Записки» ║UcfGlob.RunwA(${ua}) ║запуск скрипта User.js (Alt+x) ║Userjs(btn)`;
 var Exp =()=>{
 	return Number(prefs.getBoolPref(F.u +'expert',false))
 },
