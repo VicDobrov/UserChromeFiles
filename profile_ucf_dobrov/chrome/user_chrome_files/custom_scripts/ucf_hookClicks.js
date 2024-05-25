@@ -191,16 +191,16 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 			js &&= js.split('║'); if(Array.isArray(js) && js.length < 4)
 				js = F.run.split('║'); 
 			Pref(F.u +"my-js",js.join("║")); F.js = js;
-			this.label = js[0] +" (Alt+x)",this.tooltipText = F.a + js[1]; this.run = js[1];
+			Menu.App.upd(js, this);
 		},
 		alt(){aboutCfg(F.u +"my-js")}, //править js-код
 		cmd(btn){eval(btn.run)}, img: F.Z +"command-console.svg",
 	},
-	Run2: { img: F.Z +"tool-application.svg",
-		upd(js = F.js.slice(2,4)){
-			this.label = js[0], this.tooltipText = F.a + js[1]; this.run = js[1];
+	App: { img: F.Z +"tool-application.svg",
+		upd(js = F.js.slice(2,4), trg = this){
+			trg.label = js[0].trim(); trg.tooltipText = F.a + js[1]; trg.run = js[1];
 		},
-		alt(){aboutCfg(F.u +"my-js")},
+		alt(){Menu.Run.alt()},
 		cmd(btn){eval(btn.run)}
 	}},
 
@@ -374,8 +374,8 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 			mode_skin();
 		},
 		129(btn){if(btn.id) Userjs(btn,"");}, //дC консоль
-		256(btn, n){ //config Menu
-			if(btn.id == F.Q) 
+		256(btn, n){
+			if(btn.id == F.Q) //SetupMenu
 				btn.config.menu_open_close(btn, btn.config);
 			else if (btn.cmd) //UserMenu
 				btn.cmd[n] && btn.cmd[n](btn);
@@ -1226,7 +1226,7 @@ var UcfGlob = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")], //из ucb_SaveH
 {prefs, io} = Services, {Status, Pref} = UcfGlob, ua = `"/usr/bin/osmo"`; //linux
 if(F.os == "win") ua = `"C:\\Windows\\system32\\StikyNot.exe"` //ваши команды
 else if(F.os == "macosx") ua = `"/usr/bin/open","-b","com.apple.Stickies"`;
-F.run = `запуск скрипта User.js ║Userjs(btn) ║приложение «Записки» ║UcfGlob.RunwA(${ua})`;
+F.run = `запуск скрипта User.js (Alt+x) ║Userjs(btn) ║приложение «Записки» ║UcfGlob.RunwA(${ua})`;
 var Exp =()=>{
 	return Number(prefs.getBoolPref(F.u +'expert',false))
 },
