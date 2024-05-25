@@ -1,6 +1,6 @@
-/* hookMouseKeys основной код Dumby, mod 3.7 Dobrov !нужен скрипт ucb_SaveHTML
+/* hookMouseKeys © Dumby, mod 3.7 Dobrov, нужен ucb_SaveHTML, справка в help.html
 меняйте здесь Подсказки, Keys нажатия клавиш, Mouse клики мыши, Menu команд и Setup
-Правый клик: изменить 2 нижние команды Меню и строки "ваши данные…" в меню Setup */
+Правый клик: изменить 2 нижние команды Menu и строки "ваши данные…" в меню Setup */
 
 (async F=>{eval(F.toString().slice(4)); var Tag = {[F.D]: //tooltips кнопок, меню: справка в help.html
 `{
@@ -187,25 +187,25 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 		cmd(){Help()}
 	},
 	Run: { //код пользователя (Alt+x)
-		upd(js = Pref([F.u +"my_run", F.run])){
+		upd(js = Pref([F.u +"my-js", F.run])){
 			js &&= js.split('║'); if(Array.isArray(js) && js.length < 4)
 				js = F.run.split('║'); 
-			Pref(F.u +"my_run",js.join("║")); F.js = js;
+			Pref(F.u +"my-js",js.join("║")); F.js = js;
 			this.label = js[0] +" (Alt+x)",this.tooltipText = F.a + js[1]; this.run = js[1];
 		},
-		alt(){aboutCfg(F.u +"my_run")}, //править js-код
-		cmd(btn){eval(btn.run)}
+		alt(){aboutCfg(F.u +"my-js")}, //править js-код
+		cmd(btn){eval(btn.run)}, img: F.Z +"command-console.svg",
 	},
 	Run2: { img: F.Z +"tool-application.svg",
 		upd(js = F.js.slice(2,4)){
 			this.label = js[0], this.tooltipText = F.a + js[1]; this.run = js[1];
 		},
-		alt(){aboutCfg(F.u +"my_run")},
+		alt(){aboutCfg(F.u +"my-js")},
 		cmd(btn){eval(btn.run)}
 	}},
 
 Keys = { //перехват-клавиш KeyA[_mod][_OS](e,t){код} и KeyB: "KeyA"
-	KeyX_1(e,t){userjs(e)}, // Alt+X запуск внешнего JS-кода
+	KeyX_1(e,t){Userjs(e)}, // Alt+X запуск внешнего JS-кода
 	KeyS_6(){saveSelToTxt()}, // Ctrl+Shift+S
 	KeyS_15_macosx: "KeyS_6", // Super+S
 	KeyS_1(e,t){HTML()}, //Alt+S | e: Event, t: gBrowser.selectedTab
@@ -339,7 +339,8 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		129(){ //дС
 			toTab('about:addons')},
 		256(btn){
-			btn.id && F.menu.openPopup(btn, "after_start");
+			with(document.getElementById(F.Q))
+				config.menu_open_close(btn, menupopup);
 		},
 		257(){Mouse[F.R][257]()}
 	},
@@ -372,14 +373,12 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 				btn.cmd[n] && btn.cmd[n](btn);
 			mode_skin();
 		},
-		129(btn){if(btn.id) userjs(btn,"");}, //дC консоль
+		129(btn){if(btn.id) Userjs(btn,"");}, //дC консоль
 		256(btn, n){ //config Menu
-			if(btn.id == F.Q) setTimeout(()=> {
-				with(btn.config)
-					eval(`${state != "open" ? "open" : "hide"}Popup(btn,"after_start")`);
-			}, 50);
-			if (btn.cmd){ //UserMenu
-				F.menu.hidePopup();
+			if(btn.id == F.Q) 
+				btn.config.menu_open_close(btn, btn.config);
+			else if (btn.cmd){ //UserMenu
+				btn.menupopup.hidePopup();
 				btn.cmd[n] && btn.cmd[n](btn);
 			} else
 				try{btn.parentNode.hidePopup();} catch{}
@@ -550,8 +549,8 @@ get [F.Q](){
 		zoom(0,0,0,`, ${Pref("browser.tabs.loadInBackground") ? "Не выбирать" : "Переключаться в"} новые вкладки`)
 	else if (trg.id)
 			Status(F.c,9e3);
-	try {trg.mstate = trg.config.state + trg.menupopup.state;} catch{} //SetupMenu
-	if(!/open/.test(trg.mstate))
+	try {trg.state = trg.config.state;} catch{} //SetupMenu
+	if(!/open/.test(trg.state))
 		return tExp(F.Q)
 	else trg.tooltipText = "";
 },
@@ -563,6 +562,7 @@ get [F.A + F.K](){ //ReaderView
 },
 get SessionManager(){Status("Период сохранения сессий в меню «Быстрые опции»");},
 get [F.E](){
+	(window.event?.target).state = document.getElementById(F.Q)?.menupopup.state;
 	this.clipboard; return Tag[F.E] + F.p;
 },
 get "add-ons-button"(){this.clipboard; var s = Tag[F.E];
@@ -847,9 +847,9 @@ Expert = (m = Boolean(Exp()), p = F.u +'expert') => {
 Help = (help = F.s +"help.html") => { //помощь
 	(UcfGlob.FileOk(help)) ? toTab(help) : toTab(F.J);
 },
-userjs = (e,myjs = F.s +"custom_scripts/User.js") => {
-	Debug() && document.getElementById("key_browserConsole").doCommand(); //фокус на консоль
-	UcfGlob.FileOk(myjs) ? eval(Cu.readUTF8URI(io.newURI(myjs))) : console.error(F.q + myjs); //ваш скрипт
+Userjs = (e, js = F.s +"custom_scripts/User.js") => {
+	UcfGlob.FileOk(js) ? eval(Cu.readUTF8URI(io.newURI(js))) : console.error(F.q + js);
+	Debug() && document.getElementById("key_browserConsole")?.doCommand(); //фокус на консоль
 },
 Icon = (c = '0c0')=>"data:image/svg+xml;charset=utf-8,<svg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='a' x1='16' x2='16' y1='32' gradientUnits='userSpaceOnUse'><stop stop-color='%23"+ c +"'/><stop stop-color='%23fff' offset='.8'/></linearGradient><linearGradient id='b' x2='32' y1='16' gradientTransform='matrix(1 0 0 1 2 2)'><stop stop-opacity='.5'/></linearGradient></defs><circle cx='16' cy='16' r='15' fill='url(%23a)' stroke='url(%23b)' stroke-width='2'/></svg>",
 Translate = (brMM = gBrowser.selectedBrowser.messageManager) => { //перевод сайт | выдел. текст
@@ -964,7 +964,7 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 		btn.linkedObject = this;
 		for(var type of ["contextmenu", "command"])
 			btn.setAttribute("on" + type, `linkedObject.${type}(event)`);
-		var popup = F.menu = m("menupopup"), menu = m("menuitem"); //UserMenu
+		var popup = m("menupopup"), menu = m("menuitem"); //UserMenu
 		menu.m = m; menu.fill = this.fill; menu.render = this.render;
 		popup.append(menu); btn.prepend(popup);
 	},
@@ -1013,6 +1013,9 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 		for (var type of ["popupshowing"])
 			popup.setAttribute("on"+ type, `parentNode.linkedObject.${type}(event)`);
 		for(var obj of data) popup.append(this.createElement(doc, obj));
+		popup.menu_open_close = (btn, menu)=> { if(!btn.id) return;
+			setTimeout(()=> btn.state = menu.state, 200);
+			if(!/open/.test(btn.state)) menu.openPopup(btn,"after_start");}
 		btn.append(popup);
 	},
 	createElement(doc, obj){ //click item
@@ -1078,20 +1081,6 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 		menuitem.hint = hint, info(menuitem, val, hint);
 		popup.append(menuitem);
 	}},
-	openPopup(popup){
-		var btn = popup.parentNode;
-		if(btn.domParent != btn.parentNode){
-			btn.domParent = btn.parentNode;
-			if(btn.matches(".widget-overflow-list > :scope"))
-				var pos = "after_start";
-			else var win = btn.ownerGlobal, {width, height, top, bottom, left, right} =
-				btn.closest("toolbar").getBoundingClientRect(), pos = width > height
-					? `${win.innerHeight - bottom > top ? "after" : "before"}_start`
-					: `${win.innerWidth - right > left ? "end" : "start"}_before`;
-				btn.config.setAttribute("position", pos);
-		}
-		popup.openPopup(btn);
-	},
 	regexpRefresh: /^(?:view-source:)?(?:https?|ftp)/,
 	maybeRe(node, fe){ var {pref} = node, win = node.ownerGlobal;
 		if("restart" in pref){
@@ -1239,7 +1228,7 @@ var UcfGlob = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")], //из ucb_SaveH
 {prefs, io} = Services, {Status, Pref} = UcfGlob, ua = `"/usr/bin/osmo"`; //linux
 if(F.os == "win") ua = `"C:\\Windows\\system32\\StikyNot.exe"` //ваши команды
 else if(F.os == "macosx") ua = `"/usr/bin/open","-b","com.apple.Stickies"`;
-F.run = `запуск скрипта User.js ║userjs(btn) ║приложение «Записки» ║UcfGlob.RunwA(${ua})`;
+F.run = `запуск скрипта User.js ║Userjs(btn) ║приложение «Записки» ║UcfGlob.RunwA(${ua})`;
 var Exp =()=>{
 	return Number(prefs.getBoolPref(F.u +'expert',false))
 },
