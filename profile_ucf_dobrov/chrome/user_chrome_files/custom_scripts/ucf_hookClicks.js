@@ -377,11 +377,9 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		256(btn, n){ //config Menu
 			if(btn.id == F.Q) 
 				btn.config.menu_open_close(btn, btn.config);
-			else if (btn.cmd){ //UserMenu
-				btn.menupopup.hidePopup();
+			else if (btn.cmd) //UserMenu
 				btn.cmd[n] && btn.cmd[n](btn);
-			} else
-				try{btn.parentNode.hidePopup();} catch{}
+			try{btn.parentNode.hidePopup();} catch{}
 		},
 		257(btn){ //дR
 			btn.id == F.Q && Menu.EyeDrop.cmd(btn); //линза
