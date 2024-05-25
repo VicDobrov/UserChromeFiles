@@ -174,7 +174,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 	EyeDrop: {lab: `Пипетка цвета, Линза`, img: F.eye, sep: 1,
 		cmd(btn){
 			var url = `resource://devtools/shared/${parseInt(F.ver) > 95 ? "loader/" : ""}Loader.`;
-			try {var exp = ChromeUtils.importESModule(url + "sys.mjs");} catch {exp = ChromeUtils.import(url + "jsm");}
+			try {var exp = ChromeUtils.importESModule(url +"sys.mjs");} catch {exp = ChromeUtils.import(url +"jsm");}
 			var obj = exp.require("devtools/client/menus").menuitems.find(menuitem => menuitem.id == "menu_eyedropper");
 			(obj.oncommand.bind(null, {target: btn}))();
 			UcfGlob.Flash(0,'rgba(100,0,225,0.1)',0, F.e);}
@@ -186,25 +186,24 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 			Services.prompt.alert(null,"Справка по жестам мыши",`Перетащите фото вправо, чтобы сохранить\n\n`+ h);},
 		cmd(){Help()}
 	},
-	App: { img: F.Z +"tool-application.svg",
-		upd(js = Menu.Run.exe()){
-			Menu.Run.upd(js, this);
-		},
+	App: { //и Run: правый клик правит код
+		upd(){Menu.Run.upd(Menu.Run.exe(), this);
+		}, img: F.Z +"tool-application.svg",
 		alt(){Menu.Run.alt()},
 		cmd(btn){eval(btn.run)},
 	},
-	Run: { img: F.Z +"command-console.svg", //HotKey Alt+x
-		exe(js = Pref([F.u +"my-js", F.run])){
+	Run: {img: F.Z +"command-console.svg", //HotKey Alt+x
+		exe(js = Pref([F.u +"menu", F.run])){
 			js &&= js.split('║');
 			if(Array.isArray(js) && js.length < 4)
 				js = F.run.split('║');
-			Pref(F.u +"my-js", js.join("║"));
+			Pref(F.u +"menu", js.join("║"));
 			return F.js = js;
 		},
 		upd(js = F.js.slice(2,4), trg = this){
-			trg.label = js[0].trim(); trg.tooltipText = F.a + js[1]; trg.run = js[1];
+			trg.label = js[0].trim(); trg.tooltipText = F.a + crop(js[1], 70); trg.run = js[1];
 		},
-		alt(){aboutCfg(F.u +"my-js")}, //ваш код
+		alt(){aboutCfg(F.u +"menu")}, //изменить
 		cmd(btn){
 			eval(btn.run || Menu.Run.exe()[3])}
 	}},
