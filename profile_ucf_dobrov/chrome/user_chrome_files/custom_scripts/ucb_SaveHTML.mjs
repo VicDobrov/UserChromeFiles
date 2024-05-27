@@ -159,7 +159,7 @@ UcfGlob: {
 		try {return win.FileUtils.File(String.raw`${path}`).exists();
 		} catch {}; return false;
 	},
-	RunwA(){var args = [...arguments], path = args.shift(), file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile), proc = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
+	RunwA(){let args = [...arguments], path = args.shift(), file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile), proc = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
 		file.initWithPath(path);
     try{proc.init(file);} catch{console.error(F.q + path); return 1;}
     proc.runwAsync(args, args.length);
@@ -174,7 +174,7 @@ var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
 	getSelWin = function (w) {
 		if (w.getSelection().toString()) return w;
 		for (var i = 0, f, r; f = w.frames[i]; i++) {
-			try { if (r = getSelWin(f)) return r;} catch(e) {}
+			try { if (r = getSelWin(f)) return r;} catch {}
 		}
 	},
 	encodeImg = function (src, obj, canvas, img) {
@@ -190,7 +190,7 @@ var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
 				canvas.height = img.naturalHeight || img.height || 128;
 				canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
 				src = canvas.toDataURL(/\.jpe?g/i.test(src) ? 'image/jpeg' : 'image/png'); //\.svg/i.test(src) ? 'image/svg+xml'
-			} catch (e) {};
+			} catch {};
 			if (img != obj) img.src = 'about:blank';
 		};
 		return src;
@@ -281,7 +281,6 @@ var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
 	head.appendChild(meta);
 	var title = doc.getElementsByTagName('title')[0];
 	title && head.appendChild(title.cloneNode(true));
-
 	head.copyScript = function (unsafeWin) {
 		if ('$' in unsafeWin) return;
 		var f = doc.createElement('iframe');
@@ -297,7 +296,7 @@ var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
 				if (!/\{\s*\[native code\]\s*\}/.test(str)) {
 					script.appendChild(doc.createTextNode('var ' + name + ' = ' + str.replace(/<\/(script>)/ig, '<\\/$1') + ';\n'));
 				}
-			} catch (e) {};
+			} catch {};
 		};
 		f.parentNode.removeChild(f);
 		if (script.childNodes.length) this.nextSibling.appendChild(script);
@@ -321,7 +320,7 @@ var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
 					}
 				} else { this.copyStyle(rule.styleSheet);}
 			}
-		} catch(e) {
+		} catch {
 			if (s.ownerNode) style = s.ownerNode.cloneNode(false);
 		};
 		this.appendChild(style);
