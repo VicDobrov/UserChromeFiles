@@ -98,10 +98,10 @@
 }
 @-moz-document url-prefix("chrome:"), url("about:downloads") {
   richlistbox > richlistitem.download-state[state="0"] > .downloadPauseResumeButton {
-    list-style-image: url("./svg/download-pause.svg") !important;
+    list-style-image: url("chrome://devtools/skin/images/pause.svg") !important;
   }
   richlistbox > richlistitem.download-state[state="4"] > .downloadPauseResumeButton {
-    list-style-image: url("./svg/download-resume.svg") !important;
+    list-style-image: url("chrome://devtools/skin/images/play.svg") !important;
   }
   richlistbox > richlistitem.download-state[buttonhidden] .downloadPauseResumeButton,
   richlistbox > richlistitem.download-state:not(:is([state="0"],[state="4"])) .downloadPauseResumeButton {
