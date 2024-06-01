@@ -5,4 +5,6 @@ UCF загрузчик скриптов/стилей расширяет возм
 В окне UCF (кнопка Шестерня или about:user-chrome-files) включить нужные панели и настройки.
 Дополнительные скрипты/стили размещать в папках custom_scripts/custom_styles, примеры есть в custom_script.js, CustomStylesScripts.jsm, CustomStylesScriptsChild.jsm.
 
+---
+
 Обсуждение: http://forum.mozilla-russia.org/viewtopic.php?id=76642
