@@ -6,5 +6,7 @@ UCF загрузчик скриптов/стилей расширяет возм
 Дополнительные скрипты/стили размещать в папках custom_scripts/custom_styles, примеры есть в custom_script.js, CustomStylesScripts.jsm, CustomStylesScriptsChild.jsm.
 
 ---
+Демо-профиль проще установить: содержимое папки Firefox поместить в папку его установки, запустить:
+firefox -profile "путь к папке profile_ucf_dobrov"
 
 Обсуждение: http://forum.mozilla-russia.org/viewtopic.php?id=76642
