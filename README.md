@@ -7,7 +7,7 @@ UCF загрузчик скриптов/стилей расширяет возм
 Дополнительные скрипты/стили размещать в папках custom_scripts/custom_styles, примеры в custom_script.js, CustomStylesScripts.mjs.
 
 ---
-настроенный **Демо-профиль** содержит кнопки, меню, HotKeys, жесты мыши, конфигуратор ucf_hookClicks.js.  
-Скопировать в папку браузера всё из папки Firefox, запуск: **firefox -profile "путь к profile_ucf_dobrov"**
+Настроенный **Демо-профиль** –> кнопки, меню, HotKeys, жесты мыши, конфигуратор ucf_hookClicks.js:  
+скопировать в папку браузера всё из папки Firefox, запуск: **firefox -profile "путь к profile_ucf_dobrov"**
 
 Обсуждение: http://forum.mozilla-russia.org/viewtopic.php?id=76642
