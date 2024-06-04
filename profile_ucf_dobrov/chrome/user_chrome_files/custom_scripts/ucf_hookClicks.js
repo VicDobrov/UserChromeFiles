@@ -1,10 +1,9 @@
-/* hookMouseKeys © Dumby, mod 3.7 Dobrov, нужен ucb_SaveHTML, справка в help.html
-меняйте здесь Подсказки, Keys нажатия клавиш, Mouse клики мыши, моё Menu, Setup
-Правый клик: изменить 2 нижние команды Menu и строки "ваши данные…" меню Setup */
+/* hookMouseKeys 3.7 © Dobrov, идеи Dumby. Нужен ucb_SaveHTML.mjs
+правьте Подсказки, сочетания Keys, клики Mouse, MyMenu, Setup… */
 
-(async F=>{eval(F.toString().slice(4)); var Tag = {[F.D]: //tooltips кнопок, меню: справка в help.html
+(async F=>{eval(F.toString().slice(4)); var Tag = {[F.D]: //tooltips кнопок, меню: читайте help.html
 `{
-◉ колёсико	⬇︎ папка [Загрузки]
+◉ колёсико	↓ папка [Загрузки]
 ◨ правый клик ➜ Сохранить сайт
 ◉ колёсико на Фото ➜ Сохранить
 	или перетащите фото вправо︰`+ //режимы {Простой︰Эксперт} разные действия|подсказки
@@ -13,7 +12,7 @@
 ◨ правый клик (Alt+S) ➜ Сохранить\n    в единый Html всё / выделенное
 ◉ колёсико, ${F.tc("Super","Ctrl+Shift")}+S как Текст\n
 ◧ дважды на Фото: найти Похожие
-◧ лев + Shift   Графика вкл/выкл}`,[F.P]: //PanelUI фон кнопки Blue Gray Red зел жёлт
+◧ лев. + Shift   Графика вкл/выкл}`,[F.P]: //PanelUI фон кнопки Blue Gray Red зел жёлт
 
 `◧ лев. клик	меню Firefox ${F.ver}{\n︰
 ◧ + Shift	⤾ Вернуть вкладку\n}
@@ -31,17 +30,17 @@
 ◉ колёсико	Оставить 1 текущую`, [F.I]: //identity-box
 
 `правый клик	 Копировать адрес в буфер
-◧ лев + Shift	 Медиа на странице {︰\n
+◧ лев. + Shift	 Медиа на странице {︰\n
 ◉ колёсико	 Мобильный дизайн}
 Ø крутить ±	 Яркость страниц `, [F.F]: //FavDir
 
-`Левый клик	★ Закладки\n◧ лев + Alt		Домашняя папка
+`Левый клик	★ Закладки\n◧ лев. + Alt	Домашняя папка
 Правый		⟳ История\n◨ + Alt		Папка установки\n
-◉ колёсико	⬇︎ Загрузки
+◉ колёсико	↓ Загрузки
 ◉ ролик +Alt	UserChromeFiles`, [F.Q]: //SetupMenu ◨ + Alt посл.закладка меню
 
 `  левый клик ◧ мыши «Журнал»\n
-◉ колёсико	открыть «моё Меню»
+◉ колёсико	открыть Моё меню
 ◨ пр. клик	Быстрые настройки
 ◨ держать	Пипетка цвета, линза\n
 ◧ лев. + Alt	Библиотека
@@ -61,8 +60,8 @@ Alt + R		Выбор части страницы
 ◉ ролик режим Простой | Эксперт
 ◧ держать	краткая Справка`, [F.N]: //Reload
 
-`прав. клик	Обновить без кэша
-◧ держать	Обновить всё`, [F.O]: //Щит
+`◧ держать	Обновить всё
+◨ прав. клик	Обновить без кэша`, [F.O]: //Щит
 
 `клик мыши	Сведения о защите сайта\n
 ◨ правый клик	Куки и данные сайта
@@ -79,9 +78,9 @@ Alt + R		Выбор части страницы
 `	Атрибут-Инспектор
 ◉ колёсико	Инструменты браузера\n\n◨ пр. клик`, [F.E]: //extensions
 
-`	Расширения\n◨ прав. клик	«моё Меню»\n\n◉ колёсико`},
+`	Расширения\n◨ прав. клик	Моё меню\n\n◉ колёсико`},
 
-Menu = { //команды юзера: alt правый клик, mid колёсико, upd обновлять строку
+Menu = { // alt правый клик, mid колёсико, upd обновлять строку
 	View: { //имя курсивом без подсказки, обводка: изменяемые строки
 		lab: `Мобильный дизайн | для Чтения`, inf: F.b, //подсказка
 		img: F.Z +"aboutdebugging-connect-icon.svg",
@@ -93,7 +92,7 @@ Menu = { //команды юзера: alt правый клик, mid колёс�
 	},
 	HTML: {lab: `Экспорт сайта в единый HTML`, img: F.Z +"globe.svg",
 		inf: `используя скрипт SaveHTML\nили расширение SingleFile`,
-		cmd(){ HTML()}
+		cmd(){HTML()}
 	},
 	Tab: {lab: `Вернуть вкладку | Обновить все`, inf: F.b, img: F.Z +"reload.svg",
 		cmd(btn){btn.ownerGlobal.undoCloseTab()},
@@ -533,7 +532,7 @@ get "stop-button"(){return GetDynamicShortcutTooltipText("stop-button") +"\n"+ t
 get "urlbar-input"(){
 	let trg = window.event?.target, clip = this.clipboard;
 	if(trg)
-		trg.title = gBrowser.currentURI.spec +"\n\nБуфер обмена (текст)\n"+ crop(clip,50,'\n',0,9);
+		trg.title = gBrowser.currentURI.spec +"\n\nБуфер обмена (текст)\n"+ crop(clip,50,'\n',0,14);
 	Status("Ролик мыши: очистить панель, 📋 "+ crop(clip,128),3e3)
 }, //tab
 [F.L]: Tag[F.L], "appMenu-print-button2": Tag[F.L], //print
@@ -549,6 +548,7 @@ get [F.T](){
 get "identity-icon-box"(){ //custom hint
 	return tooltip_x(window.event.target, tExp(F.I) + br_val());
 },
+get SessionManager(){Status("Период сохранения сессий в меню «Быстрые опции»");},
 get [F.I](){Status(this.BrExp(),2500)},
 get [F.O](){Status(this.BrExp(),2500); //щит
 	return tooltip_x(window.event.target, tExp(F.O) + br_val());
@@ -570,13 +570,16 @@ get [F.M](){ //reader
 get [F.A + F.K](){ //ReaderView
 	return Tag["ReaderView"] + Tag[F.M] + br_val();
 },
-get SessionManager(){Status("Период сохранения сессий в меню «Быстрые опции»");},
+async ozu(){var info = await ChromeUtils.requestProcInfo(), bytes = info.memory;
+		for(var child of info.children) bytes += child.memory;
+		Status("Занято ОЗУ примерно ~"+ formatBytes(bytes/1.2));
+},
 get [F.E](){
 	(window.event?.target).state = document.getElementById(F.Q)?.menupopup.state;
-	return Tag[F.E] + F.p; //Status(полезная инфа…
+	this.ozu(); return Tag[F.E] + F.p;
 },
 get "add-ons-button"(){var s = Tag[F.E];
-	return tooltip(window.event.target, s.replace(s.split("\n", 1),"") + F.p);
+	return tooltip(window.event.target, s.replace(s.split("\n",1),"") + F.p);
 },
 get [F.R](){return Tag[F.R] + F.p;
 },
@@ -708,7 +711,7 @@ ucf_custom_script_win[F.id] = {destructor(){
 }};
 var addDestructor = nextDestructor => { //для saveSelToTxt
 	var {destructor} = ucf_custom_script_win[F.id];
-	ucf_custom_script_win[F.id].destructor = () => {
+	ucf_custom_script_win[F.id].destructor =()=> {
 		try {destructor();} catch(ex){Cu.reportError(ex)}
 		nextDestructor();
 }},
@@ -739,9 +742,9 @@ io.getProtocolHandler("resource").QueryInterface(Ci.nsIResProtocolHandler)
 	.setSubstitution(tabr,io.newURI("data:text/css,"+ encodeURIComponent(css)));
 sss.loadAndRegisterSheet(io.newURI(url),sss.USER_SHEET);
 var st = InspectorUtils.getAllStyleSheets(document).find(s => s.href == url).cssRules[0].cssRules[2].style;
-var observer = () => st.setProperty("opacity", getIntPref(tabr)/100,"important");
+var observer =()=> st.setProperty("opacity", getIntPref(tabr)/100,"important");
 prefs.addObserver(tabr,observer);
-this.removePrefObs = () => prefs.removeObserver(tabr,observer); //end bright
+this.removePrefObs =()=> prefs.removeObserver(tabr,observer); //end bright
 
 function BrowserEx(){
 	let args = [...arguments], b = args.shift();
@@ -821,7 +824,7 @@ saveSelToTxt = async () => { //в .txt Всё или Выбранное
 		/\S/.test(res) && sendAsyncMessage("saveSelToTxt",res);
 	}
 	var url = "data:;charset=utf-8,"+ encodeURIComponent(`(${sfunc})`.replace("saveSelToTxt",msgName)) +'(Cc["@mozilla.org/focus-manager;1"].getService(Ci.nsIFocusManager));';
-	(saveSelToTxt = () => gBrowser.selectedBrowser.messageManager.loadFrameScript(url,false))();
+	(saveSelToTxt =()=> gBrowser.selectedBrowser.messageManager.loadFrameScript(url,false))();
 },
 HTML = (sfile = document.getElementById(F[4])) => { //addon SingleFile
 	try {UcfGlob.SingleHTML(true,window);
@@ -844,7 +847,7 @@ bright = (trg,forward,step = 1,val) => { //wheel
 	val = val > 100 ? 100 : val < 15 ? 15 : val;
 	Pref(tabr,val); trg.toggleAttribute("rst"); Status(F.l + val +"%",1e3);
 },
-br_val = () => Pref([tabr,100]) +"%",
+br_val =()=> Pref([tabr,100]) +"%",
 zoom = (forward,toggle = false, change = true,text = '') => {
 	toggle ? ZoomManager.toggleZoom() : change ? forward ? FullZoom.enlarge() : FullZoom.reduce() : 0;
 	Status("± Масштаб "+ Math.round(ZoomManager.zoom*100) +`%${Pref("browser.zoom.full") ? "" : " (только текст)"}` + text,3e3);
@@ -914,7 +917,7 @@ FavItem = (end = false,def_url = 'ua.ru', s = 0,m = 1)=>{ //first|last url Ме�
 		if(node.type == type) return node.uri;
 	}; return def_url;
 },
-toFav = () => {with (PlacesUtils.bookmarks){ //без диалога
+toFav =()=> {with (PlacesUtils.bookmarks){ //без диалога
 	var url = gBrowser.selectedBrowser.currentURI.spec;
 	search({url}).then(async array => {
 		if(array.length)
