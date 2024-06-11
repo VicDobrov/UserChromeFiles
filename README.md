@@ -8,7 +8,7 @@ UCF загрузчик скриптов/стилей расширяет возм
 
 ---
 Настроенный **Демо-профиль** –> кнопки, меню, HotKeys, жесты мыши, конфигуратор ucf_hookClicks.js:  
-Закладки и опции по-умолчанию при создании новых профилей указаны в distribution/policies.json  
+Закладки и опции по-умолчанию при создании новых профилей прописаны в distribution/policies.json  
 скопировать в папку браузера всё из папки Firefox, запуск: **firefox** -profile **"путь к profile_ucf_dobrov"**
 
 Обсуждение: http://forum.mozilla-russia.org/viewtopic.php?id=76642
