@@ -15,14 +15,13 @@ var UcfStylesScripts = {
 		// { path: "custom_styles_chrome_author.css", type: "AUTHOR_SHEET", sheet(f) { preloadSheet(this, f); }, },
 		// { path: "custom_styles_chrome_user.css", type: "USER_SHEET", sheet(f) { preloadSheet(this, f); }, },
 		{ path: "special_widget.css", type: "USER_SHEET", sheet(f) { preloadSheet(this, f); }, }, // <-- Special Widgets
-		// { path: "auto_hide_sidebar.css", type: "USER_SHEET", sheet(f) { preloadSheet(this, f); }, }, // <-- Auto Hide Sidebar
 	],
 	stylesall: [ // Для всех документов
 		{ path: "custom_styles_all_agent.css", type: "AGENT_SHEET", sheet() { registerSheet(this); }, },
 		{ path: "custom_styles_all_user.css", type: "USER_SHEET", sheet() { registerSheet(this); }, },
 	// стиль для вашей операционной системы: *_macosx.css, *_linux.css, *_win.css
 		// { path: os("custom_styles_all_agent.css"), type: "AGENT_SHEET", sheet() { registerSheet(this); }, },
-		{ path: os("custom_styles_all_user.css"), type: "USER_SHEET", sheet() { registerSheet(this); }, },
+		// { path: os("custom_styles_all_user.css"), type: "USER_SHEET", sheet() { registerSheet(this); }, },
 	],
 	/**
 	* Настройки скриптов:
@@ -37,8 +36,6 @@ var UcfStylesScripts = {
 		],
 		load: [ // По событию "load"
 			{ path: "special_widgets.js", ucfobj: true }, // <-- Special Widgets
-			// { path: "auto_hide_sidebar.js", ucfobj: true }, // <-- Auto Hide Sidebar
-			{ path: "ucf_findbarclose.js", ucfobj: true },
 		],
 	},
 	scriptsallchrome: { // Для докум. всех окон [ChromeOnly]
@@ -50,7 +47,6 @@ var UcfStylesScripts = {
 	},
 	scriptsbackground: [ // В фоне [System Principal]
 		{ path: "custom_script.js" }, // пусто
-		{ path: "ucf_addons-control.js" },
 		{ func: mjsmLoad("SingleHTML.jsm") },
 		{ func: mjsmLoad("ClickPicSave.jsm") },
 	],

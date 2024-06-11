@@ -1,7 +1,7 @@
 
 export var UcfPrefs = {
     // ▼ Default settings ▼
-    vertical_top_bottom_bar_enable: true,
+    toolbars_enable: true,
     t_enable: true,
     t_collapsed: false,
     t_next_navbar: true,
@@ -50,6 +50,36 @@ export var UcfPrefs = {
         ]);
         return this.L10nRegistry = reg;
     },
+    async formatMessages() {
+        this.formatMessages = async () => {
+            return this.l10n;
+        };
+        return this.l10n = (async () => {
+            return this.l10n = await new Localization(["main.ftl"], false, this.L10nRegistry).formatMessages([
+                "ucf-open-about-config-button",
+                "ucf-additional-vertical-spring",
+                "ucf-additional-vertical-toggle-button",
+                "ucf-additional-top-spring",
+                "ucf-additional-top-toggle-button",
+                "ucf-additional-bottom-spring",
+                "ucf-additional-bottom-toggle-button",
+                "ucf-restart-app",
+                "ucf-view-history-sidebar-button",
+                "ucf-view-bookmarks-sidebar-button",
+                "ucf-open-directories-button",
+                "ucf-additional-top-bar",
+                "ucf-additional-vertical-bar",
+                "ucf-additional-bottom-bar",
+                "ucf-additional-bottom-closebutton",
+            ]);
+        })();
+    },
+    setSubToolbars(newStrFn) {
+        this.setSubToolbars = () => {};
+        Services.io.getProtocolHandler("resource")
+        .QueryInterface(Ci.nsIResProtocolHandler)
+        .setSubstitution("ucf_on_view_toolbars", Services.io.newURI(`data:charset=utf-8,${encodeURIComponent(newStrFn)}`));
+    },
     get dbg() { // by Dumby
         delete this.dbg;
         var sandbox = Cu.Sandbox(Cu.getObjectPrincipal(this), { freshCompartment: true });
@@ -79,30 +109,11 @@ export var UcfPrefs = {
         }
         return this.dbg = dbg;
     },
-    async formatMessages() {
-        this.formatMessages = async () => {
-            return this.l10n;
-        };
-        return this.l10n = new Promise(async resolve => {
-            var attr = await new Localization(["main.ftl"], false, this.L10nRegistry).formatMessages([
-                "ucf-open-about-config-button",
-                "ucf-additional-vertical-spring",
-                "ucf-additional-vertical-toggle-button",
-                "ucf-additional-top-spring",
-                "ucf-additional-top-toggle-button",
-                "ucf-additional-bottom-spring",
-                "ucf-additional-bottom-toggle-button",
-                "ucf-restart-app",
-                "ucf-view-history-sidebar-button",
-                "ucf-view-bookmarks-sidebar-button",
-                "ucf-open-directories-button",
-                "ucf-additional-top-bar",
-                "ucf-additional-vertical-bar",
-                "ucf-additional-bottom-bar",
-                "ucf-additional-bottom-closebutton",
-            ]);
-            this.l10n = attr;
-            resolve(attr);
-        });
+    get customSandbox() {
+        delete this.customSandbox;
+        var scope = this.user_chrome?.customSandbox;
+        if (!scope)
+            scope = this.user_chrome?._initCustom();
+        return this.customSandbox = scope;
     },
 };

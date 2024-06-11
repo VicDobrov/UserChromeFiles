@@ -44,8 +44,8 @@ ChromeUtils.domProcessChild.childID || ({
 	get win(){
 		return this.ownerGlobal || Services.wm.getMostRecentWindow("navigator:browser");
 	},
-	async save(win, data, fname, host, to) {
-		var path = self.UcfGlob.TitlePath(to, fname, host, win); //путь в зависимости от опций
+	async save(data, fname, protocol, to, win = self.win) {
+		var path = self.UcfGlob.TitlePath(to, fname); //путь в зависимости от опций
 		var dir = path[0], t = path[2].slice(0,48), path = path[1];
 		try {dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);}
 			catch(ex){
@@ -61,7 +61,7 @@ ChromeUtils.domProcessChild.childID || ({
 				path = fp.file.path
 			else return;
 		}; to = 1;
-		try {await IOUtils.writeUTF8(path, data);} catch {to = 0}
+		try {await IOUtils.writeUTF8(path, data +'<a href='+ (protocol != 'data:' ? self.UcfGlob.URL()[0] : 'data:uri') +'><small><blockquote>источник: '+ new Date().toLocaleString("ru") +'</blockquote></small></a>');} catch {to = 0}
 		await self.UcfGlob.Succes(path, to, '√ страница записана: '+ t);
 	},
 UcfGlob: {
@@ -85,6 +85,17 @@ UcfGlob: {
 			prefs[`set${t}Pref`](key[0],set)
 		else set = prefs[`get${t}Pref`](...key);
 		return set;
+	},
+	readFromClip({clipboard} = Services, data = {}, win = self.win){
+		try {let trans = Cc["@mozilla.org/widget/transferable;1"].createInstance(Ci.nsITransferable),
+			flavor = `text/${parseInt(Services.appinfo.platformVersion) >= 111 ? "plain" : "unicode"}`;
+			trans.init(win.docShell.QueryInterface(Ci.nsILoadContext));
+			trans.addDataFlavor(flavor);
+			clipboard.getData(trans, clipboard.kGlobalClipboard);
+			trans.getTransferData(flavor, data);
+			if (data.value)
+				return data.value.QueryInterface(Ci.nsISupportsString).data;
+		} catch {return ""}
 	},
 	dirGet(){ //dir [, subdirs]. last arg ? 1 ret path : open
 		var f, d = [...arguments], c = Ci.nsIFile, e = "DfltDwnld", r = (d[d.length-1] == 1);
@@ -127,11 +138,15 @@ UcfGlob: {
 		(await win.Downloads.getList(win.Downloads.ALL)).add(w);
 		await w.refresh(w.succeeded = true);
 	},
-	async SingleHTML(to = false, win = self.win){
-		var br = win.gBrowser.selectedBrowser, bc = focus.focusedContentBrowsingContext;
+	async SingleHTML(to = false){
+		var br = self.win.gBrowser.selectedBrowser, bc = focus.focusedContentBrowsingContext;
 		if (bc?.top.embedderElement != br) bc = br.browsingContext;
 		var actor = bc?.currentWindowGlobal?.getActor(name);
-		actor && self.save(win, ...await actor.sendQuery(""), to); //htmlAndName
+		actor && self.save(...await actor.sendQuery(""), to); //htmlAndName
+	},
+	URL(url, win = self.win){ //[url, host]
+		url ||= decodeURIComponent(win.gBrowser.selectedBrowser.currentURI.displaySpec.replace(/.+url=http/,'http'));
+		return [url, /^file:\/\//.test(url) ? 'file' : url.replace(/^.*u=|https?:\/\/|www\.|\/.*/g,'').replace(/^(moz-extension|ru\.|m\.)/,'').replace(/\/.*/,'')];
 	},
 	TitlePath(to, d, h, win = self.win, n = 0, u = 99){ //0 web|2 pic|-№ cut, name, url
 		if(parseInt(to) > 0) [n,to] = [to,n]; if(parseInt(to) < 0) u = Math.abs(to);
@@ -140,15 +155,14 @@ UcfGlob: {
 		to = to.split('|').slice(0 + n, 2 + n); //Dir/Sub|[empty|0 title|1 url]
 		d = /^blank/.test(d || "blank") ? win.gBrowser.selectedTab.label : d;
 		d = d.replace(/\s+/g,' ').replace(/:/g,'։').replace(/[|<>]+/g,'_').replace(/([\\\/?*\"'`]+| ։։ .*)/g,'').slice(0,u).trim();
-		h ||= decodeURIComponent(win.gURLBar.value); n = d, u = h;
-		h = /^file:\/\//.test(h) ? 'file' : h.replace(/^.*u=|https?:\/\/|www\.|\/.*/g,'').replace(/^(moz-extension|ru\.|m\.)/,'').replace(/\/.*/,'');
+		n = this.URL(); u = h || n[0]; h = n[1], n = d;
 		to[1] = (to[1] == "0") ? d : (to[1] == "1") ? h : "";
 		d += "_"+ new Date().toLocaleDateString('ru', {day: 'numeric',month: 'numeric',year: '2-digit'}) +'-'+ new Date().toLocaleTimeString('en-GB').replace(/:/g,"։"); //дата-часы
 		try {var dir = prefs.getComplexValue("browser.download.dir",Ci.nsIFile);} catch {dir = dirsvc.get("DfltDwnld",Ci.nsIFile)}
 		var map = s => win.DownloadPaths.sanitize(s); //FIX имён
 		to.map(map).forEach(dir.append);
 		to = dir.clone(); to.append(d +'.html');
-		return [dir, to.path, n, d, u, h]; //… имя, +дата, URL, домен
+		return [dir, to.path, n, d, u, h]; //… имя, +дата, url, домен
 	},
 	FileOk(path, win = self.win){ //файл|папка есть?
 		if(path.startsWith("chrome://"))
@@ -161,7 +175,7 @@ UcfGlob: {
 	},
 	RunwA(){let args = [...arguments], path = args.shift(), file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile), proc = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
 		file.initWithPath(path);
-    try{proc.init(file);} catch{console.error(F.q + path); return 1;}
+    try{proc.init(file);} catch{throw F.q + path}
     proc.runwAsync(args, args.length);
   }
 }
@@ -335,5 +349,5 @@ var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
 		doctype += '>\n';
 	};
 	var onlyName = selWin ? win.getSelection().toString() : (title && title.text ? title.text : loc.pathname.split('/').pop());
-	return [doctype + sel.innerHTML +'\n<a href='+ (loc.protocol != 'data:' ? loc.href : 'data:uri') +'><small><blockquote>источник: '+ new Date().toLocaleString("ru") +'</blockquote></small></a>', onlyName, loc.hostname];
+	return [doctype + sel.innerHTML, onlyName, loc.protocol];
 }

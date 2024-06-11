@@ -1,0 +1,138 @@
+{
+	"policies": {
+		"BlockAboutAddons": false,
+		"BlockAboutConfig": false,
+		"BlockAboutProfiles": false,
+		"BlockAboutSupport": false,
+		"DisableSetDesktopBackground": true,
+		"DisableMasterPasswordCreation": true,
+		"DisableFeedbackCommands": true,
+		"DisableFirefoxStudies": true,
+		"DisableProfileRefresh": true,
+		"DisableTelemetry": true,
+		"NoDefaultBookmarks": false,
+		"OverrideFirstRunPage": "",
+		"OverridePostUpdatePage": "",
+		"Bookmarks": [
+			{ "Title": "Слухи",
+				"URL": "https://mk.ru",
+				"Placement": "toolbar"
+			},
+			{ "Title": "Видео",
+				"URL": "https://youtube.com",
+				"Placement": "toolbar"
+			},
+			{ "Title": "Погода",
+				"URL": "https://meteo7.ru",
+				"Placement": "toolbar"
+			},
+			{ "Title": "Фильмы",
+				"URL": "https://google.ru/search?q=Лучшие дорамы",
+				"Placement": "toolbar",
+				"Folder": "Отдых"
+			},
+			{ "Title": "Игры",
+				"URL": "https://yandex.ru/search?text=игры online",
+				"Placement": "toolbar",
+				"Folder": "Отдых"
+			},
+			{ "Title": "Фото",
+				"URL": "https://www.zastavki.com",
+				"Placement": "toolbar",
+				"Folder": "Отдых"
+			},
+			{ "Title": "Книги",
+				"URL": "https://author.today",
+				"Placement": "toolbar",
+				"Folder": "Отдых"
+			},
+			{ "Title": "TV Звезда",
+				"URL": "https://m.tvzvezda.ru",
+				"Placement": "toolbar",
+				"Folder": "Отдых"
+			},
+			{ "Title": "Гаджеты",
+				"URL": "https://4pda.to",
+				"Placement": "toolbar",
+				"Folder": "Отдых"
+			},
+			{ "Title": "ВКонтакте",
+				"URL": "https://vk.com/feed",
+				"Placement": "toolbar",
+				"Folder": "СоцСети"
+			},
+			{ "Title": "Телеграм",
+				"URL": "https://web.telegram.org/k",
+				"Placement": "toolbar",
+				"Folder": "СоцСети"
+			},
+			{ "Title": "Одноклассники",
+				"URL": "https://ok.ru",
+				"Placement": "toolbar",
+				"Folder": "СоцСети"
+			},
+			{ "Title": "WhatsApp",
+				"URL": "https://web.whatsapp.com",
+				"Placement": "toolbar",
+				"Folder": "СоцСети"
+			},
+			{ "Title": "Мой мир",
+				"URL": "https://m.my.mail.ru",
+				"Placement": "toolbar",
+				"Folder": "СоцСети"
+			},
+			{ "Title": "Форум",
+				"URL": "https://all-forum.ru",
+				"Placement": "toolbar",
+				"Folder": "СоцСети"
+			},
+			{ "Title": "Хранение фото",
+				"URL": "https://imgbb.com",
+				"Placement": "toolbar",
+				"Folder": "INet"
+			},
+			{ "Title": "Яндекс диск",
+				"URL": "https://disk.yandex.ru",
+				"Placement": "toolbar",
+				"Folder": "INet"
+			},
+			{ "Title": "Конвертер всего",
+				"URL": "https://www.online-convert.com",
+				"Placement": "toolbar",
+				"Folder": "INet"
+			},
+			{ "Title": "Я.Перевод",
+				"URL": "https://translate.yandex.com",
+				"Placement": "toolbar",
+				"Folder": "INet"
+			},
+			{ "Title": "Скорость сети",
+				"URL": "https://2ip.ru/speed",
+				"Placement": "toolbar",
+				"Folder": "INet"
+			},
+			{ "Title": "Web-архив",
+				"URL": "http://web.archive.org",
+				"Placement": "toolbar",
+				"Folder": "INet"
+			}
+		],
+		"Preferences": {
+			"browser.search.update": false,
+			"browser.search.newSearchConfig.enabled": false,
+			"browser.warnOnQuitShortcut": false,
+			"datareporting.policy.dataSubmissionPolicyBypassNotification": true,
+			"extensions.blocklist.enabled": false,
+			"extensions.getAddons.showPane": false,
+			"extensions.experiments.enabled": true,
+			"extensions.legacy.enabled": true,
+			"extensions.htmlaboutaddons.recommendations.enabled": false,
+			"intl.accept_languages": "ru-RU,ru,en-US,en",
+			"print.more-settings.open": true,
+			"security.ssl.errorReporting.enabled": false,
+			"browser.newtabpage.activity-stream.feeds.telemetry": false,
+			"toolkit.legacyUserProfileCustomizations.stylesheets": true,
+			"widget.macos.native-context-menus": false
+		}
+	}
+}

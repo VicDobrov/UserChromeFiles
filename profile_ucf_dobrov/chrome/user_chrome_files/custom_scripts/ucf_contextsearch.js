@@ -1,12 +1,4 @@
-// ==UserScript==
-// @name      Browser search engine
-// @author    Vitaliy V., mod Dumby
-// @include   main
-// @shutdown  window.contextsearch.destructor();
-// @note      forum.mozilla-russia.org/viewtopic.php?pid=808870#p808870
-// ==/UserScript==
-
-(this.contextsearch = {
+(this.contextsearch = { //forum.mozilla-russia.org/viewtopic.php?pid=808870#p808870
 	topic: "browser-search-engine-modified", hide: "browser.search.hiddenOneOffs",
 	defaultImg: "chrome://browser/skin/search-engine-placeholder.png",
 	searchSelect: null, popup: null,

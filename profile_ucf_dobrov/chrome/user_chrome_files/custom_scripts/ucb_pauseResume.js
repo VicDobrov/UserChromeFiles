@@ -3,8 +3,8 @@ setTimeout(() => {(async (win) => { //старт браузера: ucf_hookClick
 	if (win.document.getElementById("nav-bar").tooltip.indexOf("ucf") < 0)
 		warn(`ucf_hookClicks.js\n(или открыто новое окно Firefox)`, "UserScripts");
 	if(typeof Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")] != "object")
-		warn(`ucf_global-SaveHTML.mjs`,`глобальных функций`);
-})(Services.wm.getMostRecentWindow("navigator:browser"));}, AppConstants.platform == "win" ? 9e3 : 3e3);
+		warn(`ucb_SaveHTML.mjs`,`глобальных функций`);
+})(Services.wm.getMostRecentWindow("navigator:browser"));}, 9e3);
 
 (async ({DownloadsViewUI}, origfunc = DownloadsViewUI.DownloadElementShell.prototype.connect) => {
 	DownloadsViewUI.DownloadElementShell.prototype.connect = function connect() {

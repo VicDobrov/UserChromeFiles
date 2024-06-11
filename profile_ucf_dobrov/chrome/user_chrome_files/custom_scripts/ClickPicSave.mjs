@@ -1,4 +1,4 @@
-// © Dumby, mod Dobrov сохранить картинку колёсиком или перетащив вправо; DBL поиск похожих. нужен SingleHTML
+// © Dumby, mod Dobrov сохранить картинку колёсиком или перетащив вправо; DBL поиск похожих. нужен ucf_glob_SaveHTML
 export {MouseImgSaverChild, MouseImgSaverParent};
 var u = {get it() {
 	delete this.it; return this.it = Cc["@mozilla.org/image/tools;1"].getService(Ci.imgITools);
@@ -20,8 +20,7 @@ class MouseImgSaverChild extends JSWindowActorChild {
 			&& trg instanceof Ci.nsIImageLoadingContent
 			&& this[e.type](trg, e);
 	}
-	handleDragEvent(e) {
-		this[e.type](e);
+	handleDragEvent(e) { this[e.type](e);
 	}
 	dragstart(trg, e) {
 		this.trg = trg;
@@ -36,11 +35,9 @@ class MouseImgSaverChild extends JSWindowActorChild {
 		var win = this.contentWindow;
 		for(var type of this.events) win[meth](type, this, true);
 	}
-	drop() {
-		this.drag();
+	drop() { this.drag();
 	}
-	dragover(e) {
-		var {x, y} = this,
+	dragover(e) { var {x, y} = this,
 			cx = e.screenX, cy = e.screenY,
 			dx = cx - x,
 			ax = Math.abs(dx), ay = Math.abs(cy - y);
@@ -145,7 +142,7 @@ if (!ChromeUtils.domProcessChild.childID) {
 			var p = win.Services.prefs;
 			for(var pref in data) {
 				var obj = data[pref], meth = `et${obj.type}Pref`;
-				obj.val = p.prefHasUserValue(pref) ? p["g" + meth](pref) : null;
+				obj.val = p.prefHasUserValue(pref) ? p["g"+ meth](pref) : null;
 				p["s" + meth](pref, obj.set);
 			}
 			try { var args = [url,
@@ -163,7 +160,7 @@ if (!ChromeUtils.domProcessChild.childID) {
 				null, // cache key
 				isPrivate,
 				win.document.nodePrincipal],
-				{length} = win.internalSave, lfix = length >15;
+				{length} = win.internalSave, lfix = length > 15;
 				lfix && args.splice(1, 0, null); //FIX FF113+
 				try {win.internalSave(...args);} catch{console.log("ERROR")}
 			} finally {
@@ -175,7 +172,7 @@ if (!ChromeUtils.domProcessChild.childID) {
 		}
 		dblclick(win, imgURL) {
 			var gb = win.gBrowser, index = gb.selectedTab._tPos +1;
-			gb.selectedTab = gb.addTrustedTab('https://yandex.ru/images/search?rpt=imageview&url=' + imgURL, {index});
+			gb.selectedTab = gb.addTrustedTab('https://yandex.ru/images/search?rpt=imageview&url='+ imgURL, {index});
 		}
 	}
 }

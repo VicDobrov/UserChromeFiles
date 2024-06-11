@@ -11,7 +11,7 @@
 	hint: подсказка в строке меню для roll
 	%OpenURI выделенный текст или URL страницы/ссылки */
 
-		linux = [
+		OS_linux = [
 			{ name: 'Ссылку в |плеер VLC', path: '/usr/bin/vlc',
 				icon: 'moz-icon://stock/vlc?size=menu'
 			},
@@ -21,7 +21,7 @@
 				roll: `--hold --workdir ~/Загрузки -e "ffmpeg -i %OpenURI -c copy -f mp4 video.mp4"`,
 				icon: 'moz-icon://stock/youtube-dl?size=menu'}
 		],
-		win = [
+		OS_win = [
 			{	name: 'Ссылку в |плеер VLC', path: 'C:\\Program Files\\VideoLAN\\VLC\\vlc.exe',
 				args: `"%OpenURI"`
 			},
@@ -30,25 +30,25 @@
 			},
 			{ name: 'Открыть в |Microsoft Edge', path: 'C:\\Windows\\explorer.exe', args: `"microsoft-edge:%OpenURI "`}
 		],
-		macosx = [
+		OS_macosx = [
 			{	name: '|Видео загрузчик yt-dlp', path: '/usr/bin/osascript',
-				args: `-e "tell app %quotTerminal%quot to activate do script %quotyt-dlp '%OpenURI' && say 'Download complete'; exit%quot"`,
+				args: `-e "tell app %quotTerminal%quot to activate do script %quotyt-dlp '%OpenURI' && say сделано; exit%quot"`,
 				hint: 'опции --downloader ffmpeg…',
-				roll: `-e "tell app %quotTerminal%quot to activate do script %quotyt-dlp --downloader ffmpeg --hls-use-mpegts '%OpenURI' && say 'Download complete'; exit%quot"`,
+				roll: `-e "tell app %quotTerminal%quot to activate do script %quotyt-dlp --downloader ffmpeg --hls-use-mpegts '%OpenURI' && say сделано; exit%quot"`,
 				icon: 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4TC0AAAAvD8ADEA8QEfMfQlFt29T7MhRBFNGIJsqLYPhnqEJE/8P8772bd+qxBfOVCwIA'
 			},
 			{	name: 'Ссылку в |плеер MPV', path: '/usr/bin/osascript', //FIX only mpv
 				args: `-e "tell app %quotTerminal%quot to do script %quotopen -b io.mpv '%OpenURI' --args '--ytdl-format=bestvideo[height<=?720][fps<=?30]+bestaudio/best[height<=?720][fps<=?30]'; exit%quot" -e "tell app %quotSystem Events%quot to set visible of process %quotTerminal%quot to false"`,
 				hint: 'скачать книгу в Elib2Ebook',
-				roll: `-e "tell app %quotTerminal%quot to do script %quotcd $HOME/Downloads; Elib2Ebook -f epub -u '%OpenURI' && say 'Download complete'; exit%quot"`,
+				roll: `-e "tell app %quotTerminal%quot to do script %quotcd ${Downloadir()}; Elib2Ebook -f epub -u '%OpenURI' && say сделано; exit%quot"`,
 				icon: 'moz-icon://file:///System/Applications/Automator.app?size=16'
 			},
 			{	name: 'Открыть в браузере |Safari', path: '/usr/bin/open',
 				args: `-b com.apple.Safari -u "%OpenURI"`,
-				icon: 'chrome://branding/content/icon32.png'},
+				icon: 'chrome://devtools/skin/images/browsers/safari.svg'},
 		];
-		try {var arrOS = eval(AppConstants.platform);} catch {return};
-		if (!arrOS.length) return;
+		try {var arrOS = eval('OS_'+ AppConstants.platform);} catch {return};
+		if (!arrOS || !arrOS.length) return;
 		var addListener = (...arr) => {
 			var elm = arr[0];
 			if (!elm) return;
@@ -184,6 +184,11 @@
 		};
 		addListener(popup, "popupshowing", create);
 		that.unloadlisteners.push("contextmenuopenwith");
+		function Downloadir(c = Ci.nsIFile){
+			var d = Services.dirsvc.get("DfltDwnld",c);
+			try {var d = Services.prefs.getComplexValue("browser.download.dir",c);} catch {}
+			return d.path;
+		}
 	},
 	destructor() {
 		for(let arr of this._eventListeners)

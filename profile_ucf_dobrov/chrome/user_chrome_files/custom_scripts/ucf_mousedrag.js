@@ -18,12 +18,19 @@
 			}
 		},
 		D: {
-			name: "Открыть ссылку в фоновой странице", cmd() {
-				win.openTrustedLinkIn(this.val, "tabshifted", this.opts);
+			name: "Адрес ссылки в SideBar | фоновой вкладке", cmd() {
+				var sb = ucf_custom_script_win.ucf_sidebar_tabs;
+				try{sb.setPanel(0, this.val);} catch{win.openTrustedLinkIn(this.val, "tabshifted", this.opts)}
 			}
 		}
 	},
 	text: {
+		L: {
+			name: "Копировать текст в буфер обмена", cmd() {
+				this.gClipboard.write(this.val);
+				this.flash();
+			}
+		},
 		U: {
 			name: "Поиск текста в активной странице", cmd() {
 				this.search("tab");
@@ -32,12 +39,6 @@
 		D: {
 			name: "Поиск текста в фоновой странице", cmd() {
 				this.search("tabshifted");
-			}
-		},
-		L: {
-			name: "Копировать текст в буфер обмена", cmd() {
-				this.gClipboard.write(this.val);
-				this.flash();
 			}
 		}
 	},
@@ -70,7 +71,6 @@
 	},
 	dragstart(e) {
 		win = e.view.windowRoot.ownerGlobal;
-		//if (!win.gBrowser.currentURI.spec.startsWith("http")) return;
 		if (!e.dataTransfer.mozItemCount || !win.gBrowser.selectedBrowser.matches(":hover"))
 			return;
 
@@ -89,19 +89,6 @@
 			}
 			else return;
 		}
-/*
-		var txt = dt.getData("text/plain");
-		if (url)
-			this.val = url, this.txt = dt.getData("text/x-moz-url").split("\n")[1];
-		else if (!txt) return;
-		try {
-			this.val = new URL(txt.trim()).href;
-		} catch {
-			this.val = txt;
-			if (!this.textLinkRe.test(txt))
-				this.type = this.text;
-		}
-*/
 		this.x = e.screenX; this.y = e.screenY;
 		this.drag(true);
 	},

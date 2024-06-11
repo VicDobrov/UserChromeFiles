@@ -2,14 +2,12 @@
 	var g = Cu.getGlobalForObject(Cu), stt = g[id];
 	if (!stt) {
 		var {obs, prefs} = Services, {bookmarks: bm, observers: pobs} = PlacesUtils;
-		stt = g[id] = {
-			bm,
+		stt = g[id] = { bm,
 			help_star: `(${Services.appinfo.OS == "Darwin" ? "⌘" : "Ctrl+"}D)\n
-Правый клик	➜ Быстрая закладка
+правый клик	➜ Быстрая закладка
 ◉ Колёсико	1-я строка Меню закладок
-◧ держать	Перевод сайт/выдел. текст\n`, //клики в ucf_hookClicks.js
+◧ держать	Перевод сайт/выдел. текст\n\n`, //клики в ucf_hookClicks.js
 			pref: `ucf.${id}Guid`,
-
 			async init() {
 				this.args = [b => this.bguids.add(b.parentGuid), {concurrent: true}];
 				this.pobsArgs = [
@@ -56,7 +54,6 @@
 			}
 		};
 		stt.init();
-
 		var func = id => this[id].handleEvent = async function(e) {
 			var win = e.view;
 			var star = e.target;

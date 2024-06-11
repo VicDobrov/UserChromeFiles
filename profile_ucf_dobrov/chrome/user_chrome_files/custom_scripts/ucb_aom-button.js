@@ -1,7 +1,7 @@
 try {(() => { var label = "Дополнения",
 tooltiptext = "ЛКМ: Меню дополнений\nСКМ: Отладка дополнений\nПКМ: Открыть менеджер дополнений",
 id = "ucf-aom-button",
-img = "data:image/webp;base64,UklGRh4BAABXRUJQVlA4TBIBAAAvD8ADELfBtpEkRXPsXf4p3pnPOJ0G20aSFPXdPVP+wb33HjPDMGgkSdEeenj/7pj5d9pM2zaG1L/8d49RAzFk+OFHkAFI2IebP3l3/DtebtGLjgp2n3+J/Mr/IBQfnLvW13v8/jGZdeu73Tm/lvqgN+hHY5Szb8a7OX8AARiXqSdsG1MFDrviB4hxCsSfIMOPQPyW5ciYGmXRRSlIcpDAYWTbSnNxiYcQl/vjjtN/b99aiOj/BFxpeSPJ08RPDyrl0QN2FxPOEP8/F9UIWmcuJBi6L2FTvASZrDOD6in4KFqNkweLF3mvHRWAsOB0v4Q2wqAgDN3fttNsvv0QblEUKrcpilwzBoBVUQfIpNv5XRiX",
+img = "chrome://devtools/skin/images/debugging-addons.svg",
 checked = "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' height='16' width='16'><path d='M 3,7 7,11 13,5' style='fill:none;stroke:white;stroke-width:1;'/></svg>",
 show_version = true,
 show_description = true,

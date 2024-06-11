@@ -280,19 +280,19 @@ toolbarpaletteitem[place] > toolbaritem.ucf-additional-springs {
   right: auto !important;
 }
 
-#ucf-additional-vertical-container #ucf-additional-vertical-box[vertautohide="true"][v_vertical_bar_visible="true"] > #ucf-additional-vertical-bar:not([collapsed="true"]) {
+#ucf-additional-vertical-container #ucf-additional-vertical-box[vertautohide="true"][v_vertical_bar_visible^="visible"] > #ucf-additional-vertical-bar:not([collapsed="true"]) {
   left: 0px !important;
   right: auto !important;
   opacity: 1 !important;
   transition-delay: 0s !important;
 }
 
-#ucf-additional-vertical-container #ucf-additional-vertical-box[vertautohide="true"]:-moz-locale-dir(rtl)[v_vertical_bar_visible="true"] > #ucf-additional-vertical-bar:not([collapsed="true"]), #ucf-additional-vertical-container #ucf-additional-vertical-box[vertautohide="true"][v_vertical_bar_start="false"][v_vertical_bar_visible="true"] > #ucf-additional-vertical-bar:not([collapsed="true"]) {
+#ucf-additional-vertical-container #ucf-additional-vertical-box[vertautohide="true"]:-moz-locale-dir(rtl)[v_vertical_bar_visible^="visible"] > #ucf-additional-vertical-bar:not([collapsed="true"]), #ucf-additional-vertical-container #ucf-additional-vertical-box[vertautohide="true"][v_vertical_bar_start="false"][v_vertical_bar_visible^="visible"] > #ucf-additional-vertical-bar:not([collapsed="true"]) {
   left: auto !important;
   right: 0px !important;
 }
 
-#ucf-additional-vertical-container #ucf-additional-vertical-box[vertautohide="true"][v_vertical_bar_start="false"]:-moz-locale-dir(rtl)[v_vertical_bar_visible="true"] > #ucf-additional-vertical-bar:not([collapsed="true"]) {
+#ucf-additional-vertical-container #ucf-additional-vertical-box[vertautohide="true"][v_vertical_bar_start="false"]:-moz-locale-dir(rtl)[v_vertical_bar_visible^="visible"] > #ucf-additional-vertical-bar:not([collapsed="true"]) {
   left: 0px !important;
   right: auto !important;
 }

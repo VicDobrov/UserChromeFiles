@@ -1,0 +1,360 @@
+(async ( // -- Настройки  Sidebar Tabs -->
+	ID = "ucf_sidebar_tabs",
+	TABS = [{
+			label: "Сайт",
+			src: "https://github.com/VitaliyVstyle/VitaliyVstyle.github.io",
+			attributes: 'messagemanagergroup="webext-browsers" type="content" disableglobalhistory="true" context="contentAreaContextMenu" tooltip="aHTMLTooltip" autocompletepopup="PopupAutoComplete" remote="true" maychangeremoteness="true" ',
+			menu: {
+				label: "Открыть в Sidebar Tabs",
+				icon: `resource://${ID}`,
+			}
+		},
+		{
+			label: "Журнал",
+			src: "chrome://browser/content/places/historySidebar.xhtml",
+		},
+		{
+			label: "Закладки",
+			src: "chrome://browser/content/places/bookmarksSidebar.xhtml",
+		},
+		{
+			label: "Загрузки",
+			src: "chrome://browser/content/downloads/contentAreaDownloadsView.xhtml",
+		},
+	],
+	ST_RIGHT = false, // Расположение панели
+	ST_WIDTH = 400,
+	ST_AUTOHIDE = true, // Скрывать в полноэкранном режиме
+	ST_NAME = "Sidebar Tabs",
+	CLOSE_BTN_TOOLTIP = "Закрыть панель",
+	ST_HIDE_HEADER = true,
+	SELECTOR = "#context-media-eme-separator",
+	KEY = "KeyB_true_true_false", // HotKey: code ctrlKey altKey shiftKey
+	popup,
+	showing = (e, g) => (e.target != popup || g.webExtBrowserType === "popup" || (g.isContentSelected || g.onTextInput || g.onImage || g.onVideo || g.onAudio || g.inFrame) && !g.linkURL),
+	hiding = e => (e.target != popup),
+) => (this[ID] = {
+	last_open: "extensions.ucf.sidebar_tabs.last_open",
+	last_index: "extensions.ucf.sidebar_tabs.last_index",
+	toolbox_width: "extensions.ucf.sidebar_tabs.toolbox_width",
+	eventListeners: new Map(),
+	eventCListeners: [],
+	urlsMap: new Map(),
+	timer: null,
+	init() {
+		this.prefs = Services.prefs;
+		var open = this._open = this.prefs.getBoolPref(this.last_open, false);
+		windowUtils.loadSheetUsingURIString(`data:text/css;charset=utf-8,${encodeURIComponent(`
+			#st_toolbox {
+				background-color: Field !important;
+				background-image: linear-gradient(var(--toolbar-bgcolor), var(--toolbar-bgcolor)) !important;
+				color: var(--toolbar-color, FieldText) !important;
+				overflow: hidden !important;
+				order: ${ST_RIGHT ? "101" : "0"} !important;
+			}
+			#st_header {
+				padding: 6px !important;
+				padding-bottom: 3px !important;
+			}
+			#st_toolbox [flex="1"] {
+				flex: 1 !important;
+			}
+			#st_toolbox tabs > spacer:first-of-type {
+				display: none !important;
+			}
+			#st_toolbox :is(tabs,tabpanels,tab,label) {
+				appearance: none !important;
+				background-color: transparent !important;
+				color: inherit !important;
+				margin: 0 !important;
+				padding: 0 !important;
+				border: none !important;
+			}
+			#st_toolbox tabs {
+				justify-content: start !important;
+			}
+			#st_toolbox #st_tabpanels {
+				background-color: Field !important;
+				color: FieldText !important;
+			}
+			#st_splitter {
+				appearance: none !important;
+				width: 6px !important;
+				position: relative !important;
+				order: ${ST_RIGHT ? "100" : "0"} !important;
+				background-color: transparent !important;
+				margin-inline-start: -5px !important;
+				border: none !important;
+				border-inline-end: 1px solid var(--chrome-content-separator-color, ThreeDShadow) !important;
+			}
+			#st_toolbox tab {
+				margin: 0 !important;
+				padding: 3px 6px !important;
+				outline: none !important;
+				border-block: 2px solid transparent !important;
+				--default-focusring: none !important;
+			}
+			#st_toolbox tab:hover {
+				border-bottom-color: color-mix(in srgb, currentColor 30%, transparent) !important;
+			}
+			#st_toolbox tab[selected="true"] {
+				border-bottom-color: color-mix(in srgb, currentColor 80%, transparent) !important;
+			}
+			#ucf-additional-vertical-container[v_vertical_bar_start="true"] {
+				order: 0 !important;
+			}
+			#ucf-additional-vertical-container[v_vertical_bar_start="false"] {
+				order: 102 !important;
+			}
+			${ST_AUTOHIDE ? ":root[inFullscreen] :is(#st_toolbox,#st_splitter)," : ""}
+			:root[inDOMFullscreen] :is(#st_toolbox,#st_splitter),
+			:root[chromehidden~="extrachrome"] :is(#st_toolbox,#st_splitter) {
+				visibility: collapse !important;
+			}
+			${ST_HIDE_HEADER ? `#st_header {
+				display: none !important;
+			}` : ""}
+		`)}`, windowUtils.USER_SHEET);
+		document.documentElement.setAttribute("sidebar_tabs_right", `${ST_RIGHT}`);
+		var fragment = this.fragment = MozXULElement.parseXULToFragment(`
+			<vbox id="st_toolbox" class="chromeclass-extrachrome" hidden="true">
+				<hbox id="st_header" align="center">
+					<label>${ST_NAME}</label>
+					<spacer flex="1"/>
+					<toolbarbutton id="st_close_button" class="close-icon tabbable" tooltiptext="${CLOSE_BTN_TOOLTIP}"/>
+				</hbox>
+				<tabbox id="st_tabbox" flex="1">
+					<tabs id="sbar_tabs">
+						${this.getTabs()}
+					</tabs>
+					<tabpanels id="st_tabpanels" flex="1">
+						${this.panels_str}
+					</tabpanels>
+				</tabbox>
+			</vbox>
+			<splitter id="st_splitter" class="chromeclass-extrachrome" hidden="true" resizebefore="sibling" resizeafter="none"/>
+		`);
+		document.querySelector("#sidebar-box, #sidebar-main")?.before(document.importNode(fragment, true));
+		this.toolbox = document.querySelector("#st_toolbox");
+		this.splitter = document.querySelector("#st_splitter");
+		for (let browser of this.toolbox.querySelectorAll("[id^=st_browser_]"))
+			this[`${browser.id}`] = browser;
+		this.st_tabpanels = this.toolbox.querySelector("#st_tabpanels");
+		this.st_tabbox = this.toolbox.querySelector("#st_tabbox");
+		this.st_close_btn = this.toolbox.querySelector("#st_close_button");
+		this.st_tabbox.handleEvent = function() {};
+		this.st_tabbox.selectedIndex = this.aIndex = this.prefs.getIntPref(this.last_index, 0);
+		delete this.panels_str;
+		if (open)
+			this.open();
+		this.addListener(window, "keydown", this);
+		this.addListener(this.st_close_btn, "command", this);
+		if (this.menus.length) {
+			popup = document.querySelector("#contentAreaContextMenu");
+			this.addListener(popup, "popupshowing", this);
+		}
+		if (!(ID in UcfPrefs.customSandbox))
+			Cu.evalInSandbox(`
+				(this["${ID}"] = {
+					async init() {
+						Services.io.getProtocolHandler("resource")
+						.QueryInterface(Ci.nsIResProtocolHandler)
+						.setSubstitution("${ID}", Services.io.newURI("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><g style='fill:context-fill rgb(142, 142, 152);fill-opacity:context-fill-opacity;'><path d='M2 2C.892 2 0 2.89 0 4v9.1a2 2 0 0 0 2 2h12c1.1 0 2-.9 2-2V4a2 2 0 0 0-2-2Zm0 1h12c.6 0 1 .45 1 1v9.1c0 .5-.5.9-1 .9H1.99c-.55 0-.99-.4-.99-.9V4c0-.55.45-1 1-1Z'/> <rect width='14' height='1' x='1' y='6'/> <rect width='1' height='7' x='5' y='7'/></g></svg>"));
+						CustomizableUI.createWidget({
+							id: "${ID}",
+							label: "Sidebar Tabs",
+							tooltiptext: "Открыть / Закрыть Sidebar Tabs",
+							defaultArea: CustomizableUI.AREA_NAVBAR,
+							localized: false,
+							onCreated(btn) {
+								btn.style.setProperty("list-style-image", 'url("resource://${ID}")');
+								btn.checked = btn.ownerGlobal.ucf_custom_script_win?.["${ID}"]?._open ?? Services.prefs.getBoolPref("${this.last_open}", true);
+							},
+							onCommand(e) {
+							   e.view.ucf_custom_script_win["${ID}"].toggle();
+							}
+						});
+					},
+				}).init();
+			`, UcfPrefs.customSandbox);
+		setUnloadMap(ID, this.destructor, this);
+	},
+	getTabs() {
+		var str = panels_str = "", menus = [];
+		for (let [ind, {label, src, attributes, menu}] of TABS.entries()) {
+			str += `<tab id="st_tab_${ind}" label="${label}"/>`;
+			panels_str += `<vbox id="st_container_${ind}" flex="1">
+				<browser id="st_browser_${ind}" flex="1" autoscroll="false" ${attributes || ""}/>
+			</vbox>`;
+			this.urlsMap.set(ind, {url: src});
+			if (menu) {
+				menu.aIndex = ind;
+				menus.push(menu);
+			}
+		}
+		this.panels_str = panels_str;
+		this.menus = menus;
+		return str;
+	},
+	async loadURI(browser, url, options = {}) {
+		if (browser.getAttribute("type") !== "content")
+			browser.setAttribute("src", url);
+		else {
+			options.triggeringPrincipal ||= Services.scriptSecurityManager.getSystemPrincipal();
+			browser.loadURI(Services.io.newURI(url), options);
+		}
+	},
+	select(e, aIndex) {
+		if (e.target != this.st_tabpanels || (aIndex = this.st_tabpanels.selectedIndex) == this.aIndex) return;
+		var browser = this[`st_browser_${this.aIndex}`];
+		this.loadURI(browser, "about:blank");
+		this.aIndex = aIndex;
+		this.prefs.setIntPref(this.last_index, aIndex);
+		this.toolbox.style.width = `${this.prefs.getIntPref(`${this.toolbox_width}${aIndex}`, ST_WIDTH)}px`;
+		browser = this[`st_browser_${aIndex}`], {url, options} = this.urlsMap.get(aIndex);
+		this.loadURI(browser, url, options);
+	},
+	open() {
+		this.toolbox.hidden = this.splitter.hidden = false;
+		var {aIndex} = this;
+		this.toolbox.style.width = `${this.prefs.getIntPref(`${this.toolbox_width}${aIndex}`, ST_WIDTH)}px`;
+		this.addListener(this.st_tabpanels, "select", this);
+		this.addListener(this.splitter, "dragstart", this);
+		var browser = this[`st_browser_${aIndex}`], {url, options} = this.urlsMap.get(aIndex);
+		this.loadURI(browser, url, options);
+		this.prefs.setBoolPref(this.last_open, true);
+		this._open = true;
+	},
+	toggle() {
+		if (!this._open)
+			this.open();
+		else {
+			this.delListener("select");
+			this.delListener("dragstart");
+			this.toolbox.hidden = this.splitter.hidden = true;
+			var browser = this[`st_browser_${this.aIndex}`];
+			this.loadURI(browser, "about:blank");
+			this.prefs.setBoolPref(this.last_open, false);
+			this._open = false;
+		}
+		if (this.button ||= CustomizableUI.getWidget(ID)?.forWindow(window).node)
+			this.button.checked = this._open;
+	},
+	setPanel(aIndex, url, options = {}) {
+		try {
+			let browser = this[`st_browser_${aIndex}`];
+			if (!browser || !/^(?:https?|ftp|chrome|about|moz-extension|file):/.test(url)) throw "Отсутствуют или неверные аргументы!";
+			if (options.userContextId != browser.getAttribute("usercontextid")) {
+				let newbrowser = (this[`cn_browser_${aIndex}`] ||= this.fragment.querySelector(`#st_browser_${aIndex}`)).cloneNode(false);
+				if ("userContextId" in options)
+					newbrowser.setAttribute("usercontextid", options.userContextId);
+				browser.replaceWith(newbrowser);
+				browser = this[`st_browser_${aIndex}`] = newbrowser;
+			}
+			this.urlsMap.set(aIndex, {url, options});
+			if (this.st_tabbox.selectedIndex !== aIndex) {
+				this.st_tabbox.selectedIndex = aIndex;
+				if (!this._open) {
+					this.aIndex = aIndex;
+					this.toggle();
+				}
+				return;
+			}
+			if (!this._open)
+				this.toggle();
+			this.loadURI(browser, url, options);
+		} catch (e) {console.log(e)}
+	},
+	click(e) {
+		var url = !(e.shiftKey || e.button === 1) ? (gContextMenu?.linkURI?.displaySpec || this.getCurrentURL()) : UcfGlob.readFromClipboard();
+		var {staIndex} = e.currentTarget;
+		var userContextId = gContextMenu?.contentData?.userContextId;
+		var triggeringPrincipal = gContextMenu?.principal;
+		this.setPanel(staIndex, url, {...(userContextId ? {userContextId} : {}), ...(triggeringPrincipal ? {triggeringPrincipal} : {})});
+	},
+	dragstart() {
+		this.splitter.addEventListener("mousemove", this);
+		this.splitter.addEventListener("mouseup", this, { once: true });
+	},
+	mousemove() {
+		clearTimeout(this.timer);
+		this.timer = setTimeout(() => {
+			this.prefs.setIntPref(`${this.toolbox_width}${this.aIndex}`, this.toolbox.getBoundingClientRect().width);
+		}, 500);
+	},
+	mouseup() {
+		this.splitter.removeEventListener("mousemove", this);
+	},
+	keydown(e) {
+		if (KEY === `${e.code}_${e.getModifierState("Control")}_${e.altKey}_${e.shiftKey}`)
+			this.toggle();
+	},
+	command() {
+		this.toggle();
+	},
+	handleEvent(e) {
+		this[e.type](e);
+	},
+	delListener(type) {
+		var {elm, type, listener} = this.eventListeners.get(type);
+		elm.removeEventListener(type, listener);
+	},
+	addListener(elm, type, listener) {
+		elm.addEventListener(type, listener);
+		this.eventListeners.set(type, {elm, type, listener});
+	},
+	addCListener(elm, type, listener) {
+		elm.addEventListener(type, listener);
+		this.eventCListeners.push({elm, type, listener});
+	},
+	popupshowing(e) {
+		if (showing(e, gContextMenu)) return;
+		var contextsel = popup.querySelector(`:scope > ${SELECTOR}`) || popup.querySelector(":scope > menuseparator:last-of-type");
+		var fragment = document.createDocumentFragment();
+		var itemId = 0;
+		this.menus.forEach(item => {
+			var {label, icon, aIndex} = item;
+			var mitem = document.createXULElement("menuitem");
+			mitem.id = `ucf-sidebar-tabs-${++itemId}`;
+			mitem.className = "menuitem-iconic ucf-sidebar-tabs";
+			mitem.setAttribute("label", label);
+			mitem.tooltipText = "Колёсико откроет ссылку из буфера обмена";
+			if (icon)
+				mitem.style.cssText = `list-style-image:url("${icon}");-moz-context-properties:fill,stroke,fill-opacity;stroke:currentColor;fill:currentColor;fill-opacity:var(--toolbarbutton-icon-fill-opacity,.8);`;
+			mitem.staIndex = aIndex;
+			fragment.append(mitem);
+			this.addCListener(mitem, "click", this);
+		});
+		contextsel.before(fragment);
+		this.popupshowing = this.itemsShow;
+		this.popuphiding = this.itemsHide;
+		this.addListener(popup, "popuphiding", this);
+	},
+	itemsShow(e) {
+		if (showing(e, gContextMenu)) return;
+		for (let {elm} of this.eventCListeners)
+			elm.hidden = false;
+	},
+	itemsHide(e) {
+		if (hiding(e)) return;
+		for (let {elm} of this.eventCListeners)
+			elm.hidden = true;
+	},
+	getCurrentURL() {
+		var url = gBrowser.selectedBrowser.currentURI.displaySpec;
+		try {
+			let _url = ReaderMode.getOriginalUrl(url);
+			if (_url)
+				url = Services.io.newURI(_url).displaySpec;
+		} catch {}
+		return url;
+	},
+	destructor() {
+		this.eventListeners.forEach(item => {
+			var {elm, type, listener} = item;
+			elm.removeEventListener(type, listener);
+		});
+		for (let {elm, type, listener} of this.eventCListeners)
+			elm.removeEventListener(type, listener);
+	},
+}).init())();
