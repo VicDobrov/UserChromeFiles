@@ -14,8 +14,8 @@
 		"OverrideFirstRunPage": "",
 		"OverridePostUpdatePage": "",
 		"Bookmarks": [
-			{ "Title": "Слухи",
-				"URL": "https://mk.ru",
+			{ "Title": "Вести",
+				"URL": "https://rg.ru",
 				"Placement": "toolbar"
 			},
 			{ "Title": "Видео",

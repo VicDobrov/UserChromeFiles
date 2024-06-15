@@ -1,24 +1,19 @@
-(function(){ // Полоса загрузки в адресной строке. Location Bar Enhancer 5.1;Loading Bar0.3.0
+(()=>{ // Полоса загрузки в адресной строке. Location Bar Enhancer 5.1;Loading Bar0.3.0
 	var cssStr = `#urlbar-background {
-			background-image: repeating-linear-gradient(-45deg, rgba(255,255,255,0), rgba(255,255,255,0) 6px, rgba(255,255,255,0) 6px, rgba(255,255,255,0) 12px), linear-gradient(to left, #bce6ff 10%, #e2fffd 30%);
-			background-size:0 0;
-			background-repeat:repeat-x, no-repeat;
-			transition: background-size 350ms ease 0s;
-		}
-		#urlbar-background:not([style="background-size: 0% 100%;"]) {
-			animation: progress-bar-stripes 2s linear infinite;
-		}
-		@keyframes progress-bar-stripes {
-			from {
-				background-position: 0 0;
-			}
-			to {
-				background-position: 51px 0;
-			}
-		}
-	`.replace(/\s{2,}|\r|\n/,"");
+		background-image: repeating-linear-gradient(-45deg, rgba(255,255,255,0), rgba(255,255,255,0) 6px, rgba(255,255,255,0) 6px, rgba(255,255,255,0) 12px), linear-gradient(to left, #bce6ff 10%, #e2fffd 30%);
+		background-size:0 0;
+		background-repeat:repeat-x, no-repeat;
+		transition: background-size 350ms ease 0s;
+	}
+	#urlbar-background:not([style="background-size: 0% 100%;"]) {
+		animation: progress-bar-stripes 2s linear infinite;
+	}
+	@keyframes progress-bar-stripes {
+		from {background-position: 0 0;}
+		to {background-position: 51px 0;}
+	}`.replace(/\s{2,}|\r|\n/,"");
 
-	var style = document.createProcessingInstruction("xml-stylesheet", "type=\"text/css\"" + " href=\"data:text/css;base64," + btoa(cssStr) + "\"");
+	var style = document.createProcessingInstruction("xml-stylesheet",`type="text/css" href="data:text/css;base64,${btoa(cssStr)}"`);
 	var mainW = document.getElementById("main-window");
 	document.insertBefore(style, mainW);
 
@@ -58,7 +53,6 @@
 				}
 			}
 		};
-
 		gBrowser.tabContainer.addEventListener('TabSelect',LoadingBar.listener.onChangeTab,false);
 		gBrowser.addTabsProgressListener(LoadingBar.listener);
 		unload(function() {
@@ -76,10 +70,7 @@
 	}
 	function runOnWindows(callback, winType) {
 		function watcher(window) {
-			try {
-				callback(window);
-			}
-			catch(ex) {}
+			try {callback(window);} catch {}
 		}
 		let browserWindows = Services.wm.getEnumerator(winType);
 		while (browserWindows.hasMoreElements()) {
@@ -92,10 +83,7 @@
 	}
 	function watchWindows(callback, winType) {
 		function watcher(window) {
-			try {
-				callback(window);
-			}
-			catch(ex) {}
+			try {callback(window);} catch {}
 		}
 		runOnWindows(callback, winType);
 		function windowWatcher(subject, topic) {
@@ -123,10 +111,7 @@
 			}
 		}
 		function unloader() {
-			try {
-				callback();
-			}
-			catch(ex) {}
+			try {callback();}	catch {}
 		}
 		unloaders.push(unloader);
 	function removeUnloader() {
@@ -136,7 +121,6 @@
 		}
 		return removeUnloader;
 	}
-
 	function makeWindowHelpers(window) {
 		let {clearTimeout, setTimeout} = window;
 		function async(callback, delay) {
@@ -156,5 +140,4 @@
 			async: async,
 		};
 	}
-
 })();

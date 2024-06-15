@@ -1,5 +1,5 @@
 /* SingleHtml Ff103+ © Лекс, правка Dumby, mod Dobrov +глобальные функции
-вызов: Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")].SingleHTML(1) если 0: выбор пути */
+вызов: Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")].SingleHTML(1) если 0: выбор пути */
 
 var self, name = "SingleHTML", EXPORTED_SYMBOLS = [`${name}Child`], {io, focus, obs, prefs, dirsvc} = Services;
 export class SingleHTMLChild extends JSWindowActorChild { //класс = name + Child
@@ -18,7 +18,7 @@ ChromeUtils.domProcessChild.childID || ({
 			obs.removeObserver(self, topic);
 		}, "quit-application-granted");
 		this.handleEvent = e => this[e.type](e);
-		globalThis[Symbol.for('UcfGlob')] = this.UcfGlob; //общие функции
+		globalThis[Symbol.for('UcfAPI')] = this.UcfAPI; //общие функции
 	},
 	observe(win) {
 		win.document.getElementById("appMenu-popup").addEventListener("popupshowing", this);
@@ -33,7 +33,7 @@ ChromeUtils.domProcessChild.childID || ({
 		var before = "appMenu-save-file-button2", subviewbutton = "subviewbutton";
 		btn.className = subviewbutton;
 		btn.setAttribute("oncommand", "SingleHTML();");
-		btn.SingleHTML = this.UcfGlob.SingleHTML;
+		btn.SingleHTML = this.UcfAPI.SingleHTML;
 		popup.querySelector('toolbarbutton[id^="'+ before +'"]').before(btn);
 	},
 	unload(e) {
@@ -45,11 +45,11 @@ ChromeUtils.domProcessChild.childID || ({
 		return this.ownerGlobal || Services.wm.getMostRecentWindow("navigator:browser");
 	},
 	async save(data, fname, protocol, to, win = self.win) {
-		var path = self.UcfGlob.TitlePath(to, fname); //путь в зависимости от опций
+		var path = self.UcfAPI.TitlePath(to, fname); //путь в зависимости от опций
 		var dir = path[0], t = path[2].slice(0,48), path = path[1];
 		try {dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);}
 			catch(ex){
-				self.UcfGlob.Succes(dir.path, 0); return;}
+				self.UcfAPI.Succes(dir.path, 0); return;}
 		if (!to){ // диалог выбора папки
 			var fp = Cc['@mozilla.org/filepicker;1'].createInstance(Ci.nsIFilePicker);
 			fp.init(parseInt(Services.appinfo.platformVersion) < 125 ? win : win.browsingContext,"", fp.modeSave);
@@ -61,10 +61,10 @@ ChromeUtils.domProcessChild.childID || ({
 				path = fp.file.path
 			else return;
 		}; to = 1;
-		try {await IOUtils.writeUTF8(path, data +'<a href='+ (protocol != 'data:' ? self.UcfGlob.URL()[0] : 'data:uri') +'><small><blockquote>источник: '+ new Date().toLocaleString("ru") +'</blockquote></small></a>');} catch {to = 0}
-		await self.UcfGlob.Succes(path, to, '√ страница записана: '+ t);
+		try {await IOUtils.writeUTF8(path, data +'<a href='+ (protocol != 'data:' ? self.UcfAPI.URL()[0] : 'data:uri') +'><small><blockquote>источник: '+ new Date().toLocaleString("ru") +'</blockquote></small></a>');} catch {to = 0}
+		await self.UcfAPI.Succes(path, to, '√ страница записана: '+ t);
 	},
-UcfGlob: {
+UcfAPI: {
 	async restart(){
 		var meth = Services.appinfo.inSafeMode ? "restartInSafeMode" : "quit";
 		Services.startup[meth](Ci.nsIAppStartup.eAttemptQuit | Ci.nsIAppStartup.eRestart);

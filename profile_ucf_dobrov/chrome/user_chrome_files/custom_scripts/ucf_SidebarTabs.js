@@ -1,11 +1,12 @@
 (async ( // -- Настройки  Sidebar Tabs -->
 	ID = "ucf_sidebar_tabs",
-	TABS = [{
+	TABS = [
+		{
 			label: "Сайт",
-			src: "https://github.com/VitaliyVstyle/VitaliyVstyle.github.io",
+			src: "https://rg.ru",
 			attributes: 'messagemanagergroup="webext-browsers" type="content" disableglobalhistory="true" context="contentAreaContextMenu" tooltip="aHTMLTooltip" autocompletepopup="PopupAutoComplete" remote="true" maychangeremoteness="true" ',
 			menu: {
-				label: "Открыть в Sidebar Tabs",
+				label: "Адрес в панель SidebarTabs",
 				icon: `resource://${ID}`,
 			}
 		},
@@ -21,13 +22,21 @@
 			label: "Загрузки",
 			src: "chrome://browser/content/downloads/contentAreaDownloadsView.xhtml",
 		},
+		{
+			label: "Задачи", src: "about:processes",
+		},
+		// {
+		// 	label: "Дополнения", src: "about:addons",
+		// 	attributes: 'type="content" disableglobalhistory="true" context="contentAreaContextMenu" tooltip="aHTMLTooltip" autocompletepopup="PopupAutoComplete" remote="false" maychangeremoteness="true" ',
+		// },
 	],
-	ST_RIGHT = false, // Расположение панели
-	ST_WIDTH = 400,
-	ST_AUTOHIDE = true, // Скрывать в полноэкранном режиме
-	ST_NAME = "Sidebar Tabs",
+	RIGHT = true, // Расположение панели
+	WIDTH = 350,
+	NAME = "Sidebar Tabs",
+	TOOLTIP = "Открыть / Закрыть Sidebar Tabs",
 	CLOSE_BTN_TOOLTIP = "Закрыть панель",
-	ST_HIDE_HEADER = true,
+	HIDE_HEADER = true,
+	HIDE_FULLSCREEN = false, // Hide in full screen mode
 	SELECTOR = "#context-media-eme-separator",
 	KEY = "KeyB_true_true_false", // HotKey: code ctrlKey altKey shiftKey
 	popup,
@@ -50,16 +59,18 @@
 				background-image: linear-gradient(var(--toolbar-bgcolor), var(--toolbar-bgcolor)) !important;
 				color: var(--toolbar-color, FieldText) !important;
 				overflow: hidden !important;
-				order: ${ST_RIGHT ? "101" : "0"} !important;
+				border-inline-${RIGHT ? "end" : "start"}: 1px solid var(--chrome-content-separator-color, ThreeDShadow) !important;
 			}
-			#st_header {
+			#st_toolbox #st_header {
 				padding: 6px !important;
 				padding-bottom: 3px !important;
+				flex-direction: ${RIGHT ? "row" : "row-reverse"} !important;
+				${HIDE_HEADER ? "display: none !important;" : ""}
 			}
 			#st_toolbox [flex="1"] {
 				flex: 1 !important;
 			}
-			#st_toolbox tabs > spacer:first-of-type {
+			#st_toolbox tabs > spacer {
 				display: none !important;
 			}
 			#st_toolbox :is(tabs,tabpanels,tab,label) {
@@ -71,21 +82,11 @@
 				border: none !important;
 			}
 			#st_toolbox tabs {
-				justify-content: start !important;
+				justify-content: ${RIGHT ? "start" : "end"} !important;
 			}
 			#st_toolbox #st_tabpanels {
 				background-color: Field !important;
 				color: FieldText !important;
-			}
-			#st_splitter {
-				appearance: none !important;
-				width: 6px !important;
-				position: relative !important;
-				order: ${ST_RIGHT ? "100" : "0"} !important;
-				background-color: transparent !important;
-				margin-inline-start: -5px !important;
-				border: none !important;
-				border-inline-end: 1px solid var(--chrome-content-separator-color, ThreeDShadow) !important;
 			}
 			#st_toolbox tab {
 				margin: 0 !important;
@@ -100,26 +101,33 @@
 			#st_toolbox tab[selected="true"] {
 				border-bottom-color: color-mix(in srgb, currentColor 80%, transparent) !important;
 			}
+			#st_splitter {
+				appearance: none !important;
+				cursor: ew-resize;
+				width: 6px !important;
+				position: relative !important;
+				z-index: 3 !important;
+				background-color: transparent !important;
+				border: none !important;
+				margin: 0 !important;
+				opacity: 0 !important;
+				margin-inline-${RIGHT ? "start" : "end"}: -6px !important;
+			}
 			#ucf-additional-vertical-container[v_vertical_bar_start="true"] {
 				order: 0 !important;
 			}
 			#ucf-additional-vertical-container[v_vertical_bar_start="false"] {
 				order: 102 !important;
 			}
-			${ST_AUTOHIDE ? ":root[inFullscreen] :is(#st_toolbox,#st_splitter)," : ""}
-			:root[inDOMFullscreen] :is(#st_toolbox,#st_splitter),
-			:root[chromehidden~="extrachrome"] :is(#st_toolbox,#st_splitter) {
+			:root:is(${HIDE_FULLSCREEN ? "[inFullscreen]," : ""}[inDOMFullscreen],[chromehidden~="extrachrome"]) :is(#st_vbox_container,#st_toolbox,#st_splitter) {
 				visibility: collapse !important;
 			}
-			${ST_HIDE_HEADER ? `#st_header {
-				display: none !important;
-			}` : ""}
 		`)}`, windowUtils.USER_SHEET);
-		document.documentElement.setAttribute("sidebar_tabs_right", `${ST_RIGHT}`);
+		document.documentElement.setAttribute("sidebar_tabs_right", `${RIGHT}`);
 		var fragment = this.fragment = MozXULElement.parseXULToFragment(`
 			<vbox id="st_toolbox" class="chromeclass-extrachrome" hidden="true">
 				<hbox id="st_header" align="center">
-					<label>${ST_NAME}</label>
+					<label>${NAME}</label>
 					<spacer flex="1"/>
 					<toolbarbutton id="st_close_button" class="close-icon tabbable" tooltiptext="${CLOSE_BTN_TOOLTIP}"/>
 				</hbox>
@@ -162,8 +170,8 @@
 						.setSubstitution("${ID}", Services.io.newURI("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><g style='fill:context-fill rgb(142, 142, 152);fill-opacity:context-fill-opacity;'><path d='M2 2C.892 2 0 2.89 0 4v9.1a2 2 0 0 0 2 2h12c1.1 0 2-.9 2-2V4a2 2 0 0 0-2-2Zm0 1h12c.6 0 1 .45 1 1v9.1c0 .5-.5.9-1 .9H1.99c-.55 0-.99-.4-.99-.9V4c0-.55.45-1 1-1Z'/> <rect width='14' height='1' x='1' y='6'/> <rect width='1' height='7' x='5' y='7'/></g></svg>"));
 						CustomizableUI.createWidget({
 							id: "${ID}",
-							label: "Sidebar Tabs",
-							tooltiptext: "Открыть / Закрыть Sidebar Tabs",
+							label: "${NAME}",
+							tooltiptext: "${TOOLTIP}",
 							defaultArea: CustomizableUI.AREA_NAVBAR,
 							localized: false,
 							onCreated(btn) {
@@ -178,6 +186,7 @@
 				}).init();
 			`, UcfPrefs.customSandbox);
 		setUnloadMap(ID, this.destructor, this);
+		this.API = Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")];
 	},
 	getTabs() {
 		var str = panels_str = "", menus = [];
@@ -205,19 +214,21 @@
 		}
 	},
 	select(e, aIndex) {
-		if (e.target != this.st_tabpanels || (aIndex = this.st_tabpanels.selectedIndex) == this.aIndex) return;
+		if (e.target != this.st_tabpanels || (aIndex = this.st_tabbox.selectedIndex) == this.aIndex) return;
 		var browser = this[`st_browser_${this.aIndex}`];
 		this.loadURI(browser, "about:blank");
 		this.aIndex = aIndex;
 		this.prefs.setIntPref(this.last_index, aIndex);
-		this.toolbox.style.width = `${this.prefs.getIntPref(`${this.toolbox_width}${aIndex}`, ST_WIDTH)}px`;
+		var width = `${this.prefs.getIntPref(`${this.toolbox_width}${aIndex}`, WIDTH)}px`;
+		this.toolbox.style.width = width;
+		document.documentElement.style.setProperty("--v-sidebar-tabs-width", width);
 		browser = this[`st_browser_${aIndex}`], {url, options} = this.urlsMap.get(aIndex);
 		this.loadURI(browser, url, options);
 	},
 	open() {
 		this.toolbox.hidden = this.splitter.hidden = false;
 		var {aIndex} = this;
-		this.toolbox.style.width = `${this.prefs.getIntPref(`${this.toolbox_width}${aIndex}`, ST_WIDTH)}px`;
+		this.toolbox.style.width = `${this.prefs.getIntPref(`${this.toolbox_width}${aIndex}`, WIDTH)}px`;
 		this.addListener(this.st_tabpanels, "select", this);
 		this.addListener(this.splitter, "dragstart", this);
 		var browser = this[`st_browser_${aIndex}`], {url, options} = this.urlsMap.get(aIndex);
@@ -237,6 +248,9 @@
 			this.prefs.setBoolPref(this.last_open, false);
 			this._open = false;
 		}
+		this.togglebutton();
+	},
+	togglebutton() {
 		if (this.button ||= CustomizableUI.getWidget(ID)?.forWindow(window).node)
 			this.button.checked = this._open;
 	},
@@ -256,7 +270,8 @@
 				this.st_tabbox.selectedIndex = aIndex;
 				if (!this._open) {
 					this.aIndex = aIndex;
-					this.toggle();
+					this.open();
+					this.togglebutton();
 				}
 				return;
 			}
@@ -266,7 +281,8 @@
 		} catch (e) {console.log(e)}
 	},
 	click(e) {
-		var url = !(e.shiftKey || e.button === 1) ? (gContextMenu?.linkURI?.displaySpec || this.getCurrentURL()) : UcfGlob.readFromClipboard();
+		var url = (gContextMenu?.linkURI?.displaySpec || this.getCurrentURL());
+		url = !(e.shiftKey || e.button === 1) ? url : this.API.readFromClip() || url;
 		var {staIndex} = e.currentTarget;
 		var userContextId = gContextMenu?.contentData?.userContextId;
 		var triggeringPrincipal = gContextMenu?.principal;
@@ -318,7 +334,7 @@
 			mitem.id = `ucf-sidebar-tabs-${++itemId}`;
 			mitem.className = "menuitem-iconic ucf-sidebar-tabs";
 			mitem.setAttribute("label", label);
-			mitem.tooltipText = "Колёсико откроет ссылку из буфера обмена";
+			mitem.tooltipText = "Колёсико откроет адрес из буфера обмена";
 			if (icon)
 				mitem.style.cssText = `list-style-image:url("${icon}");-moz-context-properties:fill,stroke,fill-opacity;stroke:currentColor;fill:currentColor;fill-opacity:var(--toolbarbutton-icon-fill-opacity,.8);`;
 			mitem.staIndex = aIndex;

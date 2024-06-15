@@ -30,7 +30,7 @@ try {(() => {
 			var muim_0 = doc.createXULElement("menuitem");
 			muim_0.id = `${id}-all-history`;
 			muim_0.className = "ucf-menuitem";
-			muim_0.setAttribute("label", "Показать весь журнал");
+			muim_0.setAttribute("label", "Показать журнал за этот день");
 			muim_0.addEventListener("command", e => {
 				e.stopPropagation();
 				win.PlacesCommandHook.showPlacesOrganizer("History");
@@ -39,7 +39,7 @@ try {(() => {
 			var muim_1 = doc.createXULElement("menuitem");
 			muim_1.id = `${id}-sanitize`;
 			muim_1.className = "ucf-menuitem";
-			muim_1.setAttribute("label", "Удалить недавнюю историю…");
+			muim_1.setAttribute("label", "Выбор удаления: Журнал, Куки, формы Поиска…");
 			muim_1.addEventListener("command", e => {
 				e.stopPropagation();
 				win.Sanitizer.showUI(win);

@@ -2,7 +2,7 @@ setTimeout(() => {(async (win) => { //старт браузера: ucf_hookClick
 	warn =(txt,title)=> Cc["@mozilla.org/alerts-service;1"].getService(Ci.nsIAlertsService).showAlertNotification(null,"Ошибка "+ title, "Не загружен скрипт "+ txt,false);
 	if (win.document.getElementById("nav-bar").tooltip.indexOf("ucf") < 0)
 		warn(`ucf_hookClicks.js\n(или открыто новое окно Firefox)`, "UserScripts");
-	if(typeof Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")] != "object")
+	if(typeof Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")] != "object")
 		warn(`ucb_SaveHTML.mjs`,`глобальных функций`);
 })(Services.wm.getMostRecentWindow("navigator:browser"));}, 9e3);
 
