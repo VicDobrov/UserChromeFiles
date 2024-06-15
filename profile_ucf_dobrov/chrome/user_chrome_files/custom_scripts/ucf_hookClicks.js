@@ -94,16 +94,14 @@ Menu = { // alt правый клик, mid колёсико, upd обновля�
 			gBrowser.selectedBrowser.browsingContext.inRDMPane && BrowserEx("reload");},
 	},
 	Site: {lab: `сайт в единый HTML | в SideBar`, img: F.Z +"globe.svg",
-		upd(){
-			this.tooltipText = `Правый клик: Сайт в боковую панель\nКолёсико: сохранить через SingleFile`;
-			Status(this.url = URL()[0]);
-		},
+		inf: `Правый клик: Сайт в боковую панель\nКолёсико: сохранить через SingleFile`,
 		alt(trg, url){
 			let sb = ucf_custom_script_win.ucf_sidebar_tabs;
 			if(!sb) throw F.q +"ucf_SidebarTabs.js";
 			if(sb._open) sb.toggle()
 			else sb.setPanel(0, url || trg.url || "https://"+ F.J);},
-		cmd(){HTML()}, mid(){HTML(true)}, inf: 1
+		cmd(){HTML()}, mid(){HTML(true)},
+		upd(){Status(this.url = URL())} //получить URL вкладки
 	},
 	Tab: {lab: `Вернуть вкладку | Обновить все`, inf: F.b, img: F.Z +"reload.svg",
 		cmd(btn){btn.ownerGlobal.undoCloseTab()},
@@ -221,7 +219,7 @@ Keys = { //перехват-клавиш KeyA[_mod][_OS](e,t){код} и KeyB: "
 	KeyS_6(){saveSelToTxt()}, // Ctrl+Shift+S
 	KeyS_15_macosx: "KeyS_6", // Super+S
 	KeyS_1(e,t){HTML()}, //Alt+S | e: Event, t: gBrowser.selectedTab
-	KeyB_5(e){Menu.Site.alt(e, URL()[0])}, //Ctrl+Alt+B
+	KeyB_5(e){Menu.Site.alt(e, URL())}, //Ctrl+Alt+B
 /*
 	mod = metaKey*8 + ctrlKey*4 + shiftKey*2 + altKey
 	mod + I в конце: только в полях ввода, «i» кроме полей ввода
@@ -304,13 +302,13 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		272(btn){btn.ownerGlobal.PlacesCommandHook.showPlacesOrganizer("History")} //R+Shift
 	},
 	[F.I]: { //замок
-		1(btn){Menu.Site.alt(btn, URL()[0])},
+		1(btn){Menu.Site.alt(btn, URL())},
 		8(){UCF()}, //+Alt
 		16(btn){Mouse[F.I][1](btn)}, //+Shift
 		128(btn){Menu.View.cmd(btn)},
 		2(trg,forward){bright(trg,forward,5)}, //яркость
 		10(trg,forward){bright(trg,forward)},
-		256(){gClipboard.write(URL()[0]);
+		256(){gClipboard.write(URL());
 			UcfAPI.Flash(0,'rgba(240,176,0,0.5)',0,"в буфере: "+ gURLBar.value.slice(0,80));}
 	},
 	[F.F]: { //favdirs кнопка
@@ -331,7 +329,7 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 			BrowserEx("pageInfo", btn,"mediaTab") //securityTab feed… perm…
 		},
 		256(btn){Cookies()}, //R куки
-		128(btn){Exp() ? toTab("about:serviceworkers") : Menu.Site.alt(btn, URL()[0])} //С
+		128(btn){Exp() ? toTab("about:serviceworkers") : Menu.Site.alt(btn, URL())} //С
 	},
 	[F[2]]: {2(trg,forward){zoom(forward)}}, //zoompage
 	[F[3]]: {2(){Mouse[F[2]][2]()}},
@@ -890,7 +888,7 @@ CfgProxy = async() =>{var win = await Dialog(); win.opener = window; win.opener.
 UCF = (p = "user_chrome") => {if (!UcfAPI.FileOk(F.s + p +"/prefs.xhtml")) p = "options";
 	window.switchToTabHavingURI(F.s + p +"/prefs.xhtml",true,{relatedToCurrent: true,triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal()});
 },
-Cookies = async() =>{var uri = URL()[0];
+Cookies = async() =>{var uri = URL();
 	try {var tld = Services.eTLD.getBaseDomain(uri);} catch {var tld = uri.asciiHost}
 	var sb = (await Dialog("preferences/dialogs/siteDataSettings.xhtml", "Browser:SiteDataSettings")).document.querySelector("#searchBox");
 	sb.inputField.setUserInput(tld);
@@ -919,7 +917,7 @@ FavItem = (end = false,def_url = 'ua.ru', s = 0,m = 1)=>{ //first|last url Ме�
 	}; return def_url;
 },
 toFav =()=> {with (PlacesUtils.bookmarks){ //без диалога
-	var url = URL()[0];
+	var url = URL();
 	search({url}).then(async array => {
 		if(array.length)
 			try {await remove(array);} catch {}

@@ -1,4 +1,4 @@
-(async ( // -- Настройки  Sidebar Tabs -->
+(async ( // Sidebar Tabs © VitaliyV, mod Dobrov
 	ID = "ucf_sidebar_tabs",
 	TABS = [
 		{
@@ -279,7 +279,7 @@
 		} catch (e) {console.log(e)}
 	},
 	click(e) {
-		var url = (gContextMenu?.linkURI?.displaySpec || this.API.URL()[0]);
+		var url = (gContextMenu?.linkURI?.displaySpec || this.API.URL());
 		url = !(e.shiftKey || e.button === 1) ? url : this.API.readFromClip() || url;
 		var {staIndex} = e.currentTarget;
 		var userContextId = gContextMenu?.contentData?.userContextId;

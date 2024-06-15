@@ -61,7 +61,7 @@ ChromeUtils.domProcessChild.childID || ({
 				path = fp.file.path
 			else return;
 		}; to = 1;
-		try {await IOUtils.writeUTF8(path, data +'<a href='+ (protocol != 'data:' ? self.UcfAPI.URL()[0] : 'data:uri') +'><small><blockquote>источник: '+ new Date().toLocaleString("ru") +'</blockquote></small></a>');} catch {to = 0}
+		try {await IOUtils.writeUTF8(path, data +'<a href='+ (protocol != 'data:' ? self.UcfAPI.URL() : 'data:uri') +'><small><blockquote>источник: '+ new Date().toLocaleString("ru") +'</blockquote></small></a>');} catch {to = 0}
 		await self.UcfAPI.Succes(path, to, '√ страница записана: '+ t);
 	},
 UcfAPI: {
@@ -144,9 +144,10 @@ UcfAPI: {
 		var actor = bc?.currentWindowGlobal?.getActor(name);
 		actor && self.save(...await actor.sendQuery(""), to); //htmlAndName
 	},
-	URL(url, win = self.win){ //[url, host]
+	URL(url, host, win = self.win){
 		url ||= decodeURIComponent(win.gBrowser.selectedBrowser.currentURI.displaySpec.replace(/.+url=http/,'http'));
-		return [url, /^file:\/\//.test(url) ? 'file' : url.replace(/^.*u=|https?:\/\/|www\.|\/.*/g,'').replace(/^(moz-extension|ru\.|m\.)/,'').replace(/\/.*/,'')];
+		if(host) url = /^file:\/\//.test(url) ? 'file' : url.replace(/^.*u=|https?:\/\/|www\.|\/.*/g,'').replace(/^(moz-extension|ru\.|m\.)/,'').replace(/\/.*/,'');
+		return url;
 	},
 	TitlePath(to, d, h, win = self.win, n = 0, u = 99){ //0 web|2 pic|-№ cut, name, url
 		if(parseInt(to) > 0) [n,to] = [to,n]; if(parseInt(to) < 0) u = Math.abs(to);
@@ -155,7 +156,7 @@ UcfAPI: {
 		to = to.split('|').slice(0 + n, 2 + n); //Dir/Sub|[empty|0 title|1 url]
 		d = /^blank/.test(d || "blank") ? win.gBrowser.selectedTab.label : d;
 		d = d.replace(/\s+/g,' ').replace(/:/g,'։').replace(/[|<>]+/g,'_').replace(/([\\\/?*\"'`]+| ։։ .*)/g,'').slice(0,u).trim();
-		n = this.URL(); u = h || n[0]; h = n[1], n = d;
+		n = this.URL(); u = h || n; h = this.URL(0, 1), n = d;
 		to[1] = (to[1] == "0") ? d : (to[1] == "1") ? h : "";
 		d += "_"+ new Date().toLocaleDateString('ru', {day: 'numeric',month: 'numeric',year: '2-digit'}) +'-'+ new Date().toLocaleTimeString('en-GB').replace(/:/g,"։"); //дата-часы
 		try {var dir = prefs.getComplexValue("browser.download.dir",Ci.nsIFile);} catch {dir = dirsvc.get("DfltDwnld",Ci.nsIFile)}
