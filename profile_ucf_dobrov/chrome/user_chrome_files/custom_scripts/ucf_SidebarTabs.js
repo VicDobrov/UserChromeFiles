@@ -184,7 +184,7 @@
 				}).init();
 			`, UcfPrefs.customSandbox);
 		setUnloadMap(ID, this.destructor, this);
-		this.API = Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")];
+		this.API = Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")]; //ucb_SaveHTML.mjs
 	},
 	getTabs() {
 		var str = panels_str = "", menus = [];
@@ -279,7 +279,7 @@
 		} catch (e) {console.log(e)}
 	},
 	click(e) {
-		var url = (gContextMenu?.linkURI?.displaySpec || this.getCurrentURL());
+		var url = (gContextMenu?.linkURI?.displaySpec || this.API.URL()[0]);
 		url = !(e.shiftKey || e.button === 1) ? url : this.API.readFromClip() || url;
 		var {staIndex} = e.currentTarget;
 		var userContextId = gContextMenu?.contentData?.userContextId;
@@ -349,15 +349,6 @@
 		if (hiding(e)) return;
 		for (let {elm} of this.eventCListeners)
 			elm.hidden = true;
-	},
-	getCurrentURL() {
-		var url = gBrowser.selectedBrowser.currentURI.displaySpec;
-		try {
-			let _url = ReaderMode.getOriginalUrl(url);
-			if (_url)
-				url = Services.io.newURI(_url).displaySpec;
-		} catch {}
-		return url;
 	},
 	destructor() {
 		this.eventListeners.forEach(item => {
