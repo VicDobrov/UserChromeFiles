@@ -38,7 +38,6 @@
 	HIDE_HEADER = true,
 	HIDE_FULLSCREEN = false, // Hide in full screen mode
 	SELECTOR = "#context-media-eme-separator",
-	KEY = "KeyB_true_true_false", // HotKey: code ctrlKey altKey shiftKey
 	popup,
 	showing = (e, g) => (e.target != popup || g.webExtBrowserType === "popup" || (g.isContentSelected || g.onTextInput || g.onImage || g.onVideo || g.onAudio || g.inFrame) && !g.linkURL),
 	hiding = e => (e.target != popup),
@@ -155,7 +154,6 @@
 		delete this.panels_str;
 		if (open)
 			this.open();
-		this.addListener(window, "keydown", this);
 		this.addListener(this.st_close_btn, "command", this);
 		if (this.menus.length) {
 			popup = document.querySelector("#contentAreaContextMenu");
@@ -300,10 +298,6 @@
 	},
 	mouseup() {
 		this.splitter.removeEventListener("mousemove", this);
-	},
-	keydown(e) {
-		if (KEY === `${e.code}_${e.getModifierState("Control")}_${e.altKey}_${e.shiftKey}`)
-			this.toggle();
 	},
 	command() {
 		this.toggle();

@@ -221,6 +221,7 @@ Keys = { //перехват-клавиш KeyA[_mod][_OS](e,t){код} и KeyB: "
 	KeyS_6(){saveSelToTxt()}, // Ctrl+Shift+S
 	KeyS_15_macosx: "KeyS_6", // Super+S
 	KeyS_1(e,t){HTML()}, //Alt+S | e: Event, t: gBrowser.selectedTab
+	KeyB_5(e){Menu.Site.alt(e, URL()[0])}, //Ctrl+Alt+B
 /*
 	mod = metaKey*8 + ctrlKey*4 + shiftKey*2 + altKey
 	mod + I в конце: только в полях ввода, «i» кроме полей ввода
@@ -836,11 +837,11 @@ tooltip = (id = document.getElementById(F.T), s = "\n◨ правый клик: 
 },
 tooltip_x = (trg,text = "", ttt = "") => {
 	if(!trg.id.endsWith("x")){ //box
-		ttt = (trg.hasAttribute("tooltiptext")) ? trg.ttt = trg.tooltipText : trg.ttt;
+		ttt = (trg.hasAttribute("tooltiptext")) ? trg.ttt = trg.tooltipText : trg.ttt || "";
 		if(ttt && ttt.indexOf(text) == -1) ttt += "\n\n";
 		trg.removeAttribute("tooltiptext");
 	}
-	return (ttt && ttt.indexOf(text) == -1) ? ttt + text : ttt || text;
+	return ttt.indexOf(text) == -1 ? ttt + text : ttt;
 },
 bright = (trg,forward,step = 1,val) => { //wheel
 	val ||= getIntPref(tabr) + (forward ? step : -step);
