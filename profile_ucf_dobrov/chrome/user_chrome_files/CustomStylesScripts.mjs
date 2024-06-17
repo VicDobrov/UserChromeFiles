@@ -51,9 +51,9 @@ export var UcfStylesScripts = {
 	*/
 	scriptschrome: { // For browser window document [ChromeOnly]
 		domload: [ // By event "DOMContentLoaded"
+		{ path: "sidebar_tabs_mod.js", ucfobj: true, },// Sidebar Tabs			
 		{ path: "ucf_autohidetabstoolbar.js", ucfobj: true },
 		{ path: "ucf_hookClicks.js", ucfobj: true }, //+ attrsInspector.js
-		{ path: "ucf_SidebarTabs.js", ucfobj: true },
 		{ path: "ucf_contextsearch.js", ucfobj: true },
 		{ path: "ucf_contextmenu_openwith.js", ucfobj: true },
 		{ path: "ucf_BookmarkDir.js", ucfobj: true },
@@ -61,7 +61,6 @@ export var UcfStylesScripts = {
 		{ path: "ucf_downloads_clear.js", ucfobj: true },
 		{ path: "ucf_mousedrag.js", ucfobj: true },
 		{ path: "LocationBarEnhancer.js", ucfobj: true },
-		{ path: "undoBookmarks.js", ucfobj: true },
 		],
 		load: [ // By event "load"
 			{ path: "custom_script_win.js", ucfobj: true, },
@@ -77,6 +76,7 @@ export var UcfStylesScripts = {
 		load: [ // By event "load"
 			// { path: "custom_script_all_win.js", urlregxp: /^(?:chrome|about):/, ucfobj: true, }, // <-- For chrome|about protocol
 			// { path: "example_places.js", urlregxp: /chrome:\/\/browser\/content\/places\/places\.xhtml/, ucfobj: false, }, // <-- Example
+		{ path: "places_context_open.js", urlregxp: /chrome:\/\/browser\/content\/(?:browser|places\/(?:bookmarksSidebar|historySidebar|places))\.xhtml/, ucfobj: false, },
 		{ path: "undoBookmarks.js", urlregxp: /chrome:\/\/browser\/content\/places\/places\.xhtml/, ucfobj: false, },
 		],
 	},
@@ -97,7 +97,7 @@ export var UcfStylesScripts = {
 };
 
 export var UcfStylesScriptsChild = {
-	/** ************************▼ Сontent Settings ▼************************ */
+	/** ************************▼ Content Settings ▼************************ */
 	/**
 	* Styles Settings:
 	* @param {String} type: (required)
@@ -146,5 +146,5 @@ export var UcfStylesScriptsChild = {
 
 		],
 	},
-	/** ************************▲ Сontent Settings ▲************************ */
+	/** ************************▲ Content Settings ▲************************ */
 };

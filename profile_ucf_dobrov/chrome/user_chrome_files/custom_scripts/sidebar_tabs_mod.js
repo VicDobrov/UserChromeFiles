@@ -1,22 +1,3 @@
-(async sep => { //закладку в Sidebar Tabs
-	if (!sep) return;
-	var popup = sep.parentNode;
-	var menuitem = document.createXULElement("menuitem");
-	for(var args of Object.entries({
-		label: "Открыть в Sidebar Tabs",
-		id: "placesContext_open:sidebartabs",
-		"node-type": "link", "selection-type": "single"
-	}))
-	menuitem.setAttribute(...args);
-	menuitem.className = "menuitem-iconic";
-	menuitem.setAttribute("image", "resource://ucf_sidebar_tabs");
-	menuitem.addEventListener("command", () => {
-		var {uri} = popup.triggerNode._placesNode || popup._view.selectedNode;
-		Services.wm.getMostRecentBrowserWindow().ucf_custom_script_win.ucf_sidebar_tabs.setPanel(0, uri);
-	});
-	sep.before(menuitem);
-})(document.querySelector("menupopup#placesContext > #placesContext_openSeparator"));
-
 (async ( // Sidebar Tabs © VitaliyV, mod Dobrov
 	ID = "ucf_sidebar_tabs",
 	TABS = [
@@ -53,8 +34,6 @@
 	WIDTH = 350,
 	NAME = "Sidebar Tabs",
 	TOOLTIP = "Открыть / Закрыть Sidebar Tabs",
-	CLOSE_BTN_TOOLTIP = "Закрыть панель",
-	HIDE_HEADER = true,
 	HIDE_FULLSCREEN = false, // Hide in full screen mode
 	SELECTOR = "#context-media-eme-separator",
 	popup,
@@ -78,12 +57,6 @@
 				color: var(--toolbar-color, FieldText) !important;
 				overflow: hidden !important;
 				border-inline-${RIGHT ? "end" : "start"}: 1px solid var(--chrome-content-separator-color, ThreeDShadow) !important;
-			}
-			#st_toolbox #st_header {
-				padding: 6px !important;
-				padding-bottom: 3px !important;
-				flex-direction: ${RIGHT ? "row" : "row-reverse"} !important;
-				${HIDE_HEADER ? "display: none !important;" : ""}
 			}
 			#st_toolbox [flex="1"] {
 				flex: 1 !important;
@@ -144,11 +117,6 @@
 		document.documentElement.setAttribute("sidebar_tabs_right", `${RIGHT}`);
 		var fragment = this.fragment = MozXULElement.parseXULToFragment(`
 			<vbox id="st_toolbox" class="chromeclass-extrachrome" hidden="true">
-				<hbox id="st_header" align="center">
-					<label>${NAME}</label>
-					<spacer flex="1"/>
-					<toolbarbutton id="st_close_button" class="close-icon tabbable" tooltiptext="${CLOSE_BTN_TOOLTIP}"/>
-				</hbox>
 				<tabbox id="st_tabbox" flex="1">
 					<tabs id="sbar_tabs">
 						${this.getTabs()}
@@ -167,13 +135,11 @@
 			this[`${browser.id}`] = browser;
 		this.st_tabpanels = this.toolbox.querySelector("#st_tabpanels");
 		this.st_tabbox = this.toolbox.querySelector("#st_tabbox");
-		this.st_close_btn = this.toolbox.querySelector("#st_close_button");
 		this.st_tabbox.handleEvent = function() {};
 		this.st_tabbox.selectedIndex = this.aIndex = this.prefs.getIntPref(this.last_index, 0);
 		delete this.panels_str;
 		if (open)
 			this.open();
-		this.addListener(this.st_close_btn, "command", this);
 		if (this.menus.length) {
 			popup = document.querySelector("#contentAreaContextMenu");
 			this.addListener(popup, "popupshowing", this);
