@@ -29,8 +29,9 @@
 ◨ прав. клик	Вернуть вкладку
 ◉ колёсико	Оставить 1 текущую`, [F.I]: //identity-box
 
-`◨ правый клик	Копировать адрес в буфер
-◧ лев. держать	переключить сайт в Sidebar {︰\n
+`◧ лев. держать	переключить сайт в Sidebar 
+◨ правый клик	Копировать адрес в буфер {︰
+◧ прав. + Alt		Настройки Proxy\n
 ◉ колёсико		Мобильный дизайн}
 ${F.l}`, [F.F]: //FavDir
 
@@ -256,29 +257,20 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 			for (var i = 0; i < gBrowser.tabs.length; i++) gBrowser.getBrowserAtIndex(i).stop() },
 		257(){switchProxy()}
 	},
-	[F.A + F.K]: { //ReaderView
-		2(trg,forward){bright(trg,forward,5)}, //яркость по wheel ±
-		128(btn){Menu.View.alt(btn)},
-		256(btn){Mouse[F.M][256](btn)}
-	},
-	"appMenu-print-button2": { //меню Печать…
-		1(){Help()}, 128(){Expert()},
-		256(){Mouse[F.L][256]()}
+	[F.N]: { //reload
+		1(){Menu.Tab.alt()}, //д
+		128(){for (var i = 0; i < gBrowser.tabs.length; i++) gBrowser.getBrowserAtIndex(i).stop()}, //СМ
+		256(){BrowserEx("reloadSkipCache")}, //R
+		257(){switchProxy()} //дR
 	},
 	[F.L]: { //print
 		1(){Help()}, //д
 		128(){Expert()},
 		256(){doComm()} //R print
 	},
-	[F.M]: { //➿
-		2(trg,forward){bright(trg,forward,5)}, //яркость
-		256(btn){Menu.View.cmd(btn)} //MobileView
-	},
-	[F.N]: { //reload
-		1(){Menu.Tab.alt()}, //д
-		128(){for (var i = 0; i < gBrowser.tabs.length; i++) gBrowser.getBrowserAtIndex(i).stop()}, //СМ
-		256(){BrowserEx("reloadSkipCache")}, //R
-		257(){switchProxy()} //дR
+	"appMenu-print-button2": { //меню Печать…
+		1(){Help()}, 128(){Expert()},
+		256(){Mouse[F.L][256]()}
 	},
 	[F.D]: {mousedownTarget: true, //не передавать нажатия дальше
 		1(){ Menu.O.DwDir.cmd()}, //д
@@ -303,18 +295,28 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 	},
 	[F.I]: { //замок
 		1(btn){Menu.Site.alt(btn, URL())},
+		16(btn){Mouse[F.I][1](btn)}, //Shift
 		8(){UCF()}, //+Alt
-		16(btn){Mouse[F.I][1](btn)}, //+Shift
 		128(btn){Menu.View.cmd(btn)},
 		2(trg,forward){bright(trg,forward,5)}, //яркость
-		10(trg,forward){bright(trg,forward)},
+		10(trg,forward){bright(trg,forward)}, //Alt
 		256(){gClipboard.write(URL());
-			UcfAPI.Flash(0,'rgba(240,176,0,0.5)',0,"в буфере: "+ gURLBar.value.slice(0,80));}
+			UcfAPI.Flash(0,'rgba(240,176,0,0.5)',0,"в буфере: "+ gURLBar.value.slice(0,80));},
+		264(){CfgProxy()} //R+Alt
+	},
+	[F.O]: { //щит
+		1(){Mouse[F.Q][136]()}, //д Шрифты
+		2(trg,forward){bright(trg,forward)},
+		16(btn){ //Shift
+			BrowserEx("pageInfo", btn,"mediaTab") //securityTab feed… perm…
+		},
+		256(btn){Cookies()}, //R куки
+		128(btn){Exp() ? toTab("about:serviceworkers") : Menu.Site.alt(btn, URL())} //С
 	},
 	[F.F]: { //favdirs кнопка
 		0(btn){btn.ownerGlobal.SidebarUI.toggle("viewBookmarksSidebar")},
 		256(btn){btn.ownerGlobal.SidebarUI.toggle("viewHistorySidebar")},
-		8(){UcfAPI.dirGet("Home")}, //+Alt
+		8(){UcfAPI.dirGet("Home")}, //Alt
 		128(btn){
 			btn.ownerGlobal.PlacesCommandHook.showPlacesOrganizer("Downloads")},
 		136(){ //C+Alt
@@ -322,38 +324,17 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		264(){ //R+Alt
 			UcfAPI.dirGet("GreD")}
 	},
-	[F.O]: { //щит
-		1(){Mouse[F.Q][136]()}, //д Шрифты
-		2(trg,forward){bright(trg,forward)},
-		16(btn){ //+Shift
-			BrowserEx("pageInfo", btn,"mediaTab") //securityTab feed… perm…
-		},
-		256(btn){Cookies()}, //R куки
-		128(btn){Exp() ? toTab("about:serviceworkers") : Menu.Site.alt(btn, URL())} //С
-	},
-	[F[2]]: {2(trg,forward){zoom(forward)}}, //zoompage
-	[F[3]]: {2(){Mouse[F[2]][2]()}},
 	[F[0]]: { //title-close
 		1(){Help()},
 		128(btn){btn.ownerGlobal.undoCloseTab()},
 		256(){minimize()}
 	},
-	[F.R]: {mousedownTarget: true, //AttrView
-		0(){Status("Ctrl+Shift+C - copy tooltip's contents")},
-		128(){Menu.O.Remote.cmd()}, //C
-		256(){UCF()},
-		257(){toTab('about:debugging#/runtime/this-firefox')} //дR
-	},
 	[F.E]: {mousedownTarget: true,
-		1(){
-			Menu.O.DelCache.cmd();
-		}, //д
+		1(){Menu.O.DelCache.cmd()}, //д
 		128(btn){btn.id && UCF()}, //UCFprefs
-		129(){ //дС
-			toTab('about:addons')},
-		256(btn){
-			with(document.getElementById(F.Q))
-				config.menu_open_close(btn, menupopup);
+		129(){toTab('about:addons')}, //дС
+		256(btn){with(document.getElementById(F.Q))
+			config.menu_open_close(btn, menupopup);
 		},
 		257(){Mouse[F.R][257]()}
 	},
@@ -402,7 +383,24 @@ Mouse = { //клики Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long
 		136(){ //С+Alt
 			var n = "browser.display.use_document_fonts",f = Pref(n) ? 0 : 1;
 			Pref(n,f); zoom(0,0,0,(f > 0) ? " + Web-шрифты" : ""); BrowserEx("reload");}
-	}
+	},
+	[F.R]: {mousedownTarget: true, //AttrView
+		0(){Status("Ctrl+Shift+C - copy tooltip's contents")},
+		128(){Menu.O.Remote.cmd()}, //C
+		256(){UCF()},
+		257(){toTab('about:debugging#/runtime/this-firefox')} //дR
+	},
+	[F.M]: { //➿
+		2(trg,forward){bright(trg,forward,5)}, //яркость
+		256(btn){Menu.View.cmd(btn)} //MobileView
+	},
+	[F.A + F.K]: { //ReaderView
+		2(trg,forward){bright(trg,forward,5)}, //яркость по wheel ±
+		128(btn){Menu.View.alt(btn)},
+		256(btn){Mouse[F.M][256](btn)}
+	},
+	[F[2]]: {2(trg,forward){zoom(forward)}}, //zoompage
+	[F[3]]: {2(){Mouse[F[2]][2]()}},
 }; Mouse["add-ons-button"] = Mouse[F.E];
 Object.keys(Mouse).forEach((k) =>{Mus["."+ k] = Mus["#"+ k] = Mouse[k]});
 
