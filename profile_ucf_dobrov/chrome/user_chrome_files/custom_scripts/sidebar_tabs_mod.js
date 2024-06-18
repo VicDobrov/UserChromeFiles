@@ -1,39 +1,29 @@
-(async ( // Sidebar Tabs © VitaliyV, mod Dobrov
+(async ( // Sidebar Tabs © VitaliyV, mod Dobrov: нужен ucb_SaveHTML.mjs
 	ID = "ucf_sidebar_tabs",
 	TABS = [
-		{
-			label: "Сайт",
-			src: "https://rg.ru",
+		{ label: "Сайт",
+			src: "https://regnum.ru",
 			attributes: 'messagemanagergroup="webext-browsers" type="content" disableglobalhistory="true" context="contentAreaContextMenu" tooltip="aHTMLTooltip" autocompletepopup="PopupAutoComplete" remote="true" maychangeremoteness="true" ',
 			menu: {
-				label: "Адрес в панель SidebarTabs",
-				icon: `resource://${ID}`,
-			}
+				label: "Адрес в панель SidebarTabs", icon: `resource://${ID}`}
 		},
-		{
-			label: "Журнал",
-			src: "chrome://browser/content/places/historySidebar.xhtml",
+		{ label: "Журнал",
+			src: "chrome://browser/content/places/historySidebar.xhtml"
 		},
-		{
-			label: "Закладки",
-			src: "chrome://browser/content/places/bookmarksSidebar.xhtml",
+		{ label: "Закладки",
+			src: "chrome://browser/content/places/bookmarksSidebar.xhtml"
 		},
-		{
-			label: "Загрузки",
-			src: "chrome://browser/content/downloads/contentAreaDownloadsView.xhtml",
+		{ label: "Загрузки",
+			src: "chrome://browser/content/downloads/contentAreaDownloadsView.xhtml"
 		},
-		{
-			label: "Задачи", src: "about:processes",
+		{ label: "Задачи", src: "about:processes"
 		},
-		// {
-		// 	label: "Дополнения", src: "about:addons",
-		// 	attributes: 'type="content" disableglobalhistory="true" context="contentAreaContextMenu" tooltip="aHTMLTooltip" autocompletepopup="PopupAutoComplete" remote="false" maychangeremoteness="true" ',
-		// },
+	// { label: "Дополнения", src: "about:addons", attributes: 'type="content" disableglobalhistory="true" context="contentAreaContextMenu" tooltip="aHTMLTooltip" autocompletepopup="PopupAutoComplete" remote="false" maychangeremoteness="true" '},
 	],
 	RIGHT = true, // Расположение панели
 	WIDTH = 350,
 	NAME = "Sidebar Tabs",
-	TOOLTIP = "Открыть / Закрыть Sidebar Tabs",
+	TOOLTIP = "Открыть / Закрыть "+ NAME,
 	HIDE_FULLSCREEN = false, // Hide in full screen mode
 	SELECTOR = "#context-media-eme-separator",
 	popup,
@@ -169,7 +159,7 @@
 				}).init();
 			`, UcfPrefs.customSandbox);
 		setUnloadMap(ID, this.destructor, this);
-		this.API = Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")]; //ucb_SaveHTML.mjs
+		this.API = Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")];
 	},
 	getTabs() {
 		var str = panels_str = "", menus = [];
