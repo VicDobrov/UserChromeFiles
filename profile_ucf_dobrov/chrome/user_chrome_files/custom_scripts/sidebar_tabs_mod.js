@@ -2,7 +2,7 @@
 	ID = "ucf_sidebar_tabs",
 	TABS = [
 		{ label: "Сайт",
-			src: "https://regnum.ru",
+			src: "http://rus.vrw.ru",
 			attributes: 'messagemanagergroup="webext-browsers" type="content" disableglobalhistory="true" context="contentAreaContextMenu" tooltip="aHTMLTooltip" autocompletepopup="PopupAutoComplete" remote="true" maychangeremoteness="true" ',
 			menu: {
 				label: "Адрес в панель SidebarTabs", icon: `resource://${ID}`}
