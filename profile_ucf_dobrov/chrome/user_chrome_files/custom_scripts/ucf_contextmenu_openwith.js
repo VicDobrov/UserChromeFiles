@@ -32,7 +32,7 @@
 		],
 		OS_macosx = [
 			{	name: '|Видео загрузчик yt-dlp', path: '/usr/bin/osascript',
-				args: `-e "tell app %quotTerminal%quot to activate do script %quotyt-dlp '%OpenURI' && say сделано; exit%quot"`,
+				args: `-e "tell app %quotTerminal%quot to activate do script %quotrun ytdlp '%OpenURI' || { yt-dlp '%OpenURI' && say сделано; exit;}%quot"`,
 				hint: 'опции --downloader ffmpeg…',
 				roll: `-e "tell app %quotTerminal%quot to activate do script %quotyt-dlp --downloader ffmpeg --hls-use-mpegts '%OpenURI' && say сделано; exit%quot"`,
 				icon: 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4TC0AAAAvD8ADEA8QEfMfQlFt29T7MhRBFNGIJsqLYPhnqEJE/8P8772bd+qxBfOVCwIA'
@@ -65,7 +65,7 @@
 				trans.getTransferData("text/plain", data);
 				if (data.value)
 					url = data.value.QueryInterface(Ci.nsISupportsString).data;
-			} catch (ex) {}
+			} catch {}
 			return url;
 		};
 		var getCurrentURL = (url = gBrowser.selectedBrowser.currentURI.displaySpec) => {
@@ -73,7 +73,7 @@
 				let _url = ReaderMode.getOriginalUrl(url);
 				if (_url)
 					url = Services.io.newURI(_url).displaySpec;
-			} catch(e) {}
+			} catch {}
 			return url;
 		};
 		var getURL = key => {
@@ -123,9 +123,8 @@
 								args = args.split(/\s+(?=(?:[^"]*"[^"]*")*[^"]*$)/).map(sp => {
 									if (/%OpenURI/.test(sp)) {
 										openuri = true;
-										return sp.replace(/^["']+|["']+$/g, "").replace(/%quot/g, '"').replace("%OpenURI", getURL(e.shiftKey || e.button == 2));
+										return sp.replace(/^["']+|["']+$/g, "").replace(/%quot/g, '"').replace(/%OpenURI/g, getURL(e.shiftKey || e.button == 2));
 									}
-//сперва Clipboard: if (/%OpenClipboardURI/.test(……replace("%OpenClipboardURI", getURL(……; с Shift ссылка сайта или выдел. текст
 									return sp.replace(/^["']+|["']+$/g, "").replace(/%quot/g, '"');
 								});
 								if (!openuri)
@@ -135,7 +134,7 @@
 							process.runwAsync(args, args.length);
 						} else
 							file.launch();
-					} catch(e) {}
+					} catch {}
 				});
 			});
 			var funcpopupshowing, funcpopuphiding;
