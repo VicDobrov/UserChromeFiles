@@ -64,6 +64,9 @@ ChromeUtils.domProcessChild.childID || ({
 		try {await IOUtils.writeUTF8(path, data +'<a href='+ (protocol != 'data:' ? self.UcfAPI.URL() : 'data:uri') +'><small><blockquote>источник: '+ new Date().toLocaleString("ru") +'</blockquote></small></a>');} catch {to = 0}
 		await self.UcfAPI.Succes(path, to, '√ страница записана: '+ t);
 	},
+	w1251(txt, win1251 = new TextDecoder("windows-1251")){
+		return txt.replace(/(?:%[0-9A-F]{2})+/g, txt => win1251.decode(new Uint8Array(txt.replace(/%/g,",0x").slice(1).split(","))));
+	},
 UcfAPI: {
 	async restart(){
 		var meth = Services.appinfo.inSafeMode ? "restartInSafeMode" : "quit";
@@ -144,11 +147,8 @@ UcfAPI: {
 		var actor = bc?.currentWindowGlobal?.getActor(name);
 		actor && self.save(...await actor.sendQuery(""), to); //htmlAndName
 	},
-	w1251(txt, win1251 = new TextDecoder("windows-1251")){
-		return txt.replace(/(?:%[0-9A-F]{2})+/g, txt => win1251.decode(new Uint8Array(txt.replace(/%/g,",0x").slice(1).split(","))));
-	},
 	URL(url, host, win = self.win){
-		url = decodeURIComponent(this.w1251(url || win.gBrowser.selectedBrowser.currentURI.displaySpec).replace(/.+url=http/,'http'));
+		url = decodeURIComponent(self.w1251(url || win.gBrowser.selectedBrowser.currentURI.displaySpec).replace(/.+url=http/,'http'));
 		if(host) url = /^file:\/\//.test(url) ? 'file' : url.replace(/^.*u=|https?:\/\/|www\.|\/.*/g,'').replace(/^(moz-extension|ru\.|m\.)/,'').replace(/\/.*/,'');
 		return url;
 	},
