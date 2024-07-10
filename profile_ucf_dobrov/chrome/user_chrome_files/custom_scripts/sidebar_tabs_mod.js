@@ -16,15 +16,13 @@
 		{ label: "Загрузки",
 			src: "chrome://browser/content/downloads/contentAreaDownloadsView.xhtml"
 		},
-		{ label: "Задачи", src: "about:processes"
-		},
-	// { label: "Дополнения", src: "about:addons", attributes: 'type="content" disableglobalhistory="true" context="contentAreaContextMenu" tooltip="aHTMLTooltip" autocompletepopup="PopupAutoComplete" remote="false" maychangeremoteness="true" '},
+		{ label: "Задачи", src: "about:processes"},
 	],
 	RIGHT = true, // Расположение панели
 	WIDTH = 350,
 	NAME = "Sidebar Tabs",
 	TOOLTIP = "Открыть / Закрыть "+ NAME,
-	HIDE_FULLSCREEN = false, // Hide in full screen mode
+	HIDE_FULLSCREEN = false,
 	SELECTOR = "#context-media-eme-separator",
 	popup,
 	showing = (e, g) => (e.target != popup || g.webExtBrowserType === "popup" || (g.isContentSelected || g.onTextInput || g.onImage || g.onVideo || g.onAudio || g.inFrame) && !g.linkURL),
@@ -32,6 +30,7 @@
 ) => (this[ID] = {
 	last_open: "extensions.ucf.sidebar_tabs.last_open",
 	last_index: "extensions.ucf.sidebar_tabs.last_index",
+	last_src: "extensions.ucf.sidebar_tabs.last_src.",
 	toolbox_width: "extensions.ucf.sidebar_tabs.toolbox_width",
 	eventListeners: new Map(),
 	eventCListeners: [],
@@ -41,83 +40,83 @@
 		this.prefs = Services.prefs;
 		var open = this._open = this.prefs.getBoolPref(this.last_open, false);
 		windowUtils.loadSheetUsingURIString(`data:text/css;charset=utf-8,${encodeURIComponent(`
-			#st_toolbox {
-				background-color: Field !important;
-				background-image: linear-gradient(var(--toolbar-bgcolor), var(--toolbar-bgcolor)) !important;
-				color: var(--toolbar-color, FieldText) !important;
-				overflow: hidden !important;
-				border-inline-${RIGHT ? "end" : "start"}: 1px solid var(--chrome-content-separator-color, ThreeDShadow) !important;
-			}
-			#st_toolbox [flex="1"] {
-				flex: 1 !important;
-			}
-			#st_toolbox tabs > spacer {
-				display: none !important;
-			}
-			#st_toolbox :is(tabs,tabpanels,tab,label) {
-				appearance: none !important;
-				background-color: transparent !important;
-				color: inherit !important;
-				margin: 0 !important;
-				padding: 0 !important;
-				border: none !important;
-			}
-			#st_toolbox tabs {
-				justify-content: ${RIGHT ? "start" : "end"} !important;
-			}
-			#st_toolbox #st_tabpanels {
-				background-color: Field !important;
-				color: FieldText !important;
-			}
-			#st_toolbox tab {
-				margin: 0 !important;
-				padding: 3px 6px !important;
-				outline: none !important;
-				border-block: 2px solid transparent !important;
-				--default-focusring: none !important;
-			}
-			#st_toolbox tab:hover {
-				border-bottom-color: color-mix(in srgb, currentColor 30%, transparent) !important;
-			}
-			#st_toolbox tab[selected="true"] {
-				border-bottom-color: color-mix(in srgb, currentColor 80%, transparent) !important;
-			}
-			#st_splitter {
-				appearance: none !important;
-				cursor: ew-resize;
-				width: 6px !important;
-				position: relative !important;
-				z-index: 3 !important;
-				background-color: transparent !important;
-				border: none !important;
-				margin: 0 !important;
-				opacity: 0 !important;
-				margin-inline-${RIGHT ? "start" : "end"}: -6px !important;
-			}
-			#ucf-additional-vertical-container[v_vertical_bar_start="true"] {
-				order: 0 !important;
-			}
-			#ucf-additional-vertical-container[v_vertical_bar_start="false"] {
-				order: 102 !important;
-			}
-			:root:is(${HIDE_FULLSCREEN ? "[inFullscreen]," : ""}[inDOMFullscreen],[chromehidden~="extrachrome"]) :is(#st_vbox_container,#st_toolbox,#st_splitter) {
-				visibility: collapse !important;
-			}
+#st_toolbox {
+	background-color: Field !important;
+	background-image: linear-gradient(var(--toolbar-bgcolor), var(--toolbar-bgcolor)) !important;
+	color: var(--toolbar-color, FieldText) !important;
+	overflow: hidden !important;
+	border-inline-${RIGHT ? "end" : "start"}: 1px solid var(--chrome-content-separator-color, ThreeDShadow) !important;
+}
+#st_toolbox [flex="1"] {
+	flex: 1 !important;
+}
+#st_toolbox tabs > spacer {
+	display: none !important;
+}
+#st_toolbox :is(tabs,tabpanels,tab,label) {
+	appearance: none !important;
+	background-color: transparent !important;
+	color: inherit !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: none !important;
+}
+#st_toolbox tabs {
+	justify-content: ${RIGHT ? "start" : "end"} !important;
+}
+#st_toolbox browser[id^=st_browser_] {
+	color-scheme: light dark;
+	background-color: Field !important;
+	color: FieldText !important;
+}
+#st_toolbox tab {
+	margin: 0 !important;
+	padding: 3px 6px !important;
+	outline: none !important;
+	border-block: 2px solid transparent !important;
+	--default-focusring: none !important;
+}
+#st_toolbox tab:hover {
+	border-bottom-color: color-mix(in srgb, currentColor 30%, transparent) !important;
+}
+#st_toolbox tab[selected="true"] {
+	border-bottom-color: color-mix(in srgb, currentColor 80%, transparent) !important;
+}
+#st_splitter {
+	appearance: none !important;
+	cursor: ew-resize;
+	width: 6px !important;
+	position: relative !important;
+	z-index: 3 !important;
+	background-color: transparent !important;
+	border: none !important;
+	margin: 0 !important;
+	opacity: 0 !important;
+	margin-inline-${RIGHT ? "start" : "end"}: -6px !important;
+}
+#ucf-additional-vertical-container[v_vertical_bar_start="true"] {
+	order: 0 !important;
+}
+#ucf-additional-vertical-container[v_vertical_bar_start="false"] {
+	order: 102 !important;
+}
+:root:is(${HIDE_FULLSCREEN ? "[inFullscreen]," : ""}[inDOMFullscreen],[chromehidden~="extrachrome"]) :is(#st_vbox_container,#st_toolbox,#st_splitter) {
+	visibility: collapse !important;
+}
 		`)}`, windowUtils.USER_SHEET);
 		document.documentElement.setAttribute("sidebar_tabs_right", `${RIGHT}`);
 		var fragment = this.fragment = MozXULElement.parseXULToFragment(`
-			<vbox id="st_toolbox" class="chromeclass-extrachrome" hidden="true">
-				<tabbox id="st_tabbox" flex="1">
-					<tabs id="sbar_tabs">
-						${this.getTabs()}
-					</tabs>
-					<tabpanels id="st_tabpanels" flex="1">
-						${this.panels_str}
-					</tabpanels>
-				</tabbox>
-			</vbox>
-			<splitter id="st_splitter" class="chromeclass-extrachrome" hidden="true" resizebefore="sibling" resizeafter="none"/>
-		`);
+<vbox id="st_toolbox" class="chromeclass-extrachrome" hidden="true">
+	<tabbox id="st_tabbox" flex="1">
+		<tabs id="sbar_tabs">
+			${this.getTabs()}
+		</tabs>
+		<tabpanels id="st_tabpanels" flex="1">
+			${this.panels_str}
+		</tabpanels>
+	</tabbox>
+</vbox>
+<splitter id="st_splitter" class="chromeclass-extrachrome" hidden="true" resizebefore="sibling" resizeafter="none"/>`);
 		document.querySelector("#sidebar-box, #sidebar-main")?.before(document.importNode(fragment, true));
 		this.toolbox = document.querySelector("#st_toolbox");
 		this.splitter = document.querySelector("#st_splitter");
@@ -134,30 +133,24 @@
 			popup = document.querySelector("#contentAreaContextMenu");
 			this.addListener(popup, "popupshowing", this);
 		}
-		if (!(ID in UcfPrefs.customSandbox))
-			Cu.evalInSandbox(`
-				(this["${ID}"] = {
-					async init() {
-						Services.io.getProtocolHandler("resource")
-						.QueryInterface(Ci.nsIResProtocolHandler)
-						.setSubstitution("${ID}", Services.io.newURI("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><g style='fill:context-fill rgb(142, 142, 152);fill-opacity:context-fill-opacity;'><path d='M2 2C.892 2 0 2.89 0 4v9.1a2 2 0 0 0 2 2h12c1.1 0 2-.9 2-2V4a2 2 0 0 0-2-2Zm0 1h12c.6 0 1 .45 1 1v9.1c0 .5-.5.9-1 .9H1.99c-.55 0-.99-.4-.99-.9V4c0-.55.45-1 1-1Z'/> <rect width='14' height='1' x='1' y='6'/> <rect width='1' height='7' x='5' y='7'/></g></svg>"));
-						CustomizableUI.createWidget({
-							id: "${ID}",
-							label: "${NAME}",
-							tooltiptext: "${TOOLTIP}",
-							defaultArea: CustomizableUI.AREA_NAVBAR,
-							localized: false,
-							onCreated(btn) {
-								btn.style.setProperty("list-style-image", 'url("resource://${ID}")');
-								btn.checked = btn.ownerGlobal.ucf_custom_script_win?.["${ID}"]?._open ?? Services.prefs.getBoolPref("${this.last_open}", true);
-							},
-							onCommand(e) {
-							   e.view.ucf_custom_script_win["${ID}"].toggle();
-							}
-						});
-					},
-				}).init();
-			`, UcfPrefs.customSandbox);
+		if (!(ID in UcfPrefs.customSandbox)) Cu.evalInSandbox(`
+(this["${ID}"] = {
+	async init() {
+		Services.io.getProtocolHandler("resource").QueryInterface(Ci.nsIResProtocolHandler)
+		.setSubstitution("${ID}", Services.io.newURI("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><g style='fill:context-fill rgb(142, 142, 152);fill-opacity:context-fill-opacity;'><path d='M2 2C.892 2 0 2.89 0 4v9.1a2 2 0 0 0 2 2h12c1.1 0 2-.9 2-2V4a2 2 0 0 0-2-2Zm0 1h12c.6 0 1 .45 1 1v9.1c0 .5-.5.9-1 .9H1.99c-.55 0-.99-.4-.99-.9V4c0-.55.45-1 1-1Z'/> <rect width='14' height='1' x='1' y='6'/> <rect width='1' height='7' x='5' y='7'/></g></svg>"));
+		CustomizableUI.createWidget({
+			id: "${ID}", label: "${NAME}", tooltiptext: "${TOOLTIP}",
+			defaultArea: CustomizableUI.AREA_NAVBAR, localized: false,
+			onCreated(btn) {
+				btn.style.setProperty("list-style-image", 'url("resource://${ID}")');
+				btn.checked = btn.ownerGlobal.ucf_custom_script_win?.["${ID}"]?._open ?? Services.prefs.getBoolPref("${this.last_open}", true);
+			},
+			onCommand(e) {
+			   e.view.ucf_custom_script_win["${ID}"].toggle();
+			}
+		});
+	}
+}).init();`, UcfPrefs.customSandbox);
 		setUnloadMap(ID, this.destructor, this);
 		this.API = Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")];
 	},
@@ -168,7 +161,7 @@
 			panels_str += `<vbox id="st_container_${ind}" flex="1">
 				<browser id="st_browser_${ind}" flex="1" autoscroll="false" ${attributes || ""}/>
 			</vbox>`;
-			this.urlsMap.set(ind, {url: src});
+			this.urlsMap.set(ind, {url: this.prefs.getStringPref(this.last_src + ind, src)});
 			if (menu) {
 				menu.aIndex = ind;
 				menus.push(menu);
@@ -239,6 +232,7 @@
 				browser = this[`st_browser_${aIndex}`] = newbrowser;
 			}
 			this.urlsMap.set(aIndex, {url, options});
+			this.prefs.setStringPref(this.last_src + aIndex, url);
 			if (this.st_tabbox.selectedIndex !== aIndex) {
 				this.st_tabbox.selectedIndex = aIndex;
 				if (!this._open) {

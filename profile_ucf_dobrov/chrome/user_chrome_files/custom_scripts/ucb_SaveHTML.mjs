@@ -144,8 +144,11 @@ UcfAPI: {
 		var actor = bc?.currentWindowGlobal?.getActor(name);
 		actor && self.save(...await actor.sendQuery(""), to); //htmlAndName
 	},
+	w1251(txt, win1251 = new TextDecoder("windows-1251")){
+		return txt.replace(/(?:%[0-9A-F]{2})+/g, txt => win1251.decode(new Uint8Array(txt.replace(/%/g,",0x").slice(1).split(","))));
+	},
 	URL(url, host, win = self.win){
-		url ||= decodeURIComponent(win.gBrowser.selectedBrowser.currentURI.displaySpec.replace(/.+url=http/,'http'));
+		url = decodeURIComponent(this.w1251(url || win.gBrowser.selectedBrowser.currentURI.displaySpec).replace(/.+url=http/,'http'));
 		if(host) url = /^file:\/\//.test(url) ? 'file' : url.replace(/^.*u=|https?:\/\/|www\.|\/.*/g,'').replace(/^(moz-extension|ru\.|m\.)/,'').replace(/\/.*/,'');
 		return url;
 	},
@@ -156,7 +159,7 @@ UcfAPI: {
 		to = to.split('|').slice(0 + n, 2 + n); //Dir/Sub|[empty|0 title|1 url]
 		d = /^blank/.test(d || "blank") ? win.gBrowser.selectedTab.label : d;
 		d = d.replace(/\s+/g,' ').replace(/:/g,'։').replace(/[|<>]+/g,'_').replace(/([\\\/?*\"'`]+| ։։ .*)/g,'').slice(0,u).trim();
-		n = this.URL(); u = h || n; h = this.URL(0, 1), n = d;
+		n = this.URL(); u = h || n; h = this.URL(0, 1); n = d;
 		to[1] = (to[1] == "0") ? d : (to[1] == "1") ? h : "";
 		d += "_"+ new Date().toLocaleDateString('ru', {day: 'numeric',month: 'numeric',year: '2-digit'}) +'-'+ new Date().toLocaleTimeString('en-GB').replace(/:/g,"։"); //дата-часы
 		try {var dir = prefs.getComplexValue("browser.download.dir",Ci.nsIFile);} catch {dir = dirsvc.get("DfltDwnld",Ci.nsIFile)}
@@ -176,9 +179,9 @@ UcfAPI: {
 	},
 	RunwA(){let args = [...arguments], path = args.shift(), file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile), proc = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
 		file.initWithPath(path);
-    try{proc.init(file);} catch{throw F.q + path}
-    proc.runwAsync(args, args.length);
-  }
+		try{proc.init(file);} catch{throw "Ошибка "+ path}
+		proc.runwAsync(args, args.length);
+	}
 }
 }).init("browser-delayed-startup-finished");
 

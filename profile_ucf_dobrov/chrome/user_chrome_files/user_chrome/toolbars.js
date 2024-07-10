@@ -2,7 +2,6 @@ const ucf_toolbars = {
 	navtoolbox: null,
 	verticalbox: null,
 	verticalbar: null,
-	sidebarbox: null,
 	topbox: null,
 	topbar: null,
 	bottombar: null,
@@ -81,8 +80,7 @@ const ucf_toolbars = {
 				verticalbar.setAttribute("collapsed", `${UcfPrefs.v_collapsed}`);
 				verticalbox.append(verticalbar);
 				vcontainer.append(verticalbox);
-				let sidebarbox = this.sidebarbox = document.querySelector("#sidebar-box");
-				let browser = sidebarbox.parentElement, border;
+				let browser = document.querySelector("hbox#browser"); 
 				if (UcfPrefs.v_bar_start) {
 					browser.prepend(vcontainer);
 					document.documentElement.setAttribute("v_vertical_bar_start", "true");
@@ -207,17 +205,17 @@ const ucf_toolbars = {
 		isPopupOpen: false,
 		showTimer: null,
 		hideTimer: null,
-		panelcontainer: null,
+		tabpanels: null,
 		init(that) {
 			this.vtbb = that;
 			Services.obs.addObserver(this, "browser-delayed-startup-finished");
 		},
 		observe(aSubject, aTopic, aData) {
 			Services.obs.removeObserver(this, "browser-delayed-startup-finished");
-			var panelcontainer = this.panelcontainer = gBrowser.tabpanels;
-			if (!panelcontainer) return;
+			var tabpanels = this.tabpanels = gBrowser.tabpanels;
+			if (!tabpanels) return;
 			var hoverbox = this.hoverbox = document.querySelector(UcfPrefs.t_hoversel) || document.querySelector("#nav-bar");
-			var navtoolbox = this.vtbb.navtoolbox;
+			var {navtoolbox, topbar} = this.vtbb;
 			hoverbox.addEventListener("mouseenter", this);
 			hoverbox.addEventListener("mouseleave", this);
 			hoverbox.addEventListener("dragenter", this);
@@ -231,8 +229,8 @@ const ucf_toolbars = {
 			this[e.type](e);
 		},
 		destructor() {
-			var hoverbox = this.hoverbox;
-			var navtoolbox = this.vtbb.navtoolbox;
+			var {hoverbox} = this;
+			var {navtoolbox, topbar} = this.vtbb;
 			hoverbox.removeEventListener("mouseenter", this);
 			hoverbox.removeEventListener("mouseleave", this);
 			hoverbox.removeEventListener("dragenter", this);
@@ -240,14 +238,13 @@ const ucf_toolbars = {
 			navtoolbox.removeEventListener("popuphidden", this);
 		},
 		popupshown(e) {
-			if (e.target.localName != "tooltip" && e.target.localName != "window")
+			if (e.target.localName !== "tooltip") return;
 				this.isPopupOpen = true;
 		},
 		popuphidden(e) {
-			if (e.target.localName != "tooltip" && e.target.localName != "window") {
-				this.isPopupOpen = false;
-				this.hideToolbar();
-			}
+			if (e.target.localName !== "tooltip") return;
+			this.isPopupOpen = false;
+			this.hideToolbar();
 		},
 		mouseenter(e) {
 			switch (e.currentTarget) {
@@ -271,7 +268,7 @@ const ucf_toolbars = {
 					if (!this._visible)
 						this.showToolbar();
 					break;
-				case this.panelcontainer:
+				case this.tabpanels:
 					this.hideToolbar();
 					break;
 			}
@@ -284,8 +281,8 @@ const ucf_toolbars = {
 			this.showTimer = setTimeout(() => {
 				this._visible = true;
 				var docElm = document.documentElement;
-				var panelcontainer = this.panelcontainer;
-				var topbar = this.vtbb.topbar;
+				var {tabpanels} = this;
+				var {topbar, topbox, navtoolbox} = this.vtbb; 
 				var tbrect = topbar.getBoundingClientRect();
 				var height = tbrect.height;
 				var overlaps = tbrect.bottom + height - this.vtbb.navtoolbox.getBoundingClientRect().bottom;
@@ -296,8 +293,8 @@ const ucf_toolbars = {
 					docElm.setAttribute("v_top_bar_overlaps", "true");
 				}
 				docElm.style.setProperty("--v-top-bar-height", `${height}px`);
-				panelcontainer.addEventListener("mouseenter", this);
-				panelcontainer.addEventListener("dragenter", this);
+				tabpanels.addEventListener("mouseenter", this);
+				tabpanels.addEventListener("dragenter", this);
 				topbar.addEventListener("mouseenter", this);
 				topbar.addEventListener("popupshown", this);
 				topbar.addEventListener("popuphidden", this);
@@ -308,10 +305,10 @@ const ucf_toolbars = {
 			this.hideTimer = setTimeout(() => {
 				if (this.isPopupOpen || this.isMouseOver) return;
 				var docElm = document.documentElement;
-				var panelcontainer = this.panelcontainer;
-				var topbar = this.vtbb.topbar;
-				panelcontainer.removeEventListener("mouseenter", this);
-				panelcontainer.removeEventListener("dragenter", this);
+				var {tabpanels} = this;
+				var {topbar, topbox} = this.vtbb;
+				tabpanels.removeEventListener("mouseenter", this);
+				tabpanels.removeEventListener("dragenter", this);
 				topbar.removeEventListener("mouseenter", this);
 				topbar.removeEventListener("popupshown", this);
 				topbar.removeEventListener("popuphidden", this);
@@ -330,16 +327,16 @@ const ucf_toolbars = {
 		isPopupOpen: false,
 		showTimer: null,
 		hideTimer: null,
-		panelcontainer: null,
+		tabpanels: null,
 		init(that) {
 			this.vtbb = that;
 			Services.obs.addObserver(this, "browser-delayed-startup-finished");
 		},
 		observe(aSubject, aTopic, aData) {
 			Services.obs.removeObserver(this, "browser-delayed-startup-finished");
-			var panelcontainer = this.panelcontainer = gBrowser.tabpanels;
-			if (!panelcontainer || !this.vtbb.sidebarbox) return;
-			var verticalbox = this.vtbb.verticalbox;
+			var tabpanels = this.tabpanels = gBrowser.tabpanels;
+			if (!tabpanels || !this.vtbb.sidebarbox) return;
+			var {verticalbox} = this.vtbb;
 			verticalbox.addEventListener("mouseenter", this);
 			verticalbox.addEventListener("mouseleave", this);
 			verticalbox.addEventListener("dragenter", this);
@@ -351,20 +348,19 @@ const ucf_toolbars = {
 			this[e.type](e);
 		},
 		destructor() {
-			var verticalbox = this.vtbb.verticalbox;
+			var {verticalbox} = this.vtbb;
 			verticalbox.removeEventListener("mouseenter", this);
 			verticalbox.removeEventListener("mouseleave", this);
 			verticalbox.removeEventListener("dragenter", this);
 		},
 		popupshown(e) {
-			if (e.target.localName != "tooltip" && e.target.localName != "window")
-				this.isPopupOpen = true;
+			if (e.target.localName !== "tooltip") return;
+			this.isPopupOpen = true;
 		},
 		popuphidden(e) {
-			if (e.target.localName != "tooltip" && e.target.localName != "window") {
-				this.isPopupOpen = false;
-				this.hideToolbar();
-			}
+			if (e.target.localName !== "tooltip") return;
+			this.isPopupOpen = false;
+			this.hideToolbar();
 		},
 		mouseenter(e) {
 			switch (e.currentTarget) {
@@ -410,17 +406,16 @@ const ucf_toolbars = {
 			this.showTimer = setTimeout(() => {
 				this._visible = true;
 				var docElm = document.documentElement;
-				var panelcontainer = this.panelcontainer;
-				var verticalbar = this.vtbb.verticalbar;
-				var navtoolbox = this.vtbb.navtoolbox;
-				this.vtbb.verticalbox.setAttribute("v_vertical_bar_visible", "visible");
+				var {tabpanels} = this;
+				var {verticalbar, navtoolbox, verticalbox} = this.vtbb;
+				verticalbox.setAttribute("v_vertical_bar_visible", "visible");
 				docElm.setAttribute("v_vertical_bar_visible", "visible");
 				docElm.style.setProperty("--v-vertical-bar-width", `${verticalbar.getBoundingClientRect().width}px`);
 				docElm.setAttribute("v_vertical_bar_sidebar", `${this.isMouseSidebar}`);
 				if (UcfPrefs.v_mouseenter_sidebar)
 					this.vtbb.sidebarbox.addEventListener("mouseenter", this);
-				panelcontainer.addEventListener("mouseenter", this);
-				panelcontainer.addEventListener("dragenter", this);
+				tabpanels.addEventListener("mouseenter", this);
+				tabpanels.addEventListener("dragenter", this);
 				verticalbar.addEventListener("mouseenter", this);
 				verticalbar.addEventListener("popupshown", this);
 				verticalbar.addEventListener("popuphidden", this);
@@ -431,17 +426,17 @@ const ucf_toolbars = {
 		hideToolbar() {
 			clearTimeout(this.hideTimer);
 			var docElm = document.documentElement;
-			var verticalbox = this.vtbb.verticalbox;
+			var {verticalbox} = this.vtbb;
 			verticalbox.setAttribute("v_vertical_bar_visible", "visible_hidden");
 			docElm.setAttribute("v_vertical_bar_visible", "visible_hidden");
 			docElm.setAttribute("v_vertical_bar_sidebar", `${this.isMouseSidebar}`);
 			this.hideTimer = setTimeout(() => {
 				if (this.isPopupOpen || this.isMouseOver) return;
-				var panelcontainer = this.panelcontainer;
+				var tabpanels = this.tabpanels;
 				var verticalbar = this.vtbb.verticalbar;
 				var navtoolbox = this.vtbb.navtoolbox;
-				panelcontainer.removeEventListener("mouseenter", this);
-				panelcontainer.removeEventListener("dragenter", this);
+				tabpanels.removeEventListener("mouseenter", this);
+				tabpanels.removeEventListener("dragenter", this);
 				verticalbar.removeEventListener("mouseenter", this);
 				verticalbar.removeEventListener("popupshown", this);
 				verticalbar.removeEventListener("popuphidden", this);

@@ -1,7 +1,7 @@
 var EXPORTED_SYMBOLS = ["MouseImgSaverChild", "MouseImgSaverParent"]; // © Dumby, mod Dobrov сохранить картинку колёсиком или перетащив вправо; DBL поиск похожих. (!) нужен SingleHTML.jsm
 
 var Services = globalThis.Services || ChromeUtils.import("resource://gre/modules/Services.jsm").Services;
-var UcfGlob = Cu.getGlobalForObject(Cu)[Symbol.for("UcfGlob")];
+var UcfAPI = Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")];
 var u = {get it() {delete this.it;
 	return this.it = Cc["@mozilla.org/image/tools;1"].getService(Ci.imgITools);
 }};
@@ -114,7 +114,7 @@ if (!ChromeUtils.domProcessChild.childID) {
 				}
 			}));
 			Object.defineProperty(this, "set", {get() { //Загрузки/Фото/Имя вкладки
-				try {var dir = UcfGlob.TitlePath(2)[0];}
+				try {var dir = UcfAPI.TitlePath(2)[0];}
 					catch {dir = Services.dirsvc.get("DfltDwnld",Ci.nsIFile)}
 				try {dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);} catch{}
 				return dir.path;
@@ -162,7 +162,7 @@ if (!ChromeUtils.domProcessChild.childID) {
 					? p.clearUserPref(pref)
 					: p[`set${data[pref].type}Pref`](pref, data[pref].val);
 			}
-			UcfGlob.Succes(data["browser.download.dir"].set, 2);
+			UcfAPI.Succes(data["browser.download.dir"].set, 2);
 		}
 		dblclick(win, imgURL) {
 			var gb = win.gBrowser, index = gb.selectedTab._tPos +1;

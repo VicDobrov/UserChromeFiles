@@ -1,4 +1,3 @@
-
 const {UcfPrefs} = ChromeUtils.importESModule("chrome://user_chrome_files/content/user_chrome/UcfPrefs.mjs");
 ChromeUtils.defineESModuleGetters(this, {
 	CustomizableUI: "resource:///modules/CustomizableUI.sys.mjs",
@@ -61,6 +60,9 @@ const user_chrome = {
 		branch.setBoolPref("custom_styles_scripts_child", UcfPrefs.custom_styles_scripts_child);
 		branch.setStringPref("custom_styles_scripts_groups", "[\"browsers\"]");
 		branch.setBoolPref("custom_safemode", true);
+		branch.setBoolPref("mystyle", UcfPrefs.mystyle);
+		branch.setBoolPref("expert", UcfPrefs.expert);
+		branch.setBoolPref("info", UcfPrefs.info);
 		if (UcfPrefs.toolbars_enable = UcfPrefs.gbranch.getBoolPref("toolbars_enable"))
 			this.stylePreload();
 		var noSafeMode = true;

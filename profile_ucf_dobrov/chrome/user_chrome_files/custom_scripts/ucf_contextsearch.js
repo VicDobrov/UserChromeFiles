@@ -74,10 +74,10 @@
 		Services.obs.addObserver(this, this.topic, false);
 		Services.prefs.addObserver(this.hide, this);
 	},
-	setAttrs(node, engine, label = engine.name) {
+	async setAttrs(node, engine, label = engine.name) {
 		node.engine = engine;
 		node.setAttribute("label", label);
-		node.setAttribute("image", engine.getIconURL?.() || engine.iconURI?.spec || this.defaultImg);
+    node.setAttribute("image", await engine.getIconURL?.() || engine.iconURI?.spec || this.defaultImg);
 	},
 	observe() {
 		this.popupshowing = this.handlerRebuild;

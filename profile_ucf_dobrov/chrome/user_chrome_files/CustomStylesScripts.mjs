@@ -77,7 +77,7 @@ export var UcfStylesScripts = {
 			// { path: "custom_script_all_win.js", urlregxp: /^(?:chrome|about):/, ucfobj: true, }, // <-- For chrome|about protocol
 			// { path: "example_places.js", urlregxp: /chrome:\/\/browser\/content\/places\/places\.xhtml/, ucfobj: false, }, // <-- Example
 		{ path: "places_context_open.js", urlregxp: /chrome:\/\/browser\/content\/(?:browser|places\/(?:bookmarksSidebar|historySidebar|places))\.xhtml/, ucfobj: false, },
-		{ path: "undoBookmarks.js", urlregxp: /chrome:\/\/browser\/content\/places\/places\.xhtml/, ucfobj: false, },
+		{ path: "undoBookmarks.js", urlregxp: /^chrome:\/\/browser\/content\/(?:browser|places\/(?:bookmarksSidebar|places))\.xhtml/, },
 		],
 	},
 	scriptsbackground: [ // In the background [System Principal]
