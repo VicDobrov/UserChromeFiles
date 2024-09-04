@@ -90,11 +90,11 @@ window.ext = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34
 	Вернуть <span style="color: darkred">удалённые закладки</span>, перевод сайта/текста, <span style="background: linear-gradient(to right, #4ff, #cff 70pt)">  Прогресс загрузки   </span><br>
 	<span style="background-color:#FED"><strong>Меню переключения</strong> скрытых настроек</span>, Добавить закладку без запроса<br>
 	Проиграть/скачать видео или ссылку <strong>программой из контекстного меню</strong><br>
-	<strong>Открыть в боковой панели</strong> Сайт, Файл, Журнал, Закладки, Загрузки…<br>
+	<strong>Открыть в боковой панели</strong> Сайт, Закладку, Файл, Журнал, Загрузки…<br>
 	<span style="background-color:#DFF">Расположение закладок</span> в подсказке Звёздочки, Экспорт папки закладок<br>
 	Яркость колёсиком ± на Замке <img src='data:image/gif;base64,R0lGODlhLAAUAPIAAFZdZnJ6gm+LsZOdrJmqvrnD08jV59jj9CH5BAAAAAAALAAAAAAsABQAAAOUeLrc/jDKSau9WBkyAgDBQBjWJghjNXxsCwyUcc4COX3CUCjFIHwUQs5g8BEowEPhuEhKTjaZAAk4rKpN7HO6OFGtzkMY4u1yJUBCeNzw0d6wiKdQcNYD2/dbsoI5+3l6MxJ3BnUac4GCZxAeUzsHP3iKghN1IHQeAJARizQUly2cnZ5lEzI4NhNui3EZr7CxsrOvCQA7' style="margin-bottom:-6px"> режим <font style="background-color: #F0F0D0">Proxy</font> <font style="background-color: #FFE8FF">разным</font> <font style="background-color: #E0F0D4">фоном</font> <strong style="text-decoration: underline"><a class="tooltip" href="#" onclick="toggle('help'); return false">≡ Меню<span>Автонастройка <span style="background-color:#FEF; margin-top:-3px">Меню и Щит красные</span><br>Без прокси: голубой, Системный: серый</span></a></strong><br>
 	<strong style="text-decoration: underline"><a class="tooltip" href="#" onclick="toggle('help'); return false">можно изменить<span>В скрипте ucf_hookClicks.js меняйте «под себя»<br>Подсказки, Keys нажатия клавиш, Menu команды, Mouse клики мыши, Setup опции.<br>Браузер запомнит ваши команды для последней строки в Menu команд и строк "ваши данные…" в Setup</span></a></strong> действия кнопок, меню команд/опций, горячие клавиши<br>
-	<strong>Обновление вкладок</strong> по таймерам и многое другое… <small><a class="tooltip" href="#" onclick="toggle('help'); return false"><strong style="color:#4000c0; background-color:#FE8; text-decoration: underline">Полный список</strong>▼<span>Техническая информация<br>Справка кнопок, скриптов</span></a></small><br>
+	<strong>Обновление вкладок</strong> по таймерам и многое другое… <small><a class="tooltip" href="#" onclick="toggle('help'); return false"><strong style="color:#4000c0; background-color:#FE8; text-decoration: underline">Настройки, справка</strong>▼<span>Техническая информация<br>Справка кнопок, скриптов</span></a></small><br>
 	<p style="margin-top:-5px; font-size:small; font-style:italic; color:gray">  кнопки и строки менюшек выполняют несколько действий: Справка при наведении мыши</p>
 </p>
 <p><div class="trigger_note" id="help"><table style="margin-bottom: 7px" class="history" width="97%" cellspacing="1"><tbody><tr><td> <!-- справка -->
@@ -103,7 +103,7 @@ window.ext = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34
 <strong>стандартные</strong> 7 — Загрузки, ≡ Меню, Печать, Звёздочка, Щит защиты, Замок, Обновить/Стоп<br>
 <strong>расширения</strong> 2 — SingleFile (сохранение по Alt+Ctrl+S), Reader View.<br>
 Alt+X – запуск последней строки «Моё меню». <span style="background-color:#DFF">Две нижние строки меню изменяются правым кликом мыши</span><br>
-<strong>ucf_hookClicks.js</strong> общие функции. Подсказки, действия мыши и клавиатуры можно изменить, примеры в начале скрипта.<br>
+<strong>ucf_hookClicks.js</strong> общие функции. Подсказки, действия мыши и клавиатуры можно изменить, примеры в начале скрипта. Подсказки отключаются, если в блоке Tag пустой текст: [F.C]: ""<br>
 <font color="darkred">&nbsp;&nbsp;<small>Добавьте ваши действия клавиш и мыши по выводу <strong>консоли</strong>, если <strong>включена Отладка</strong> в опциях UCF или открыта <strong>Боковая панель.</strong></small></font><br>
 <strong>Quick Toggle</strong> меню скрытых настроек, открытие боковой панели. Жмите секунду колёсико мыши для запуска <strong>User.js</strong> скрипта пользователя<br>
 <strong>ucf_SidebarTabs</strong> Открыть в боковой панели Сайт, Файл, Журнал, Закладки, Загрузки…<br>

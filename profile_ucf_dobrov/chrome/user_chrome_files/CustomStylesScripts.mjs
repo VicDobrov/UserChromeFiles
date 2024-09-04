@@ -143,7 +143,7 @@ export var UcfStylesScriptsChild = {
 			// { path: "example_all_about.js", urlregxp: /^about:/, }, // <-- Example
 		],
 		pageshow: [ // By event "pageshow"
-
+		{ path: "undoBookmarks.js", urlregxp: /chrome:\/\/browser\/content\/places\/places\.xhtml/, }, // Библиотека во вкладке
 		],
 	},
 	/** ************************▲ Content Settings ▲************************ */

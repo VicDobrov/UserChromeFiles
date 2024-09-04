@@ -32,7 +32,7 @@
 		],
 		OS_macosx = [
 			{	name: '|Видео загрузчик yt-dlp', path: '/usr/bin/osascript',
-				args: `-e "tell app %quotTerminal%quot to activate do script %quotrun ytdlp '%OpenURI' || { yt-dlp '%OpenURI' && say сделано; exit;}%quot"`,
+				args: `-e "tell app %quotTerminal%quot to activate do script %quotrun ytdlp '%OpenURI' || { yt-dlp '%OpenURI' && say сделано;}; exit%quot"`,
 				hint: 'опции --downloader ffmpeg…',
 				roll: `-e "tell app %quotTerminal%quot to activate do script %quotyt-dlp --downloader ffmpeg --hls-use-mpegts '%OpenURI' && say сделано; exit%quot"`,
 				icon: 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4TC0AAAAvD8ADEA8QEfMfQlFt29T7MhRBFNGIJsqLYPhnqEJE/8P8772bd+qxBfOVCwIA'

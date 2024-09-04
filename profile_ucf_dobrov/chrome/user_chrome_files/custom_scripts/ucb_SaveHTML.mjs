@@ -122,7 +122,7 @@ UcfAPI: {
 		StatusPanel._label = text;
 	},
 	Flash(id,color = 'rgba(0,200,0,0.3)',style,txt,time,ms = 350,win = self.win){
-		id = win.document.getElementById(id || 'urlbar-input-container');
+		id = win.document.getElementById(id || 'urlbar-background');
 		id &&= id.style; if(isNaN(Number(txt)))
 			this.Status(txt,time); //мигание, статус
 		if(style && id) id.filter = style;

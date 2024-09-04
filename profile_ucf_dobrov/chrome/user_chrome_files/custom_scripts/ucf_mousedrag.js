@@ -51,9 +51,9 @@
 			(this.write = str => ch.copyStringToClipboard(str, Services.clipboard.kGlobalClipboard))(str);
 		}
 	},
-	flash(color = 'rgba(240,176,0,0.5)', sec = 250, id = 'urlbar-input-container') {
+	flash(color = 'rgba(240,176,0,0.5)', sec = 250, id = 'urlbar-background') {
 		id = win.document.getElementById(id); id.style.background = color;
-		setTimeout(() => { id.style.removeProperty('background-color');}, sec);
+		setTimeout(() => {id.style.removeProperty('background-color')}, sec);
 	},
 	search(where) {
 		var engine = Services.search[`default${this.opts.private ? "Private" : ""}Engine`];

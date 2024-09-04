@@ -13,9 +13,27 @@
 		"NoDefaultBookmarks": false,
 		"OverrideFirstRunPage": "",
 		"OverridePostUpdatePage": "",
+    "SearchEngines": {
+      "Add": [
+				{
+					"Name": "Google RU",
+					"URLTemplate": "https://www.google.com/search?q={searchTerms}&region=ru-RU",
+					"Method": "GET",
+					"Description": "metager",
+					"IconURL": "https://www.google.com/favicon.ico"
+				},
+				{
+					"Name": "Metager",
+					"URLTemplate": "https://metager.de/meta/meta.ger3?eingabe={searchTerms}",
+					"Description": "metager",
+					"IconURL": "https://metager.de/favicon.ico"
+				}
+			],
+			"Default": "Google RU"
+		},
 		"Bookmarks": [
 			{ "Title": "Вести",
-				"URL": "https://rg.ru",
+				"URL": "https://regnum.ru",
 				"Placement": "toolbar"
 			},
 			{ "Title": "Видео",
@@ -59,32 +77,32 @@
 			{ "Title": "ВКонтакте",
 				"URL": "https://vk.com/feed",
 				"Placement": "toolbar",
-				"Folder": "СоцСети"
+				"Folder": "CоцСети"
 			},
 			{ "Title": "Телеграм",
 				"URL": "https://web.telegram.org/k",
 				"Placement": "toolbar",
-				"Folder": "СоцСети"
+				"Folder": "CоцСети"
 			},
 			{ "Title": "Одноклассники",
 				"URL": "https://ok.ru",
 				"Placement": "toolbar",
-				"Folder": "СоцСети"
+				"Folder": "CоцСети"
 			},
 			{ "Title": "WhatsApp",
 				"URL": "https://web.whatsapp.com",
 				"Placement": "toolbar",
-				"Folder": "СоцСети"
+				"Folder": "CоцСети"
 			},
 			{ "Title": "Мой мир",
 				"URL": "https://m.my.mail.ru",
 				"Placement": "toolbar",
-				"Folder": "СоцСети"
+				"Folder": "CоцСети"
 			},
 			{ "Title": "Форум",
 				"URL": "https://all-forum.ru",
 				"Placement": "toolbar",
-				"Folder": "СоцСети"
+				"Folder": "CоцСети"
 			},
 			{ "Title": "Хранение фото",
 				"URL": "https://imgbb.com",
@@ -125,6 +143,7 @@
 			"extensions.blocklist.enabled": false,
 			"extensions.getAddons.showPane": false,
 			"extensions.experiments.enabled": true,
+			"xpinstall.signatures.required": false,
 			"extensions.legacy.enabled": true,
 			"extensions.htmlaboutaddons.recommendations.enabled": false,
 			"intl.accept_languages": "ru-RU,ru,en-US,en",

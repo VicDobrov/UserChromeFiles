@@ -66,6 +66,9 @@ ChromeUtils.domProcessChild.childID || ({
 		try {await IOUtils.writeUTF8(path, data +'<a href='+ (protocol != 'data:' ? self.UcfAPI.URL() : 'data:uri') +'><small><blockquote>источник: '+ new Date().toLocaleString("ru") +'</blockquote></small></a>');} catch {to = 0}
 		await self.UcfAPI.Succes(path, to, '√ страница записана: '+ t);
 	},
+	w1251(txt, win1251 = new TextDecoder("windows-1251")){
+		return txt.replace(/(?:%[0-9A-F]{2})+/g, txt => win1251.decode(new Uint8Array(txt.replace(/%/g,",0x").slice(1).split(","))));
+	},
 UcfAPI: {
 	async restart(){
 		var meth = Services.appinfo.inSafeMode ? "restartInSafeMode" : "quit";
@@ -121,7 +124,7 @@ UcfAPI: {
 		StatusPanel._label = text;
 	},
 	Flash(id,color = 'rgba(0,200,0,0.3)',style,txt,time,ms = 350,win = self.win){
-		id = win.document.getElementById(id || 'urlbar-input-container');
+		id = win.document.getElementById(id || 'urlbar-background');
 		id &&= id.style; if(isNaN(Number(txt)))
 			this.Status(txt,time); //мигание, статус
 		if(style && id) id.filter = style;
@@ -147,7 +150,7 @@ UcfAPI: {
 		actor && self.save(...await actor.sendQuery(""), to); //htmlAndName
 	},
 	URL(url, host, win = self.win){
-		url ||= decodeURIComponent(win.gBrowser.selectedBrowser.currentURI.displaySpec.replace(/.+url=http/,'http'));
+		url = decodeURIComponent(self.w1251(url || win.gBrowser.selectedBrowser.currentURI.displaySpec).replace(/.+url=http/,'http'));
 		if(host) url = /^file:\/\//.test(url) ? 'file' : url.replace(/^.*u=|https?:\/\/|www\.|\/.*/g,'').replace(/^(moz-extension|ru\.|m\.)/,'').replace(/\/.*/,'');
 		return url;
 	},
@@ -158,7 +161,7 @@ UcfAPI: {
 		to = to.split('|').slice(0 + n, 2 + n); //Dir/Sub|[empty|0 title|1 url]
 		d = /^blank/.test(d || "blank") ? win.gBrowser.selectedTab.label : d;
 		d = d.replace(/\s+/g,' ').replace(/:/g,'։').replace(/[|<>]+/g,'_').replace(/([\\\/?*\"'`]+| ։։ .*)/g,'').slice(0,u).trim();
-		n = this.URL(); u = h || n; h = this.URL(0, 1), n = d;
+		n = this.URL(); u = h || n; h = this.URL(0, 1); n = d;
 		to[1] = (to[1] == "0") ? d : (to[1] == "1") ? h : "";
 		d += "_"+ new Date().toLocaleDateString('ru', {day: 'numeric',month: 'numeric',year: '2-digit'}) +'-'+ new Date().toLocaleTimeString('en-GB').replace(/:/g,"։"); //дата-часы
 		try {var dir = prefs.getComplexValue("browser.download.dir",Ci.nsIFile);} catch {dir = dirsvc.get("DfltDwnld",Ci.nsIFile)}

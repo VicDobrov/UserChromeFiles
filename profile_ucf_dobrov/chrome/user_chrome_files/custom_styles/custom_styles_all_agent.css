@@ -17,67 +17,17 @@
   --bookmark_items_height: 22px !important;
   --bookmark_items_lines: 3 !important; /* <- maximum amount of lines */
   --search-one-offs_labels_height: 100px !important;
-  --top_toolbars_background: hsl(235,33%,19%) !important;
-  --top_toolbars_background_inactive: hsl(235,13%,9%) !important;
-  --top_toolbars_text: hsl(240,9%,98%) !important;
-  --top_toolbars_text_inactive: #999999 !important;
-  --urlbar_background_color: white !important;
-  --urlbar_text_color: black !important;
   --classic_squared_tabs_tab_height: 22px !important;
-  --navbar-background: #e6ebfa;
-  --general_toolbar_color_toolbars: linear-gradient(var(--navbar-background), var(--navbar-background)) !important;
-  --general_toolbar_color_navbar: linear-gradient(var(--navbar-background),var(--navbar-background)) !important;
   --general_toolbar_text_color: inherit !important;
   --general_toolbar_text_shadow: transparent !important;
-  --tabs_toolbar_color_tabs_not_on_top: linear-gradient(var(--navbar-background),var(--navbar-background)) !important;
   --tabs_toolbar_border-tnot_normal_mode_size: 1px !important;
   --tabs_toolbar_border-tnot_normal_mode: var(--tabs-border-color) !important;
-  --colored_menubar_background_image: linear-gradient(var(--navbar-background),var(--navbar-background)) !important;
   --colored_menubar_text_color: black !important;
-  --statusbar_background_color: linear-gradient(var(--navbar-background),var(--navbar-background)) !important;
   --statusbar_font_color: inherit !important;
-}
-#tabbrowser-arrowscrollbox {
-  background: var(--navbar-background) !important;
-}
-#nav-bar:not(:-moz-lwtheme) {
-  appearance: none !important;
-  background: var(--general_toolbar_color_navbar, inherit) !important;
-}
-#navigator-toolbox, #sidebar-box { /* фон заголовка */
-	background-color: var(--navbar-background) !important;
-}
-#main-window toolbar:not(:-moz-lwtheme):not(#TabsToolbar):not(#toolbar-menubar):not(#nav-bar) {
-  appearance: none !important;
-  background: var(--general_toolbar_color_toolbars, inherit) !important;
-}
-#nav-bar:not(:-moz-lwtheme) #urlbar ::-moz-selection {
-  background-color: Highlight !important;
-  color: HighlightText !important;
-}
-#main-window:not(:-moz-lwtheme) #PersonalToolbar #bookmarks-menu-button::after,
-#main-window:not(:-moz-lwtheme) toolbar > toolbarbutton > .toolbarbutton-text,
-#main-window:not(:-moz-lwtheme) toolbar #stop-reload-button toolbarbutton > .toolbarbutton-text,
-#main-window:not(:-moz-lwtheme) toolbar #PanelUI-button toolbarbutton > .toolbarbutton-text,
-#main-window:not(:-moz-lwtheme) toolbar > toolbarbutton >.toolbarbutton-badge-stack .toolbarbutton-text,
-#main-window:not(:-moz-lwtheme) #nav-bar-customization-target > toolbarbutton > .toolbarbutton-text,
-#main-window:not(:-moz-lwtheme) #PlacesToolbarItems toolbarbutton > :is(label,description) {
-  color: var(--general_toolbar_text_color, inherit) !important;
-  text-shadow: 1px 1px 1px var(--general_toolbar_text_shadow, inherit) !important;
-}
-#main-window[style*='--lwt-header-image']:-moz-lwtheme :is(.browserContainer,#viewSource) :is(findbar,#FindToolbar) {
-  background: var(--lwt-header-image) !important;
-  background-position: calc(100vw - 5px) !important;
-}
-#main-window[style*='--lwt-header-image']:-moz-lwtheme :is(.browserContainer,#viewSource) :is(findbar,#FindToolbar) :is(.toolbarbutton-icon,.toolbarbutton-text) {
-  color: var(--lwt-text-color) !important;
-  fill: var(--lwt-text-color) !important;
 }
 #main-window[style*='--lwt-header-image']:-moz-lwtheme-brighttext :is(.browserContainer,#viewSource) :is(findbar,#FindToolbar) :is(.toolbarbutton-icon,.toolbarbutton-text) {
   text-shadow: 1px 1px 1px black !important;
 }
-#historyTree { background-color: #F0F4F9 !important;}
-#bookmarks-view, #bookmarks-view-children { background-color: #F2F2F0 !important;}
 tooltip[hasbeenopened="true"] {
 	color: rgb(12, 12, 22) !important;
 	background: #f8f8e0 !important;

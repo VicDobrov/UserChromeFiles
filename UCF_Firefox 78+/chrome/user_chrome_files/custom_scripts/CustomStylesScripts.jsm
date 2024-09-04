@@ -33,6 +33,7 @@ var UcfStylesScripts = {
 	scriptschrome: { // Для докум. окна браузера [ChromeOnly]
 		domload: [ // По событию "DOMContentLoaded"
 			{ path: "ucf_hookClicks.js", ucfobj: true }, //+ attrsInspector.js
+			{ path: "select_open_bookmark.js", ucfobj: true },
 		],
 		load: [ // По событию "load"
 			{ path: "special_widgets.js", ucfobj: true }, // <-- Special Widgets

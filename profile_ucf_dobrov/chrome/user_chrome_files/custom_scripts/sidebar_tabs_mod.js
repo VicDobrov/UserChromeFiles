@@ -1,27 +1,30 @@
-(async ( // Sidebar Tabs © VitaliyV, mod Dobrov: нужен ucb_SaveHTML.mjs
+(async ( // Sidebar Tabs VitaliyV, mod Dobrov: нужны UCF 2024+, ucb_SaveHTML.mjs
 	ID = "ucf_sidebar_tabs",
 	TABS = [
 		{ label: "Сайт",
-			src: "http://rus.vrw.ru",
+			src: "http://rus.vrw.ru", //последний адрес запоминается
 			attributes: 'messagemanagergroup="webext-browsers" type="content" disableglobalhistory="true" context="contentAreaContextMenu" tooltip="aHTMLTooltip" autocompletepopup="PopupAutoComplete" remote="true" maychangeremoteness="true" ',
 			menu: {
-				label: "Адрес в панель SidebarTabs", icon: `resource://${ID}`}
+				label: "Адрес в панель SidebarTabs", icon: `resource://${ID}`,
+			}
 		},
 		{ label: "Журнал",
 			src: "chrome://browser/content/places/historySidebar.xhtml"
 		},
-		{ label: "Закладки",
+		{ label: "Любимое",
 			src: "chrome://browser/content/places/bookmarksSidebar.xhtml"
 		},
-		{ label: "Загрузки",
+		{ label: "Файлы",
 			src: "chrome://browser/content/downloads/contentAreaDownloadsView.xhtml"
 		},
 		{ label: "Задачи", src: "about:processes"},
+		{ label: "Опции", src: "about:config"},
 	],
 	RIGHT = true, // Расположение панели
 	WIDTH = 350,
 	NAME = "Sidebar Tabs",
 	TOOLTIP = "Открыть / Закрыть "+ NAME,
+	HINT = "Адреса вкладок запоминаются в\n",
 	HIDE_FULLSCREEN = false,
 	SELECTOR = "#context-media-eme-separator",
 	popup,
@@ -30,7 +33,7 @@
 ) => (this[ID] = {
 	last_open: "extensions.ucf.sidebar_tabs.last_open",
 	last_index: "extensions.ucf.sidebar_tabs.last_index",
-	last_src: "extensions.ucf.sidebar_tabs.last_src.",
+	last_src: "extensions.ucf.sidebar_tabs.src.",
 	toolbox_width: "extensions.ucf.sidebar_tabs.toolbox_width",
 	eventListeners: new Map(),
 	eventCListeners: [],
@@ -126,6 +129,7 @@
 		this.st_tabbox = this.toolbox.querySelector("#st_tabbox");
 		this.st_tabbox.handleEvent = function() {};
 		this.st_tabbox.selectedIndex = this.aIndex = this.prefs.getIntPref(this.last_index, 0);
+		this.st_tabbox.tooltipText = HINT + this.last_src +"номер";
 		delete this.panels_str;
 		if (open)
 			this.open();
@@ -157,7 +161,7 @@
 	getTabs() {
 		var str = panels_str = "", menus = [];
 		for (let [ind, {label, src, attributes, menu}] of TABS.entries()) {
-			str += `<tab id="st_tab_${ind}" label="${label}"/>`;
+			str += `<tab id="st_tab_${ind}" label="${label}" />`;
 			panels_str += `<vbox id="st_container_${ind}" flex="1">
 				<browser id="st_browser_${ind}" flex="1" autoscroll="false" ${attributes || ""}/>
 			</vbox>`;
