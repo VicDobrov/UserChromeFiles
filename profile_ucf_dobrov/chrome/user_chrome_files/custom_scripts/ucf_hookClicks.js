@@ -94,13 +94,12 @@ Menu = { // alt правый клик, mid колёсико, upd обновля�
 			doComm("key_responsiveDesignMode", btn.ownerDocument); //пункт меню с HotKey
 			gBrowser.selectedBrowser.browsingContext.inRDMPane && BrowserEx("reload");},
 	},
-	Site: {lab: `сайт в единый HTML | в SideBar`, img: F.Z +"globe.svg",
-		inf: `Правый клик: Сайт в боковую панель\nКолёсико: сохранить через SingleFile`,
+	Site: {lab: `сайт в единый HTML ${F.sb ? "| в SideBar" : ""}`, img: F.Z +"globe.svg",
+			inf: `Колёсико: сохранить через SingleFile\nПравый клик: Сайт в боковую панель`,
 		alt(trg, url){
-			let sb = ucf_custom_script_win.ucf_sidebar_tabs;
-			if(!sb) throw F.q +"ucf_SidebarTabs.js";
-			if(sb._open) sb.toggle()
-			else sb.setPanel(0, url || trg.url || "https://"+ F.J);},
+			if(!F.sb) throw F.q +"ucf_SidebarTabs.js";
+			if(F.sb._open) F.sb.toggle()
+			else F.sb.setPanel(0, url || trg.url || "https://"+ F.J);},
 		cmd(){HTML()}, mid(){HTML(true)},
 		upd(){Status(this.url = URL())} //получить URL вкладки
 	},
@@ -1275,7 +1274,8 @@ var io = "chrome://devtools/skin/images/", F = {Z: io, id: "ucf_hookExpert",
 if(c){F[i] = i == 0 ? c : c +"BAP"; F[i+1] = i == 0 ? c.replace("."," ") : c +"browser-action";}});
 `Правый клик: правка команд меню "Имя ║ Java-код"\n|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор смещает на пиксель|◧ + Shift, Колёсико: не закрывать|ваши данные…|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|Ø крутить ±		Яркость страниц |по-умолчанию|browser.display.use_document_fonts|about:config|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tпосл. строка Моё меню|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|permissions.default.image|https://p.thenewone.lol:8443/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|chrome://browser/skin/canvas-blocked.svg|browser.cache.memory.max_entry_size`.split('|').forEach((c,i)=>{
 	if(i == 0) k = 97; if(i == 26) k = 39; F[String.fromCharCode(i+k)] = c;
-}); F.as = F.s +"custom_scripts/"+ F.R +".js";
+});
+F.as = F.s +"custom_scripts/"+ F.R +".js"; F.sb = ucf_custom_script_win.ucf_sidebar_tabs;
 var UcfAPI = Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")], //из ucb_SaveHTML
 {prefs, io} = Services, {Status, Pref, URL} = UcfAPI, ua = `"/usr/bin/osmo"`; //linux
 if(F.os == "win") ua = `"C:\\Windows\\system32\\StikyNot.exe"` //ваши команды
