@@ -159,19 +159,21 @@ Menu = { // alt правый клик, mid колёсико, upd обновля�
 				Services.appinfo.invalidateCachesOnRestart();
 				with(Services.startup) quit(eAttemptQuit | eRestart);}}
 	},
-	VPN: {lab: `Антизапрет | Настройки Proxy`, inf: F.w +"\nCensor Tracker только отключается",
+	VPN: {lab: `Антизапрет | Настройки Proxy`, inf: "опция URL автонастройки прокси:\n"+ F.u +"vpn\n\nCensor Tracker только отключается",
 		upd(){
-			this.image = Pref(F.x) == 2 ? F.ok : F.no;},
+			this.image = Pref(F.x) == 2 ? F.ok : F.no;
+			Status("URL прокси: "+ F.vpn);
+		},
 		cmd(){switchProxy()},	alt(){CfgProxy()}
 	},
-	Pics: { alt(){ Pref(F.v, 3); BrowserEx("reload");}, inf: 1,
-		upd(){ var val = Pref(F.v), s = val == 1, i = F.X;
+	Pics: { alt(){ Pref(F.w, 3); BrowserEx("reload");}, inf: 1,
+		upd(){ var val = Pref(F.w), s = val == 1, i = F.X;
 			this.label = `Графика страниц – ${s ? "включена" : val == 3 ? "только сайт" : "запрещена"}`;
 			this.image = s ? i.replace("-blocked","") : i || F.nul;
-			this.tooltipText = `правый Клик: кроме сторонних\n${F.v} = ${val}`;
+			this.tooltipText = `правый Клик: кроме сторонних\n${F.w} = ${val}`;
 		},
 		cmd(){
-			var n = Pref(F.v) != 1; Pref(F.v, n ? 1 : 2);
+			var n = Pref(F.w) != 1; Pref(F.w, n ? 1 : 2);
 			mode_skin(); BrowserEx("reload");
 			Status(`Загрузка изображений ${n ? "√ разреш" : "✘ запрещ"}ено`,3e3);}
 	},
@@ -448,10 +450,10 @@ var Setup = [{ //меню. refresh=true ⟳ Обновить без кэша. re
 	keys: [[0, "Ни для чего", "0"], [1, "Только ссылки", "1"], [2, "Ссылки, графика", "2"]]
 },{
 	pref: [F.y, "Прокси (VPN)", "п", F.x +"\n\nПереключение сетевых настроек"],
-		Def3el: "localhost", Yellow: F.w, Gray: "", refresh: true,
+		Def3el: "localhost", Yellow: F.vpn, Gray: "", refresh: true,
 	keys: [
 		["localhost", "системный", "0",,`Pref(F.x,5)`],
-		[F.w, "АнтиЗапрет", "2", "Надёжный доступ на заблокированные сайты\n«Режим прокси» меняется на 2",
+		[F.vpn, "АнтиЗапрет", "2", "Надёжный доступ на заблокированные сайты\n«Режим прокси» меняется на 2",
 			`Pref(F.x,2)`],
 		["127.0.0.1", "tor или opera-proxy", "1", "Включите одну из служб",
 			`Pref(F.x,1)`],
@@ -535,7 +537,7 @@ get [F.N](){ mode_skin('');
 	return GetDynamicShortcutTooltipText(F.N) + Te(F.N,'\n') + Te("wheel-stop");
 },
 get [F.D](){var dw = UcfAPI.dirGet("DfltDwnld", 1);
-	if(dw) Status(`${Pref(F.v) > 1 ? "\u{26A1} Графика отключена," : "💾 папка"} Загрузки: `+ crop(dw, 196,'…'));
+	if(dw) Status(`${Pref(F.w) > 1 ? "\u{26A1} Графика отключена," : "💾 папка"} Загрузки: `+ crop(dw, 196,'…'));
 	return GetDynamicShortcutTooltipText(F.D) + Te(F.D,'\n');
 },
 get "urlbar-input"(){
@@ -729,7 +731,7 @@ var addDestructor = nextDestructor => { //для saveSelToTxt
 }},
 mode_skin = (txt,t,s = 'unset',o = '') => {setTimeout(()=>{ //опции FF меняют подсветку кнопок
 	var p = Pref(F.x), z = s; UcfAPI.Flash(F.O,p == 2 ? "magenta" : s,0,-1);
-	UcfAPI.Flash(F.D,0, Pref(F.v) > 1 ? 'hue-rotate(180deg) drop-shadow(0px 0.5px 0px #F68)' : 'none',-1);
+	UcfAPI.Flash(F.D,0, Pref(F.w) > 1 ? 'hue-rotate(180deg) drop-shadow(0px 0.5px 0px #F68)' : 'none',-1);
 	if(Pref("dom.security.https_only_mode")) z = 'drop-shadow(0px 0.5px 0px #F8F)', o = ', только HTTPS'
 	UcfAPI.Flash(F.N,0,z,-1); t = [s,'Настройки сети - системные'];
 	if(p == 0) t = ['saturate(0%) brightness(0.93)','Сеть работает без прокси'];
@@ -928,7 +930,7 @@ Cookies = async() =>{
 	await window.SiteDataManager.updateSites();
 	setTimeout(() => sb.editor.selection.collapseToEnd(), 50);
 },
-switchProxy = (pac = F.w) => {
+switchProxy = (pac = F.vpn) => {
 	var t = F.x,u = F.y;
 	if(Pref(t) != 2) //выключить
 		Pref(t,2), Pref(u,pac)
@@ -1265,12 +1267,13 @@ var io = "chrome://devtools/skin/images/", F = {Z: io, id: "ucf_hookExpert",
 }, Last, Mus = {};
 ['titlebar-button.titlebar-close',,'zoompage-we_dw-dev-',,'_531906d3-e22f-4a6c-a102-8057b88a1a63_-',,'_b9db16a4-6edc-47ec-a1f4-b86292ed211d_-'].forEach((c,i)=>{ //addons
 if(c){F[i] = i == 0 ? c : c +"BAP"; F[i+1] = i == 0 ? c.replace("."," ") : c +"browser-action";}});
-`Правый клик: правка команд меню "Имя ║ Java-код"\n|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор смещает на пиксель|◧ + Shift, Колёсико: не закрывать|ваши данные…|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|Ø крутить ±		Яркость страниц |по-умолчанию|browser.display.use_document_fonts|about:config|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tпосл. строка Моё меню|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|permissions.default.image|https://p.thenewone.lol:8443/proxy.pac|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|chrome://browser/skin/canvas-blocked.svg|browser.cache.memory.max_entry_size`.split('|').forEach((c,i)=>{
+`Правый клик: правка команд меню "Имя ║ Java-код"\n|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор смещает на пиксель|◧ + Shift, Колёсико: не закрывать|ваши данные…|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|Ø крутить ±		Яркость страниц |по-умолчанию|browser.display.use_document_fonts|about:config|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tпосл. строка Моё меню|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|#@#|permissions.default.image|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|chrome://browser/skin/canvas-blocked.svg|browser.cache.memory.max_entry_size`.split('|').forEach((c,i)=>{
 	if(i == 0) k = 97; if(i == 26) k = 39; F[String.fromCharCode(i+k)] = c;
 });
 F.as = F.s +"custom_scripts/"+ F.R +".js"; F.sb = ucf_custom_script_win.ucf_sidebar_tabs;
 var UcfAPI = Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")], //из ucb_SaveHTML
 {prefs, io} = Services, {Status, Pref, URL} = UcfAPI, ua = `"/usr/bin/osmo"`; //linux
+F.vpn = Pref([F.u +"vpn","https://p.thenewone.lol:8443/proxy.pac"]);
 if(F.os == "win") ua = `"C:\\Windows\\system32\\StikyNot.exe"` //ваши команды
 else if(F.os == "macosx") ua = `"/usr/bin/open","-b","com.apple.Stickies"`;
 F.run = `приложение «Записки» ║UcfAPI.RunwA(${ua}) ║запуск скрипта User.js (Alt+x) ║Userjs(btn)`;
