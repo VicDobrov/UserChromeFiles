@@ -483,14 +483,7 @@ var Setup = [{ //меню. refresh=true ⟳ Обновить без кэша. re
 },{
 	pref: ["privacy.resistFingerprinting", "Изоляция Firstparty-Fingerprint",,"privacy.firstparty.isolate\n\nЗащита данных пользователя также\nзапрещает запоминать размер окна"], Def3el: false,
 	keys: [[true, "Да",,"Защита от слежки",`Pref('privacy.firstparty.isolate', true)`], [false, "Нет",,,`Pref('privacy.firstparty.isolate',false)`]]
-},(()=>{
-if(parseInt(F.ver) > 114) return { //новый FF
-	pref: ["browser.translations.enable", "Встроенный перевод сайтов"], Def3el: true, Gray: false, refresh: true,
-	keys: [[true, "Да"], [false, "Откл",,,`Status('Перевод отключен для новых вкладок')`]]
-}; else return {
-	pref: ["media.peerconnection.enabled", "WebRTC ваш реальный IP"], Def3el: false,
-	keys: [[true, "Выдать"], [false, "Скрыть"]]
-}})(),null,{
+},null,{
 	pref: ["browser.cache.disk.capacity", "Кэш браузера",,`\n${F.Y}:\nДиск и память: 5120\nтолько Память: -1`,,`[[F.U,true],[F.V,true],[F.W,true]].map((a)=>{Pref(...a)})`],
 	Def3el: 1048576, Yellow: 0, Gray: 5e5, Blue: 25e4, restart: true,
 	keys: [[5e5, F.m,,"500 Мб авторазмер"],
@@ -503,7 +496,7 @@ if(parseInt(F.ver) > 114) return { //новый FF
 	pref: ["browser.sessionstore.interval", "Резервирование сессий",,"Браузер резервирует сессии на\nслучай сбоя, снижая ресурс SSD"], Gray: 15e3, Def3el: 6e4, Blue: 3e5, Yellow: 9e5,
 	keys: [[15e3, "15 сек"], [6e4, "1 мин"], [3e5, "5 мин"], [9e5, "15 мин"], [18e5, "30 мин"]]
 },{
-	pref: [F.z, "User Agent",,"Изменяет вид сайтов", [ua(1),"встроенный"]],
+	pref: [F.z, "User Agent",,"Вид страниц для устройств", [ua(1),"встроенный"]],
 		refresh: true, Def3el: ua(1), Yellow: F.G + F.H,
 	keys: [
 	[ua(0, F.z +"_my"), F.g,,,,F.z +"_my"], //alt-ключ
@@ -928,8 +921,8 @@ CfgProxy = async() =>{var win = await Dialog(); win.opener = window; win.opener.
 UCF = (p = "user_chrome") => {if (!UcfAPI.FileOk(F.s + p +"/prefs.xhtml")) p = "options";
 	window.switchToTabHavingURI(F.s + p +"/prefs.xhtml",true,{relatedToCurrent: true,triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal()});
 },
-Cookies = async() =>{var uri = URL();
-	try {var tld = Services.eTLD.getBaseDomain(uri);} catch {var tld = uri.asciiHost}
+Cookies = async() =>{
+	var tld = URL(0,1).match(/\w+\.\w+$/)[0] || gBrowser.selectedBrowser.currentURI.host;
 	var sb = (await Dialog("preferences/dialogs/siteDataSettings.xhtml", "Browser:SiteDataSettings")).document.querySelector("#searchBox");
 	sb.inputField.setUserInput(tld);
 	await window.SiteDataManager.updateSites();
