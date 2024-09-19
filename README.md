@@ -1,5 +1,5 @@
 # UserChromeFiles © Vitaliy V.
-UCF загрузчик скриптов/стилей расширяет возможности Firefox 115+ и Thunderbird. [Тема форума.](http://forum.mozilla-russia.org/viewtopic.php?id=76642 "Скрипты и настройки UserChromeFiles")
+UCF загрузчик скриптов/стилей расширяет возможности Firefox 115+ и Thunderbird. [Подробнее на форуме.](http://forum.mozilla-russia.org/viewtopic.php?id=76642 "Скрипты и настройки UserChromeFiles")
 
 ***Установка:*** содержимое папки Firefox поместить в папку его установки, папку chrome поместить в папку вашего профиля.  
 После изменения/добавления скриптов нажать в about:support «Очистить кэш запуска» или в UCF-диалоге «Перезапустить*».  
