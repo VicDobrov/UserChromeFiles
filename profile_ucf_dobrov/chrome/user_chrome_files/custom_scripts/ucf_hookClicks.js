@@ -122,11 +122,12 @@ Menu = { // alt правый клик, mid колёсико, upd обновля�
 	},
 	O: { men: 1, img: F.opt, //подменю, любая вложенность
 		lab: `Опции ${F.o} | Страницы`, inf: `Правый клик: about-page`, alt(){toTab("about:about")},
-		DwNew: {lab: `Загрузки | Улучшения панели загрузок`, inf: `Авто-открытие списка`,
+		DwNew: {inf: `Авто-открытие списка`,
 			cmd(){Mouse[F.D][1]()},
-			alt(){
-				var p = "browser.download.improvements_to_download_panel", n = Pref(p);
-				Pref(p, !n);
+			upd(){
+				this.label = `Загрузки | Поведение панели - ${Pref(F.v) ? "Улучшено" : "Обычное"}`;
+			},
+			alt(){ let n = Pref(F.v); Pref(F.v, !n);
 				Status(`Подтверждение загрузки ${n ? "√ разреш" : "✘ запрещ"}ено`);}
 		},
 		"Выполнять скрипты Java": {inf: "Поддержка графики, рекламы\nдействия горячих клавиш",
@@ -141,12 +142,12 @@ Menu = { // alt правый клик, mid колёсико, upd обновля�
 				this.image = i;}
 		},
 		Remote: {sep: 1, inf: `Инструменты браузера`,
-			lab: `Удалённая отладка | Режим кнопок ${Exp() ? "Expert" : "Простой"}`,
 			cmd(chr = "devtools.chrome.enabled",rem = "devtools.debugger.remote-enabled"){
 				if(!Pref(chr) || !Pref(rem))
 					Pref(chr,true), Pref(rem,true);
 				var {BrowserToolboxLauncher} = ChromeUtils.import("resource://devtools/client/framework/browser-toolbox/Launcher.jsm");
 				BrowserToolboxLauncher.init();},
+			upd(){this.label = `Удалённая отладка | Режим кнопок ${Exp() ? "Expert" : "Простой"}`},
 			alt(){Expert()},
 		},
 		"Настройки профайлера": {
@@ -1267,7 +1268,7 @@ var io = "chrome://devtools/skin/images/", F = {Z: io, id: "ucf_hookExpert",
 }, Last, Mus = {};
 ['titlebar-button.titlebar-close',,'zoompage-we_dw-dev-',,'_531906d3-e22f-4a6c-a102-8057b88a1a63_-',,'_b9db16a4-6edc-47ec-a1f4-b86292ed211d_-'].forEach((c,i)=>{ //addons
 if(c){F[i] = i == 0 ? c : c +"BAP"; F[i+1] = i == 0 ? c.replace("."," ") : c +"browser-action";}});
-`Правый клик: правка команд меню "Имя ║ Java-код"\n|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор смещает на пиксель|◧ + Shift, Колёсико: не закрывать|ваши данные…|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|Ø крутить ±		Яркость страниц |по-умолчанию|browser.display.use_document_fonts|about:config|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tпосл. строка Моё меню|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|#@#|permissions.default.image|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|chrome://browser/skin/canvas-blocked.svg|browser.cache.memory.max_entry_size`.split('|').forEach((c,i)=>{
+`Правый клик: правка команд меню "Имя ║ Java-код"\n|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор смещает на пиксель|◧ + Shift, Колёсико: не закрывать|ваши данные…|💾 кэш, данные сайтов, куки занимают |⚡️ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|Ø крутить ±		Яркость страниц |по-умолчанию|browser.display.use_document_fonts|about:config|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tпосл. строка Моё меню|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|browser.download.improvements_to_download_panel|permissions.default.image|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|chrome://browser/skin/canvas-blocked.svg|browser.cache.memory.max_entry_size`.split('|').forEach((c,i)=>{
 	if(i == 0) k = 97; if(i == 26) k = 39; F[String.fromCharCode(i+k)] = c;
 });
 F.as = F.s +"custom_scripts/"+ F.R +".js"; F.sb = ucf_custom_script_win.ucf_sidebar_tabs;
