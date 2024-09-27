@@ -423,13 +423,15 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 }; Mouse["add-ons-button"] = Mouse[F.E];
 Object.keys(Mouse).forEach((k) =>{Mus["."+ k] = Mus["#"+ k] = Mouse[k]});
 
-var Setup = [{ //меню. refresh=true ⟳ Обновить без кэша. restart=false ↯ Без запроса, Изменено: курсив
-	pref: ["dom.disable_open_during_load", "Всплывающие окна",,"dom.disable_beforeunload\nЗапрос страниц о закрытии\n\nОпции "+ F.m +": Cерые"], Def3el: true, Yellow: false,
-	keys: [[true, "Блокировать",,,`Pref('dom.disable_beforeunload',true)`], [false, "Разрешить",,,`Pref('dom.disable_beforeunload',false)`]],
-},{ //серый значок: опция не задана|или Gray. Сирень: юзер, Жёлт: Yellow, Не равно Def3el: Красный, Обводка: не по-умолчанию
+var Setup = [ //меню. refresh=true ⟳ Обновить без кэша. restart=false ↯ Без запроса, Изменено: курсив
+((a)=>{return{ //pref,lab,key,hint,[val,str],code | keys:val,lab,dat,+hint,code,pref_my | icon:значок
+	pref: ["dom.disable_open_during_load", "Всплывающие окна",,a +"\nЗапрос страниц о закрытии\n\nОпции "+ F.m +": Cерые"], Def3el: true, Yellow: false,
+	keys: [[true, "Блокировать",,,`Pref('${a}',true)`], [false, "Разрешить",,,`Pref('${a}',false)`]]
+}})("dom.disable_beforeunload"),
+{ //серый значок: опция не задана|или Gray. Сирень: юзер, Жёлт: Yellow, Не равно Def3el: Красный, Обводка: не по-умолчанию
 	pref: [F.t, "Опасные файлы, сайты",,F.t +"_host"], Def3el: true, Yellow: false,
 	keys: [[true, "Запрет",,,`Pref(F.t +'_host',true)`], [false, "Открыть",,,`Pref(F.t +'_host',false)`]]
-},{ //pref,lab,key,hint,[val,str],code | keys:val,lab,dat,+hint,code,pref_my | icon:значок
+},{
 	pref: [F.S, "Сайт",,"Некоторым сайтам нужен доступ к Clipboard"], Def3el: false, Yellow: true,
 	keys: [[true, "управлять буфером обмена"], [false, "не изменять буфер обмена"]]
 },{
@@ -470,12 +472,13 @@ var Setup = [{ //меню. refresh=true ⟳ Обновить без кэша. re
 	pref: ["font.name.sans-serif.x-cyrillic", "Шрифт без засечек ",,"Также влияет на всплывающие подсказки\nСистемный: загрузка шрифтов документа"], Def3el: "", Yellow: "Roboto", Gray: "Arial", keys: sans
 },{
 	pref: ["font.name.serif.x-cyrillic", "Шрифт с засечками"], Def3el: "", Yellow: "Arial", keys: serif
-},{
-	pref: ["gfx.webrender.force-disabled", "Ускорять отрисовку страниц",,"gfx.webrender.compositor.force-enabled\ngfx.webrender.all\n\nАппаратная отрисовка видеокартой,\nотключите при проблемах с графикой"],
+},((a,b)=>{return {
+	pref: ["gfx.webrender.force-disabled", "Ускорять отрисовку страниц",,a +"\n"+ b +"\n\nАппаратная отрисовка видеокартой,\nотключите при проблемах с графикой"],
 	Def3el: false, Yellow: true, Gray: undefined, restart: true, keys: [
-		[false, "Да",,,`[['gfx.webrender.compositor.force-enabled', true], ['gfx.webrender.all', true]].map((a) =>{Pref(...a)})`],
-		[true, "Нет",,,`[['gfx.webrender.compositor.force-enabled', false],['gfx.webrender.all', false]].map((a) =>{Pref(...a)})`]]
-},null,{
+		[false, "Да",,,`[['${a}', true], ['${b}', true]].map((l) =>{Pref(...l)})`],
+		[true, "Нет",,,`[['${a}', false],['${b}', false]].map((l) =>{Pref(...l)})`]]
+}})("gfx.webrender.compositor.force-enabled","gfx.webrender.all"),
+null,{
 	pref: ["media.autoplay.default", "Авто-play аудио/видео"], Def3el: 0, Yellow: 2, Gray: 5, refresh: true,
 	keys: [
 		[0, "Разрешить", "0"], [2, "Спрашивать", "2"], [1, "Запретить", "1"], [5, "Блокировать", "5"]]
@@ -483,10 +486,12 @@ var Setup = [{ //меню. refresh=true ⟳ Обновить без кэша. re
 	pref: ["dom.storage.enabled", "Локальное хранилище",,"Сохранение персональных данных, по\nкоторым вас можно идентифицировать"],
 	Def3el: false, Yellow: true,
 	keys: [[true, "Разрешить"], [false, "Запретить"]]
-},{
-	pref: ["privacy.resistFingerprinting", "Изоляция Firstparty-Fingerprint",,"privacy.firstparty.isolate\n\nЗащита данных пользователя также\nзапрещает запоминать размер окна"], Def3el: false,
-	keys: [[true, "Да",,"Защита от слежки",`Pref('privacy.firstparty.isolate', true)`], [false, "Нет",,,`Pref('privacy.firstparty.isolate',false)`]]
-},null,{
+},
+((a)=>{return {
+	pref: ["privacy.resistFingerprinting", "Изоляция Firstparty-Fingerprint",,a +"\n\nЗащита данных пользователя также\nзапрещает запоминать размер окна"], Def3el: false,
+	keys: [[true, "Да",,"Защита от слежки",`Pref('${a}',true)`], [false, "Нет",,,`Pref('${a}',false)`]]
+}})("privacy.firstparty.isolate"),
+null,{
 	pref: ["browser.cache.disk.capacity", "Кэш браузера",,`\n${F.Y}:\nДиск и память: 5120\nтолько Память: -1`,,`[[F.U,true],[F.V,true],[F.W,true]].map((a)=>{Pref(...a)})`],
 	Def3el: 1048576, Yellow: 0, Gray: 5e5, Blue: 25e4, restart: true,
 	keys: [[5e5, F.m,,"500 Мб авторазмер"],
