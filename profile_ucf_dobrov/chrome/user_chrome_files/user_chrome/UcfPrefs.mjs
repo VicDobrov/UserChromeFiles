@@ -20,11 +20,11 @@ export var UcfPrefs = {
 	b_enable: false,
 	b_collapsed: false,
 	custom_styles_chrome: true,
-	custom_styles_all: false,
-	custom_scripts_background: false,
+	custom_styles_all: true,
+	custom_scripts_background: true,
 	custom_scripts_chrome: true,
-	custom_scripts_all_chrome: false,
-	custom_styles_scripts_child: false,
+	custom_scripts_all_chrome: true,
+	custom_styles_scripts_child: true,
 	mystyle: true,
 	expert: false,
 	info: false,
@@ -77,11 +77,51 @@ export var UcfPrefs = {
 			]);
 		})();
 	},
-	setSubToolbars(newStrFn) {
-		this.setSubToolbars = () => {};
-		Services.io.getProtocolHandler("resource")
-		.QueryInterface(Ci.nsIResProtocolHandler)
-		.setSubstitution("ucf_on_view_toolbars", Services.io.newURI(`data:charset=utf-8,${encodeURIComponent(newStrFn)}`));
+	handleToolbars: function handleToolbars(win, externalToolbars) {
+		if ((handleToolbars.wins ??= new Set()).add(win).size > 1) return;
+
+		var rph = Services.io.getProtocolHandler("resource").QueryInterface(Ci.nsIResProtocolHandler);
+		var resURL = (code, sfx = "") => {
+			var subst = "ucf_on_view_toolbars" + sfx
+			rph.setSubstitution(subst, Services.io.newURI("data:charset=utf-8," + encodeURIComponent(code)));
+			return "resource://" + subst;
+		}
+		var script = 
+			'window.addEventListener("toolbarvisibilitychange", ucf_toolbars);\n' +
+			'window.addEventListener("unload", () => ucf_toolbars.destructor(), {once: true});';
+		var oVTC = win.onViewToolbarCommand;
+		if (typeof oVTC === "function") {
+			var strFn = `${oVTC}`, regExr = /(BrowserUsageTelemetry\s*\.\s*recordToolbarVisibility\s*\(\s*toolbarId.+?\)\s*\;)/g;
+			if (regExr.test(strFn)) {
+				script += `\nwindow.onViewToolbarCommand = ${strFn.replace(/^(async\s)?.*?\(/, `$1function ${oVTC.name}(`)
+					.replace(regExr, 'if (!/ucf-additional-.+?-bar/.test(toolbarId)) { $1 }')};`;
+			}
+		}
+		if (externalToolbars) {
+			var tcm = win.ToolbarContextMenu;
+			var navToolbars = 'gNavToolbox.querySelectorAll("toolbar")';
+			var oVTPS = tcm.onViewToolbarsPopupShowing || win.onViewToolbarsPopupShowing;
+			if (typeof oVTPS == "function" && (strFn = String(oVTPS)).includes(navToolbars)) {
+				strFn = strFn.replace(navToolbars, 'Array.from(document.querySelectorAll("toolbar[toolbarname]"))');
+				if (strFn.startsWith("f")) script += "\n" + strFn;
+				else {
+					var key = "temp_ToolbarContextMenu";
+					var code = `Object.assign(${key}, {${strFn.replace("gNavToolbox", "window: lazy")}});`;
+					globalThis[key] = tcm;
+					ChromeUtils.compileScript(resURL(code, "_mjs"))
+						.then(ps => ps.executeInGlobal(globalThis), Cu.reportError)
+						.finally(() => delete globalThis[key]);
+				}
+			}
+		}
+		var func;
+		ChromeUtils.compileScript(resURL(script)).then(
+			ps => func = win => ps.executeInGlobal(win),
+			ex => func = () => Cu.reportError(ex)
+		).finally(() => {
+			this.handleToolbars = func;
+			for(var win of handleToolbars.wins) try {func(win);} catch(ex) {Cu.reportError(ex);}
+		});
 	},
 	get dbg() { // by Dumby
 		delete this.dbg;

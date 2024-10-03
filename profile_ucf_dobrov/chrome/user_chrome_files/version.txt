@@ -1,1 +1,2 @@
 version, date year-month-day: 2024-6-5
+FIX FF131 forum.mozilla-russia.org/viewtopic.php?pid=811075#p811075
