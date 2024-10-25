@@ -276,7 +276,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		1(){Help()}, 128(){Expert()},
 		256(){Mouse[F.L][256]()}
 	},
-	[F.T]: { //star
+	[F.T]: { //⭑
 		1(){Translate()}, //держать
 		8(){ //R+Alt
 			window.PlacesCommandHook.showPlacesOrganizer("BookmarksToolbar") }, //библиотека
@@ -462,9 +462,9 @@ var Setup = [ //меню. refresh=true ⟳ Обновить без кэша. res
 			`Pref(F.x,1)`],
 		[Pref(["user.pacfile", "file:///etc/proxy.pac"]), "user .pac файл", "4", F.o +" pacfile"]] //нужен диалог выбора pac-файла
 },{
-	pref: ["network.trr.mode", "DNS поверх HttpS",,"Шифрование DNS-трафика для\nзащиты персональных данных"], Def3el: 2, Yellow: 3, Gray: 5, Blue: 1, refresh: true,
+	pref: ["network.trr.mode", "DNS через HttpS",,"Шифрование DNS-трафика для\nзащиты персональных данных"], Def3el: 2, Yellow: 3, Gray: 0, Blue: 1, refresh: true,
 	keys: [
-		[0, F.m, "0"], [1, "автоматически", "1", "используется DNS или DoH, в зависимости от того, что быстрее"], [2, "DoH, затем DNS", "2"], [3, "только DoH", "3"], [4, "DNS и DoH", "4"], [5, "отключить DoH", "5"]]
+		[0, "автоматически", "0", "DNS/DoH, выбирается самый быстрый"], [2, "DoH плюс DNS", "2", "Повышенная защита"], [3, "только DoH", "3", "Максимум защиты"], [5, "отключить", "5"]]
 },null,{
 	pref: [F.n, "Загружать шрифты страниц"], Def3el: 1, Yellow: 0, refresh: true,
 	keys: [[1, "Да"], [0, "Нет"]]
@@ -556,7 +556,7 @@ get "urlbar-input"(){
 get [F[1]](){ //title-close
 	Status("правый клик: Свернуть, колёсико: Восстановить вкладку",3e3); return Te(F[0]);
 }, 
-get [F.T](){
+get [F.T](){ //⭑
 	var t = `${Pref("dom.disable_open_during_load") ? "Запрет" : "↯ Разреш"}ить всплывающие окна`;
 	if(!Pref("places.history.enabled")) t = F.j;
 	if(Pref("privacy.sanitize.sanitizeOnShutdown")) t = F.k;
