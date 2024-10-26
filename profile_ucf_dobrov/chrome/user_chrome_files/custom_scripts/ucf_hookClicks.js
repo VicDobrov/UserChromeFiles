@@ -738,7 +738,8 @@ var addDestructor = nextDestructor => { //для saveSelToTxt
 mode_skin = (txt,t,s = 'unset',o = '') => {setTimeout(()=>{ //опции FF меняют подсветку кнопок
 	var p = Pref(F.x), z = s; UcfAPI.Flash(F.O,p == 2 ? "magenta" : s,0,-1);
 	UcfAPI.Flash(F.D,0, Pref(F.w) > 1 ? 'hue-rotate(180deg) drop-shadow(0px 0.5px 0px #F68)' : 'none',-1);
-	if(Pref("dom.security.https_only_mode")) z = 'drop-shadow(0px 0.5px 0px #F8F)', o = ', только HTTPS'
+	if(Pref("dom.security.https_only_mode")) o = ', только HTTPS';
+	let d = Pref("network.trr.mode"); if(d == 2 || d == 3) z = 'drop-shadow(0px 0.5px 0px #F8F)';
 	UcfAPI.Flash(F.N,0,z,-1); t = [s,'Настройки сети - системные'];
 	if(p == 0) t = ['saturate(0%) brightness(0.93)','Сеть работает без прокси'];
 	else if(p == 1) t = ['sepia(100%) saturate(300%) brightness(0.9)', 'Ручная настройка прокси'];
