@@ -90,7 +90,7 @@
 	cursor: ew-resize;
 	width: 6px !important;
 	position: relative !important;
-	z-index: 3 !important;
+	z-index: calc(var(--browser-area-z-index-tabbox, 2) + 1) !important;
 	background-color: transparent !important;
 	border: none !important;
 	margin: 0 !important;
