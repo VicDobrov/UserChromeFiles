@@ -40,7 +40,7 @@
 			{	name: 'Ссылку в |плеер MPV', path: '/usr/bin/osascript', //FIX only mpv
 				args: `-e "tell app %quotTerminal%quot to do script %quotopen -b io.mpv '%OpenURI' --args '--ytdl-format=bestvideo[height<=?720][fps<=?30]+bestaudio/best[height<=?720][fps<=?30]'; exit%quot" -e "tell app %quotSystem Events%quot to set visible of process %quotTerminal%quot to false"`,
 				hint: 'скачать книгу в Elib2Ebook',
-				roll: `-e "tell app %quotTerminal%quot to do script %quotcd ${Downloadir()}; Elib2EbookCli -f epub -u '%OpenURI' && say сделано; exit%quot"`,
+				roll: `-e "tell app %quotTerminal%quot to do script %quotcd ${Downloadir()}; Elib2EbookCli --additional -f epub -u '%OpenURI' && say сделано; exit%quot"`,
 				icon: 'moz-icon://file:///System/Applications/Automator.app?size=16'
 			},
 			{	name: 'Открыть в браузере |Safari', path: '/usr/bin/open',
@@ -182,7 +182,7 @@
 			});
 		};
 		addListener(popup, "popupshowing", create);
-		that.unloadlisteners.push("contextmenuopenwith");
+		setUnloadMap("contextmenuopenwith", this.destructor, this);
 		function Downloadir(c = Ci.nsIFile){
 			var d = Services.dirsvc.get("DfltDwnld",c);
 			try {var d = Services.prefs.getComplexValue("browser.download.dir",c);} catch {}

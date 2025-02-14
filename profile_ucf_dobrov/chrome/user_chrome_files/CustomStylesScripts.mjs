@@ -17,14 +17,14 @@ export var UcfStylesScripts = {
 	*    compare with >= Services.appinfo.platformVersion
 	*/
 	styleschrome: [ // For documents of all windows [ChromeOnly]
-		{ path: "special_widgets.css", type: "USER_SHEET", }, // <-- Special Widgets
+		{ path: "special_widgets.css", type: "USER_SHEET", }, // Special Widgets
 		// { path: "auto_hide_sidebar.css", type: "USER_SHEET", }, // <-- Auto Hide Sidebar
 	],
 	stylesall: [ // For all documents
-		// { ver: {min: 117}, isos: ["linux"], ospath: "example_all.css", type: "USER_SHEET", }, // <-- Example
+		// { ver: {min: 117}, isos: ["linux"], ospath: "example_all.css", type: "USER_SHEET", }, // Example
 		{ path: "custom_styles_all_agent.css", type: "AGENT_SHEET"},
 		{ path: "custom_styles_all_user.css", type: "USER_SHEET"},
-	// { ospath: "custom_styles_all_user_%OS%.css", type: "USER_SHEET"},
+		// { ospath: "custom_styles_all_user_%OS%.css", type: "USER_SHEET"},
 	],
 	/**
 	* Scripts Settings:
@@ -51,6 +51,7 @@ export var UcfStylesScripts = {
 	*/
 	scriptschrome: { // For browser window document [ChromeOnly]
 		domload: [ // By event "DOMContentLoaded"
+		{ path: "ucf_unloadlisteners_fix.js", ucfobj: true, },//FIX new UCF
 		{ path: "sidebar_tabs_mod.js", ucfobj: true, },// Sidebar Tabs			
 		{ path: "ucf_autohidetabstoolbar.js", ucfobj: true },
 		{ path: "ucf_hookClicks.js", ucfobj: true }, //+ attrsInspector.js
@@ -64,14 +65,13 @@ export var UcfStylesScripts = {
 		],
 		load: [ // By event "load"
 			{ path: "custom_script_win.js", ucfobj: true, },
-			{ path: "special_widgets.js", ucfobj: true, }, // <-- Special Widgets
-			{ path: "auto_hide_sidebar.js", ucfobj: true, }, // <-- Auto Hide Sidebar
+			{ path: "special_widgets.js", ucfobj: true, }, // Special Widgets
+			// { path: "auto_hide_sidebar.js", ucfobj: true, }, // Auto Hide Sidebar
 			{ path: "ucf_findbarclose.js", ucfobj: true },
 		],
 	},
 	scriptsallchrome: { // For documents of all windows [ChromeOnly]
 		domload: [ // By event "DOMContentLoaded"
-
 		],
 		load: [ // By event "load"
 			// { path: "custom_script_all_win.js", urlregxp: /^(?:chrome|about):/, ucfobj: true, }, // <-- For chrome|about protocol
@@ -115,7 +115,7 @@ export var UcfStylesScriptsChild = {
 	*    compare with >= Services.appinfo.platformVersion
 	*/
 	stylescontent: [
-		// { path: "example_content.css", type: "USER_SHEET", }, // <-- Example
+		// { path: "example_content.css", type: "USER_SHEET", }, // Example
 	],
 	/**
 	* Scripts Settings:
@@ -140,7 +140,7 @@ export var UcfStylesScriptsChild = {
 
 		],
 		DOMContentLoaded: [ // By event "DOMContentLoaded"
-			// { path: "example_all_about.js", urlregxp: /^about:/, }, // <-- Example
+			// { path: "example_all_about.js", urlregxp: /^about:/, }, // Example
 		],
 		pageshow: [ // By event "pageshow"
 		{ path: "undoBookmarks.js", urlregxp: /chrome:\/\/browser\/content\/places\/places\.xhtml/, }, // Библиотека во вкладке

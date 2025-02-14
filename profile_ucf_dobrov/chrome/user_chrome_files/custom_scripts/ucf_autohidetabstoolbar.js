@@ -3,7 +3,7 @@
 		var newtab = this.newtab = document.querySelector("#tabs-newtab-button");
 		if (!newtab) return;
 		newtab.addEventListener("animationstart", this);
-		that.unloadlisteners.push("autohidetabstoolbar");
+		setUnloadMap("autohidetabstoolbar", this.destructor, this);
 		var style = "data:text/css;charset=utf-8," + encodeURIComponent(`
 			:root[ucfautohidetabstoolbar="true"] #TabsToolbar:not([customizing]) {
 				visibility: collapse !important;

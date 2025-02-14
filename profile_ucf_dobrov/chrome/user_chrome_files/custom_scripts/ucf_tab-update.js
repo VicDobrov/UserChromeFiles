@@ -17,8 +17,7 @@
 		))("addEventListener");
 
 		ucf_custom_script_win[id] = this;
-		ucf_custom_script_win.unloadlisteners.push(id);
-
+		setUnloadMap(id, this.destructor, this);
 		await SessionStore.promiseAllWindowsRestored;
 		for(var tab of gBrowser.tabs)
 			tab.linkedPanel || this.maybeInitTab(tab);

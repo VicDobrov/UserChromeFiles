@@ -36,7 +36,7 @@
 	init(that) {
 		gBrowser.tabpanels.addEventListener("findbaropen", this);
 		window.addEventListener("keydown", this, true);
-		that.unloadlisteners.push("findbarclose");
+		setUnloadMap("findbarclose", this.destructor, this);
 	},
 	close: function() {
 		this.delay = 3000; // Задержка скрытия

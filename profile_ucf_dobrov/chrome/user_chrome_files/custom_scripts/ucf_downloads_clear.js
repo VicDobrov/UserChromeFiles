@@ -3,7 +3,7 @@
 		var panel = this.panel = DownloadsPanel.panel;
 		if (!panel) return;
 		panel.addEventListener("popupshowing", this);
-		that.unloadlisteners.push("cleardownloadsbutton");
+		setUnloadMap("cleardownloadsbutton", this.destructor, this);
 	},
 	handleEvent(e) {
 		var dh = DownloadsView.downloadsHistory;

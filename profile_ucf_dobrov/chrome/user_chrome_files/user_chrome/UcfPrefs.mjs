@@ -77,51 +77,58 @@ export var UcfPrefs = {
 			]);
 		})();
 	},
-	handleToolbars: function handleToolbars(win, externalToolbars) {
-		if ((handleToolbars.wins ??= new Set()).add(win).size > 1) return;
-
-		var rph = Services.io.getProtocolHandler("resource").QueryInterface(Ci.nsIResProtocolHandler);
-		var resURL = (code, sfx = "") => {
-			var subst = "ucf_on_view_toolbars" + sfx
-			rph.setSubstitution(subst, Services.io.newURI("data:charset=utf-8," + encodeURIComponent(code)));
-			return "resource://" + subst;
-		}
-		var script = 
-			'window.addEventListener("toolbarvisibilitychange", ucf_toolbars);\n' +
-			'window.addEventListener("unload", () => ucf_toolbars.destructor(), {once: true});';
-		var oVTC = win.onViewToolbarCommand;
-		if (typeof oVTC === "function") {
-			var strFn = `${oVTC}`, regExr = /(BrowserUsageTelemetry\s*\.\s*recordToolbarVisibility\s*\(\s*toolbarId.+?\)\s*\;)/g;
-			if (regExr.test(strFn)) {
-				script += `\nwindow.onViewToolbarCommand = ${strFn.replace(/^(async\s)?.*?\(/, `$1function ${oVTC.name}(`)
-					.replace(regExr, 'if (!/ucf-additional-.+?-bar/.test(toolbarId)) { $1 }')};`;
-			}
-		}
-		if (externalToolbars) {
-			var tcm = win.ToolbarContextMenu;
-			var navToolbars = 'gNavToolbox.querySelectorAll("toolbar")';
-			var oVTPS = tcm.onViewToolbarsPopupShowing || win.onViewToolbarsPopupShowing;
-			if (typeof oVTPS == "function" && (strFn = String(oVTPS)).includes(navToolbars)) {
-				strFn = strFn.replace(navToolbars, 'Array.from(document.querySelectorAll("toolbar[toolbarname]"))');
-				if (strFn.startsWith("f")) script += "\n" + strFn;
-				else {
-					var key = "temp_ToolbarContextMenu";
-					var code = `Object.assign(${key}, {${strFn.replace("gNavToolbox", "window: lazy")}});`;
-					globalThis[key] = tcm;
-					ChromeUtils.compileScript(resURL(code, "_mjs"))
-						.then(ps => ps.executeInGlobal(globalThis), Cu.reportError)
-						.finally(() => delete globalThis[key]);
+	async viewToolbars(win, externalToolbars) {
+		this.viewToolbars = async () => {
+			return this.viewToolbarsScript;
+		};
+		return this.viewToolbarsScript = (async () => {
+			var newStrFn = "";
+			var oVTC = win.onViewToolbarCommand;
+			if (typeof oVTC === "function") {
+				let strFn = `${oVTC}`, regExr = /(BrowserUsageTelemetry\s*\.\s*recordToolbarVisibility\s*\(\s*toolbarId.+?\)\s*\;)/g;
+				if (regExr.test(strFn)) {
+					newStrFn = `window.onViewToolbarCommand = ${strFn.replace(/^(async\s)?.*?\(/, `$1function ${oVTC.name}(`)
+						.replace(regExr, 'if (!/ucf-additional-.+?-bar/.test(toolbarId)) { $1 }')};`;
 				}
 			}
-		}
-		var func;
-		ChromeUtils.compileScript(resURL(script)).then(
-			ps => func = win => ps.executeInGlobal(win),
-			ex => func = () => Cu.reportError(ex)
-		).finally(() => {
-			this.handleToolbars = func;
-			for(var win of handleToolbars.wins) try {func(win);} catch(ex) {Cu.reportError(ex);}
-		});
+			if (externalToolbars) {
+				let oVTPS = win.ToolbarContextMenu?.onViewToolbarsPopupShowing;
+				if (typeof oVTPS === "function")
+					this.viewToolbarsPopupShowing(win.ToolbarContextMenu, oVTPS);
+				else if (typeof (oVTPS = win.onViewToolbarsPopupShowing) === "function")
+					newStrFn += "\nUcfPrefs.viewToolbarsPopupShowing(window, onViewToolbarsPopupShowing);";
+			}
+			Services.io.getProtocolHandler("resource")
+			.QueryInterface(Ci.nsIResProtocolHandler)
+			.setSubstitution("ucf_on_view_toolbars", Services.io.newURI(`data:charset=utf-8,${encodeURIComponent(newStrFn)}`));
+			return this.viewToolbarsScript = await ChromeUtils.compileScript("resource://ucf_on_view_toolbars");
+		})();
+	},
+	viewToolbarsPopupShowing(obj, oVTPS) {
+		obj.onViewToolbarsPopupShowing = function() {
+			var func = oVTPS.apply(obj, arguments);
+			var popup = arguments[0].target;
+			if (/toolbar-context-menu|view-menu-popup|customization-toolbar-menu/.test(popup.id)) {
+				let win = popup.ownerGlobal;
+				let Item = arguments[1] || (Items => (Items = popup.querySelectorAll(":scope > [toolbarId]"))[Items.length - 1]?.nextElementSibling)();
+				for (let toolbar of win.ucf_toolbars_win.externalToolbars) {
+					if (toolbar.id === "ucf-additional-vertical-bar" && popup.id === "customization-toolbar-menu") continue;
+					let mItem = win.document.createXULElement("menuitem");
+					mItem.setAttribute("id", "toggle_" + toolbar.id);
+					mItem.setAttribute("toolbarId", toolbar.id);
+					mItem.setAttribute("type", "checkbox");
+					mItem.setAttribute("label", toolbar.getAttribute("toolbarname"));
+					mItem.setAttribute("checked", toolbar.getAttribute("collapsed") != "true");
+					mItem.setAttribute("accesskey", toolbar.getAttribute("accesskey"));
+					if (popup.id !== "toolbar-context-menu")
+						mItem.setAttribute("key", toolbar.getAttribute("key"));
+					if (Item) Item.before(mItem);
+					else popup.append(mItem);
+					mItem.addEventListener("command", win.onViewToolbarCommand);
+				}
+			}
+			return func;
+		};
 	},
 	get dbg() { // by Dumby
 		delete this.dbg;

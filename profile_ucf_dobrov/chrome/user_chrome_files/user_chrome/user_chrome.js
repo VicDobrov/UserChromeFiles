@@ -1,3 +1,4 @@
+
 const {UcfPrefs} = ChromeUtils.importESModule("chrome://user_chrome_files/content/user_chrome/UcfPrefs.mjs");
 ChromeUtils.defineESModuleGetters(this, {
 	CustomizableUI: "resource:///modules/CustomizableUI.sys.mjs",
@@ -572,20 +573,21 @@ class UserChrome {
 				enumerable: true,
 				value: UcfPrefs,
 			});
-			if (user_chrome.toolbars_enable)
+			if (user_chrome.toolbars_enable) {
+				this.addStyleToolbars(win.windowUtils.addSheet);
 				win.addEventListener("MozBeforeInitialXULLayout", e => {
-					this.addStyleToolbars(win.windowUtils.addSheet);
 					Services.scriptloader.loadSubScript("chrome://user_chrome_files/content/user_chrome/toolbars.js", win);
 				}, { once: true });
+			}
 			if (UcfPrefs.custom_scripts_chrome) {
 				win.addEventListener("DOMContentLoaded", e => {
-					new CustomScripts(win, "ucf_custom_script_win");
+					new CustomScripts(win, "ucf_custom_scripts_win");
 				}, { once: true });
 			}
 		}
 		if (UcfPrefs.custom_scripts_all_chrome) {
 			win.addEventListener("DOMContentLoaded", e => {
-				new CustomScripts(win, "ucf_custom_script_all_win", href);
+				new CustomScripts(win, "ucf_custom_scripts_all_win", href);
 			}, { once: true });
 		}
 	}
@@ -615,10 +617,6 @@ class CustomScripts {
 				this.unloadMap.delete(key);
 			return val;
 		}, ucfo, { defineAs: "getDelUnloadMap" });
-		var udls = Cu.createObjectIn(ucfo, { defineAs: "unloadlisteners" });
-		Cu.exportFunction(key => {
-			this.setUnloadMap(key, ucfo[key]?.destructor, ucfo[key]);
-		}, udls, { defineAs: "push" });
 		this[defineAs](win, ucfo, "domload", href);
 	}
 	setMap(key, func, context) {
@@ -632,12 +630,13 @@ class CustomScripts {
 				try { val.func.apply(val.context); } catch (e) {
 					if (!val.func)
 						try { this.ucfo[key].destructor(); } catch (e) {Cu.reportError(e);}
-					Cu.reportError(e);
+					else
+						Cu.reportError(e);
 				}
 			});
 		}, { once: true });
 	}
-	ucf_custom_script_win(win, ucfo, prop) {
+	ucf_custom_scripts_win(win, ucfo, prop) {
 		var {loadSubScript} = Services.scriptloader;
 		for (let {ucfobj, path, ospath, isos, ver, func} of UcfStylesScripts.scriptschrome[prop]) {
 			try {
@@ -651,7 +650,7 @@ class CustomScripts {
 			} catch (e) {Cu.reportError(e);}
 		}
 	}
-	ucf_custom_script_all_win(win, ucfo, prop, href) {
+	ucf_custom_scripts_all_win(win, ucfo, prop, href) {
 		var {loadSubScript} = Services.scriptloader;
 		for (let {urlregxp, ucfobj, path, ospath, isos, ver, func} of UcfStylesScripts.scriptsallchrome[prop]) {
 			try {

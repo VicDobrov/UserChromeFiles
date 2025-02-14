@@ -8,7 +8,7 @@
 			return;
 		var popup = this.popup = searchSelect.closest("menupopup");
 		popup.addEventListener("popupshowing", this);
-		that.unloadlisteners?.push("contextsearch");
+		that.setUnloadMap?.("contextsearch", this.destructor, this);
 		document.getElementById("context-sep-screenshots").style.setProperty("display", "none", "important");
 		if (AppConstants.platform == "macosx")
 			Services.prefs.setBoolPref('widget.macos.native-context-menus',false);
@@ -34,8 +34,7 @@
 		menu.append(menupopup);
 		menu.ePopup = menupopup;
 		searchSelect.style.setProperty("display", "none", "important");
-		// searchSelect.before(menu);
-		document.getElementById("context-selectall").after(menu);
+		searchSelect.before(menu);
 		menu.onclick = this.search.bind(this);
 		this.handler = e => e.target != popup || (menu.hidden = searchSelect.hidden);
 		this.handlerRebuild = e => this.handler(e) || this.rebuild(menu);
@@ -51,7 +50,7 @@
 		? [e => !e.hideOneOffButton]
 		: Object.defineProperty(
 			[function(e) {return !this.includes(e.name);}], "1", {
-				get: () => Services.prefs.getStringPref(this.hide)?.split(",") || []
+				get: () => Services.prefs.getStringPref(this.hide, [])?.split(",") || []
 			}
 		);
 		return (this.getEngines = async () =>
@@ -77,7 +76,7 @@
 	async setAttrs(node, engine, label = engine.name) {
 		node.engine = engine;
 		node.setAttribute("label", label);
-    node.setAttribute("image", await engine.getIconURL?.() || engine.iconURI?.spec || this.defaultImg);
+		node.setAttribute("image", await engine.getIconURL?.() || engine.getIconURLBySize?.(16, 16) || this.defaultImg);
 	},
 	observe() {
 		this.popupshowing = this.handlerRebuild;

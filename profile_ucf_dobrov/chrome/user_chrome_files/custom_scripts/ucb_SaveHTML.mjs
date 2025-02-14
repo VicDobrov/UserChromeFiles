@@ -14,8 +14,7 @@ ChromeUtils.domProcessChild.childID || ({
 		});
 		obs.addObserver(self = this, topic);
 		obs.addObserver(function quit(s, t) {
-			obs.removeObserver(quit, t);
-			obs.removeObserver(self, topic);
+			obs.removeObserver(quit, t); obs.removeObserver(self, topic);
 		}, "quit-application-granted");
 		this.handleEvent = e => this[e.type](e);
 		globalThis[Symbol.for('UcfAPI')] = this.UcfAPI; //общие функции
@@ -27,14 +26,14 @@ ChromeUtils.domProcessChild.childID || ({
 	popupshowing(e) {
 		this.unload(e);
 		var popup = e.target;
-		var btn = popup.ownerDocument.createXULElement("toolbarbutton");
-		btn.id = "appMenu-ucf-save-html-button";
-		btn.setAttribute("label", "Всё или выбранное в единый HTML");
-		var before = "appMenu-save-file-button2", subviewbutton = "subviewbutton";
-		btn.className = subviewbutton;
-		btn.setAttribute("oncommand", "SingleHTML();");
-		btn.SingleHTML = this.UcfAPI.SingleHTML;
-		popup.querySelector('toolbarbutton[id^="'+ before +'"]').before(btn);
+		var b = popup.ownerDocument.createXULElement("toolbarbutton");
+		b.id = "appMenu-ucf-save-html-button";
+		b.setAttribute("label", "Всё или выбранное в единый HTML");
+		var before = "appMenu-save-file-button2";
+		b.className = "subviewbutton";
+		b.setAttribute("oncommand", "SingleHTML();");
+		b.SingleHTML = this.UcfAPI.SingleHTML;
+		popup.querySelector('toolbarbutton[id^="'+ before +'"]').before(b);
 	},
 	unload(e) {
 		var win = e.target.ownerGlobal;
@@ -50,7 +49,7 @@ ChromeUtils.domProcessChild.childID || ({
 		try {dir.exists() && dir.isDirectory() || dir.create(dir.DIRECTORY_TYPE, 0o777);}
 			catch(ex){
 				self.UcfAPI.Succes(dir.path, 0); return;}
-		if (!to){ // диалог выбора папки
+		if (!to){ //диалог выбора папки
 			var fp = Cc['@mozilla.org/filepicker;1'].createInstance(Ci.nsIFilePicker);
 			fp.init(parseInt(Services.appinfo.platformVersion) < 125 ? win : win.browsingContext,"", fp.modeSave);
 			fp.defaultString = path.split(/.*[\/|\\]/)[1];
@@ -62,7 +61,7 @@ ChromeUtils.domProcessChild.childID || ({
 			else return;
 		}; to = 1;
 		try {await IOUtils.writeUTF8(path, data +'<a href='+ (protocol != 'data:' ? self.UcfAPI.URL() : 'data:uri') +'><small><blockquote>источник: '+ new Date().toLocaleString("ru") +'</blockquote></small></a>');} catch {to = 0}
-		await self.UcfAPI.Succes(path, to, '√ страница записана: '+ t);
+		await self.UcfAPI.Succes(path, to, '√ сайт записан: '+ t);
 	},
 	w1251(txt, win1251 = new TextDecoder("windows-1251")){
 		return txt.replace(/(?:%[0-9A-F]{2})+/g, txt => win1251.decode(new Uint8Array(txt.replace(/%/g,",0x").slice(1).split(","))));
@@ -76,7 +75,7 @@ UcfAPI: {
 		if (conf && !Services.prompt.confirm(null, lab, "Перезапустить браузер?")) return;
 		let cancel = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
 		Services.obs.notifyObservers(cancel, "quit-application-requested", "restart");
-		return cancel.data ? Services.prompt.alert(null, lab, "Запрос на выход отменён.") : exe();
+		return cancel.data ? Services.prompt.alert(null, lab, "Запрос на выход отменён") : exe();
 	},
 	Pref(key,set){ //или key = [key,default]
 		if(!Array.isArray(key)) key = [key];
@@ -100,15 +99,18 @@ UcfAPI: {
 				return data.value.QueryInterface(Ci.nsISupportsString).data;
 		} catch {return ""}
 	},
-	dirGet(){ //dir [, subdirs]. last arg ? 1 ret path : open
-		var f, d = [...arguments], c = Ci.nsIFile, e = "DfltDwnld", r = (d[d.length-1] == 1);
-		try {var b = prefs.getComplexValue("browser.download.dir",c);} catch {b = dirsvc.get(e,c)}
-		(r) && d.pop(); if (d[0] == e) f = b;
-		else try {f = dirsvc.get(d[0], c);} catch{f = b}
-		d.slice(1, d.length).forEach((c) => f.append(c));
-		if(r) return f.path; f.exists() && f.launch();
+	dirGet(){ //dir [, subdirs] last > 1 ret object
+		var l,c = Ci.nsIFile, a = [...arguments], d = a.at(-1); //FF90+
+		if(d === +d) l = a.pop();
+		try {d = prefs.getComplexValue("browser.download.dir",c);} catch {d = dirsvc.get("DfltDwnld",c)}
+		if (a[0])
+			try {d = dirsvc.get(a[0],c);} catch{}
+		a.slice(1, a.length).forEach((c) => d.append(c));
+		if(l == 1) d = d.path;
+		if(l) return d; else
+			d.exists() && d.launch();
 	},
-	async Status(text,time, win = self.win){
+	async Status(str, sec,win = self.win){
 		var StatusPanel = win.StatusPanel;
 		if(StatusPanel.update.tid)
 			win.clearTimeout(StatusPanel.update.tid)
@@ -118,21 +120,21 @@ UcfAPI: {
 			StatusPanel.update.ret = () => {
 				StatusPanel.update = update,StatusPanel.update();
 		}}
-		StatusPanel.update.tid = win.setTimeout(StatusPanel.update.ret,time || 5e3);
-		StatusPanel._label = text;
+		StatusPanel.update.tid = win.setTimeout(StatusPanel.update.ret,sec * 1e3 || 5e3);
+		StatusPanel._label = str;
 	},
-	Flash(id,color = 'rgba(0,200,0,0.3)',style,txt,time,ms = 350,win = self.win){
+	Flash(id,rgb = 'rgba(0,200,0,0.3)',css,txt,sec,ms = 350,win = self.win){
 		id = win.document.getElementById(id || 'urlbar-background');
 		id &&= id.style; if(isNaN(Number(txt)))
-			this.Status(txt,time); //мигание, статус
-		if(style && id) id.filter = style;
-		if(color && id) if(txt < 0)
-			id.fill = color; else id.background = color;
+			this.Status(txt,sec); //мигание, статус
+		if(css && id) id.filter = css;
+		if(rgb && id) if(txt < 0)
+			id.fill = rgb; else id.background = rgb;
 		if(!(txt < 0) && ms && id) win.setTimeout(
 			()=> ["filter","background","fill"].forEach((c)=> id.removeProperty(c)), ms);
 	},
-	async Succes(path, w = 1, text, win = self.win, s,i){
-		this.Flash(0, w ? undefined : 'rgba(250,0,0,0.2)',0, w ? text : 0);
+	async Succes(path, w = 1, str, win = self.win, s,i){
+		this.Flash(0, w ? undefined : 'rgba(250,0,0,0.2)',0, w ? str : 0);
 		if(!w) return; s = `${w == 1 ? "und" : "ov"}erline`;
 		i = win.gBrowser.selectedTab.textLabel.style;
 		if(!i.textDecoration.includes(s)) i.textDecoration = i.textDecoration +" "+ s;
@@ -152,8 +154,12 @@ UcfAPI: {
 		if(host) url = /^file:\/\//.test(url) ? 'file' : url.replace(/^.*u=|https?:\/\/|www\.|\/.*/g,'').replace(/^(moz-extension|ru\.|m\.)/,'').replace(/\/.*/,'');
 		return url;
 	},
+	DateHour(u,m,t = 1){let d = u ? new Date(u) : new Date();
+		return d.getDate() + (m ? m[d.getMonth()] : '.'+ (d.getMonth()+1) +'.') + d.getFullYear().toString().slice(-2) + (t ? '-'+ d.toLocaleTimeString().replace(/:/g,'։') : '');
+	},
 	TitlePath(to, d, h, win = self.win, n = 0, u = 99){ //0 web|2 pic|-№ cut, name, url
-		if(parseInt(to) > 0) [n,to] = [to,n]; if(parseInt(to) < 0) u = Math.abs(to);
+		if(parseInt(to) > 0) [n,to] = [to,n];
+		if(parseInt(to) < 0) u = Math.abs(to);
 		if(typeof(to) != 'string' || !/.*\|/.test(to))
 			to = prefs.getStringPref("extensions.user_chrome_files.savedirs","|||0");
 		to = to.split('|').slice(0 + n, 2 + n); //Dir/Sub|[empty|0 title|1 url]
@@ -161,41 +167,41 @@ UcfAPI: {
 		d = d.replace(/\s+/g,' ').replace(/:/g,'։').replace(/[|<>]+/g,'_').replace(/([\\\/?*\"'`]+| ։։ .*)/g,'').slice(0,u).trim();
 		n = this.URL(); u = h || n; h = this.URL(0, 1); n = d;
 		to[1] = (to[1] == "0") ? d : (to[1] == "1") ? h : "";
-		d += "_"+ new Date().toLocaleDateString('ru', {day: 'numeric',month: 'numeric',year: '2-digit'}) +'-'+ new Date().toLocaleTimeString('en-GB').replace(/:/g,"։"); //дата-часы
-		try {var dir = prefs.getComplexValue("browser.download.dir",Ci.nsIFile);} catch {dir = dirsvc.get("DfltDwnld",Ci.nsIFile)}
-		var map = s => win.DownloadPaths.sanitize(s); //FIX имён
+		d += "_"+ this.DateHour(); //дата
+		let dir = this.dirGet(0,2);
+		let map = s => win.DownloadPaths.sanitize(s); //FIX имён
 		to.map(map).forEach(dir.append);
 		to = dir.clone(); to.append(d +'.html');
-		return [dir, to.path, n, d, u, h]; //… имя, +дата, url, домен
+		return [dir,to.path,n,d,u,h]; //… имя, +дата, url, домен
 	},
-	FileOk(path, win = self.win){ //файл|папка есть?
-		if(path.startsWith("chrome://"))
+	FileOk(path, read, win = self.win){ //файл|папка есть?
+		let chr = path; if(path.startsWith("chrome://"))
 			path = Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).convertChromeURL(io.newURI(path)).spec;
 		path = path.replace(/.+?:\/\//,"").replace(/%20/g," ");
 		if (win.AppConstants.platform == "win"){
 			path = path.replace(/^\/?/,"").replace(/\//g,"\\\\");}
-		try {return win.FileUtils.File(String.raw`${path}`).exists();
+		try { //read only chrome://…
+			return read ? Cu.readUTF8URI(io.newURI(chr)) : win.FileUtils.File(path).exists();
 		} catch {}; return false;
 	},
 	RunwA(){let args = [...arguments], path = args.shift(), file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile), proc = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
 		file.initWithPath(path);
 		try{proc.init(file);} catch{throw "Ошибка "+ path}
-		proc.runwAsync(args, args.length);
-	}
+		proc.runwAsync(args, args.length);}
 }
 }).init("browser-delayed-startup-finished");
 
-var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
-	var resolveURL = function (url, base) {
-		try { return io.newURI(url, null, io.newURI(base)).spec;} catch {}
+var htmlAndName = async mainWin =>{ //meteo7.ru не сохраняет SVG
+	var resolveURL = (url, base) =>{
+		try {return io.newURI(url, null, io.newURI(base)).spec;} catch {}
 	},
-	getSelWin = function (w) {
+	getSelWin = w =>{
 		if (w.getSelection().toString()) return w;
 		for (var i = 0, f, r; f = w.frames[i]; i++) {
-			try { if (r = getSelWin(f)) return r;} catch {}
+			try {if (r = getSelWin(f)) return r;} catch {}
 		}
 	},
-	encodeImg = function (src, obj, canvas, img) {
+	encodeImg = (src, obj, canvas, img) =>{
 		if (/^https?:\/\//.test(src)) {
 			canvas = doc.createElement('canvas');
 			if (!obj || obj.nodeName.toLowerCase() != 'img') {
@@ -208,50 +214,49 @@ var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
 				canvas.height = img.naturalHeight || img.height || 128;
 				canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
 				src = canvas.toDataURL(/\.jpe?g/i.test(src) ? 'image/jpeg' : 'image/png'); //\.svg/i.test(src) ? 'image/svg+xml'
-			} catch {};
+			} catch {}
 			if (img != obj) img.src = 'about:blank';
 		};
 		return src;
 	},
-	toSrc = function (obj) {
-		var strToSrc = function (str) {
+	toSrc = obj =>{
+		var strToSrc = str =>{
 			var chr, ret = '', i = 0, meta = {'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','\x22':'\\\x22','\\':'\\\\'};
 			while (chr = str.charAt(i++)) {
 				ret += meta[chr] || chr;
 			};
-			return '\x22' + ret + '\x22';
+			return '\x22'+ ret +'\x22';
 		},
-		arrToSrc = function (arr) {
+		arrToSrc = arr =>{
 			var ret = [];
 			for (var i = 0; i < arr.length; i++) {
 				ret[i] = toSrc(arr[i]) || 'null';
 			};
-			return '[' + ret.join(',') + ']';
+			return '['+ ret.join(',') +']';
 		},
-		objToSrc = function (obj) {
+		objToSrc = obj =>{
 			var val, ret = [];
 			for (var prop in obj) {
-				if (obj.hasOwnProperty(prop) && (val = toSrc(obj[prop]))) ret.push(strToSrc(prop) + ': ' + val);
+				if (obj.hasOwnProperty(prop) && (val = toSrc(obj[prop]))) ret.push(strToSrc(prop) +': '+ val);
 			};
-			return '{' + ret.join(',') + '}';
+			return '{'+ ret.join(',') +'}';
 		};
-		switch (Object.prototype.toString.call(obj).slice(8, -1)) {
+		switch (Object.prototype.toString.call(obj).slice(8, -1)){
 			case 'Array': return arrToSrc(obj);
 			case 'Boolean':
 			case 'Function':
 			case 'RegExp': return obj.toString();
-			case 'Date': return 'new Date(' + obj.getTime() + ')';
+			case 'Date': return 'new Date('+ obj.getTime() +')';
 			case 'Math': return 'Math';
 			case 'Number': return isFinite(obj) ? String(obj) : 'null';
 			case 'Object': return objToSrc(obj);
 			case 'String': return strToSrc(obj);
-			default: return obj ? (obj.nodeType == 1 && obj.id ? 'document.getElementById(' + strToSrc(obj.id) + ')' : '{}') : 'null';
-		}
+			default: return obj ? (obj.nodeType == 1 && obj.id ? 'document.getElementById('+ strToSrc(obj.id) +')' : '{}') : 'null';}
 	},
 	selWin = getSelWin(mainWin), win = selWin || mainWin, doc = win.document, loc = win.location,
 	ele, pEle, clone, reUrl = /(url\(\x22)(.+?)(\x22\))/g;
 
-	if (selWin) {
+	if (selWin){
 		var rng = win.getSelection().getRangeAt(0);
 		pEle = rng.commonAncestorContainer;
 		ele = rng.cloneContents();
@@ -260,7 +265,7 @@ var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
 		ele = (doc.body || doc.getElementsByTagName('body')[0]).cloneNode(true);
 	};
 	while (pEle) {
-		if (pEle.nodeType == 1) {
+		if (pEle.nodeType == 1){
 			clone = pEle.cloneNode(false);
 			clone.appendChild(ele);
 			ele = clone;
@@ -309,47 +314,43 @@ var htmlAndName = async mainWin => { //meteo7.ru не сохраняет SVG
 		script.type = 'text/javascript';
 		for (var name in unsafeWin) {
 			if (name in f.contentWindow || !/^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(name)) continue;
-			try {
-				str = toSrc(unsafeWin[name]);
+			try {str = toSrc(unsafeWin[name]);
 				if (!/\{\s*\[native code\]\s*\}/.test(str)) {
-					script.appendChild(doc.createTextNode('var ' + name + ' = ' + str.replace(/<\/(script>)/ig, '<\\/$1') + ';\n'));
+					script.appendChild(doc.createTextNode('var '+ name +' = '+ str.replace(/<\/(script>)/ig, '<\\/$1') +';\n'));
 				}
-			} catch {};
+			} catch {}
 		};
 		f.parentNode.removeChild(f);
 		if (script.childNodes.length) this.nextSibling.appendChild(script);
 	};
 	head.copyScript(win.wrappedJSObject || win);
-	head.copyStyle = function (s) {
+	head.copyStyle = function(s){
 		if (!s) return;
 		var style = doc.createElement('style');
 		style.type = 'text/css';
 		if (s.media && s.media.mediaText) style.media = s.media.mediaText;
-		try {
-			for (var i = 0, rule; rule = s.cssRules[i]; i++) {
+		try {for (var i = 0, rule; rule = s.cssRules[i]; i++) {
 				if (rule.type != 3) {
 					if((!rule.selectorText || rule.selectorText.indexOf(':') != -1) || (!sel.querySelector || sel.querySelector(rule.selectorText))) {
-						var css = !rule.cssText ? '' : rule.cssText.replace(reUrl, function (a, prev, url, next) {
+						var css = !rule.cssText ? '' : rule.cssText.replace(reUrl, (a, prev, url, next) =>{
 							if (!/^[a-z]+:/.test(url)) url = resolveURL(url, s.href || loc.href);
 							if(rule.type == 1 && rule.style && rule.style.backgroundImage) url = encodeImg(url);
 							return prev + url + next;
 						});
 						style.appendChild(doc.createTextNode(css + '\n'));
 					}
-				} else { this.copyStyle(rule.styleSheet);}
+				} else {this.copyStyle(rule.styleSheet);}
 			}
-		} catch {
-			if (s.ownerNode) style = s.ownerNode.cloneNode(false);
-		};
+		} catch {if (s.ownerNode) style = s.ownerNode.cloneNode(false);}
 		this.appendChild(style);
 	};
 	for (var j = 0; j < sheets.length; j++) head.copyStyle(sheets[j]);
 	head.appendChild(doc.createTextNode('\n'));
 	var doctype = '', dt = doc.doctype;
 	if (dt && dt.name) {
-		doctype += '<!DOCTYPE ' + dt.name;
-		if (dt.publicId) doctype += ' PUBLIC \x22' + dt.publicId + '\x22';
-		if (dt.systemId) doctype += ' \x22' + dt.systemId + '\x22';
+		doctype += '<!DOCTYPE '+ dt.name;
+		if (dt.publicId) doctype += ' PUBLIC \x22'+ dt.publicId +'\x22';
+		if (dt.systemId) doctype += ' \x22'+ dt.systemId +'\x22';
 		doctype += '>\n';
 	};
 	var onlyName = selWin ? win.getSelection().toString() : (title && title.text ? title.text : loc.pathname.split('/').pop());

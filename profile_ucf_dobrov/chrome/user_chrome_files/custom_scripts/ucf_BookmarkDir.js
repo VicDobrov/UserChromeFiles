@@ -99,7 +99,7 @@
 		for(var star of stars) star.removeEventListener("mouseenter", stt);
 	}
 	var ucf = window.ucf_custom_script_win;
-	if (ucf) ucf[id] = {destructor}, ucf.unloadlisteners.push(id);
+	if (ucf) ucf[id] = {destructor}, setUnloadMap(id, this.destructor, this);
 	else window.addEventListener("unload", destructor, {once: true});
 
 })("ucfBookmarksStarFTooltipHelper", "#star-button, #star-button-box"); // #context-bookmarkpage

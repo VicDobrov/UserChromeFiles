@@ -111,8 +111,7 @@ if (!ChromeUtils.domProcessChild.childID) {
 					var newName = title + ext, {parent} = file;
 					var newFile = parent.clone();
 					newFile.append(newName);
-					try {
-						newFile.createUnique(file.NORMAL_FILE_TYPE, file.permissions);
+					try {	newFile.createUnique(file.NORMAL_FILE_TYPE, file.permissions);
 						file.renameTo(parent, newFile.leafName);
 						download.target.path = newFile.path;
 						download.refresh();

@@ -1,14 +1,16 @@
-const ucf_toolbars = {
+var ucf_toolbars_win = {
 	navtoolbox: null,
 	verticalbox: null,
 	verticalbar: null,
 	topbox: null,
 	topbar: null,
 	bottombar: null,
+	externalToolbars: [],
+	eventListeners: [],
 	init() {
 		var navtoolbox = this.navtoolbox = window.gNavToolbox || document.querySelector("#navigator-toolbox");
 		if (!navtoolbox) return;
-		var toolbarcreate = false;
+		var toolbarcreate = false, t_autohide = false, v_autohide = false;
 		var l10n = UcfPrefs.formatMessages();
 		if (UcfPrefs.t_enable) {
 			try {
@@ -40,7 +42,7 @@ const ucf_toolbars = {
 					this.topbox = topbox;
 					this.topbar = topbar;
 					document.documentElement.setAttribute("v_top_bar_autohide", "true");
-					this.top_autohide.init(this);
+					t_autohide = true;
 				} else {
 					navtoolbox.querySelector(sel).after(topbar);
 					this.topbar = topbar;
@@ -48,7 +50,6 @@ const ucf_toolbars = {
 				toolbarcreate = true;
 			} catch {}
 		}
-
 		var externalToolbars = false;
 		if (UcfPrefs.v_enable) {
 			try {
@@ -80,7 +81,7 @@ const ucf_toolbars = {
 				verticalbar.setAttribute("collapsed", `${UcfPrefs.v_collapsed}`);
 				verticalbox.append(verticalbar);
 				vcontainer.append(verticalbox);
-				let browser = document.querySelector("hbox#browser"); 
+				let browser = document.querySelector("hbox#browser");
 				if (UcfPrefs.v_bar_start) {
 					browser.prepend(vcontainer);
 					document.documentElement.setAttribute("v_vertical_bar_start", "true");
@@ -90,17 +91,16 @@ const ucf_toolbars = {
 				}
 				this.verticalbar = verticalbar;
 				this.verticalbox = verticalbox;
-
 				if (UcfPrefs.v_autohide) {
 					document.documentElement.setAttribute("v_vertical_bar_autohide", "true");
-					this.vert_autohide.init(this);
+					v_autohide = true;
 				}
-				navtoolbox.addEventListener("beforecustomization", this);
+				this.addListener(navtoolbox, "beforecustomization", this);
+				this.externalToolbars.push(verticalbar);
 				externalToolbars = true;
 				toolbarcreate = true;
 			} catch {}
 		}
-
 		if (UcfPrefs.b_enable) {
 			try {
 				let bottombar = document.createXULElement("toolbar");
@@ -122,31 +122,54 @@ const ucf_toolbars = {
 				closebutton.id = "ucf-additional-bottom-closebutton";
 				closebutton.className = "close-icon closebutton";
 				closebutton.setAttribute("removable", "false");
-				closebutton.setAttribute("oncommand", "var bar = this.parentNode; setToolbarVisibility(bar, bar.collapsed);");
+				this.addListener(closebutton, "command", e => {
+					var bar = e.target.parentNode;
+					setToolbarVisibility(bar, bar.collapsed);
+				});
 				bottombar.append(closebutton);
 				let bottombox = document.querySelector("#browser-bottombox");
 				if (!bottombox) {
 					bottombox = document.createXULElement("vbox");
 					bottombox.id = "browser-bottombox";
-					document.querySelector("#fullscreen-and-pointerlock-wrapper")?.after(bottombox);
+					document.body.append(bottombox);
 				}
 				bottombox.append(bottombar);
 				this.bottombar = bottombar;
+				this.externalToolbars.push(bottombar);
 				externalToolbars = true;
 				toolbarcreate = true;
 			} catch {}
 		}
-		toolbarcreate && UcfPrefs.handleToolbars(window, externalToolbars);
+		if (toolbarcreate) {
+			this.addListener(window, "toolbarvisibilitychange", this);
+			window.addEventListener("unload", () => this.destructor(), { once: true });
+			UcfPrefs.viewToolbars(window, externalToolbars).then(script => script.executeInGlobal(window));
+			delayedStartupPromise.then(() => {
+				if (t_autohide)
+					this.top_autohide.init();
+				if (v_autohide)
+					this.vert_autohide.init();
+				if (!externalToolbars) return;
+				for (let {type, listenerObject: listener, capturing} of Services.els.getListenerInfoFor(navtoolbox)) {
+					if (typeof listener === "function" && Cu.getFunctionSourceLocation(listener)
+						.filename === "chrome://browser/content/navigator-toolbox.js")
+						for (let elm of this.externalToolbars)
+							this.addListener(elm, type, listener, capturing);
+				}
+			});
+		}
+	},
+	addListener(elm, type, listener, capturing = false) {
+		elm.addEventListener(type, listener, capturing);
+		this.eventListeners.push({elm, type, listener, capturing});
 	},
 	destructor() {
-		window.removeEventListener("toolbarvisibilitychange", this);
 		if (UcfPrefs.t_enable && UcfPrefs.t_autohide)
 			this.top_autohide.destructor();
-		if (UcfPrefs.v_enable) {
-			this.navtoolbox.removeEventListener("beforecustomization", this);
-			if (UcfPrefs.v_autohide)
-				this.vert_autohide.destructor();
-		}
+		if (UcfPrefs.v_enable && UcfPrefs.v_autohide)
+			this.vert_autohide.destructor();
+		for (let {elm, type, listener, capturing} of this.eventListeners)
+			elm.removeEventListener(type, listener, capturing);
 	},
 	handleEvent(e) {
 		this[e.type](e);
@@ -181,40 +204,44 @@ const ucf_toolbars = {
 		showTimer: null,
 		hideTimer: null,
 		tabpanels: null,
-		init(that) {
-			this.vtbb = that;
-			Services.obs.addObserver(this, "browser-delayed-startup-finished");
-		},
-		observe(aSubject, aTopic, aData) {
-			Services.obs.removeObserver(this, "browser-delayed-startup-finished");
+		eventListeners: [],
+		init() {
 			var tabpanels = this.tabpanels = gBrowser.tabpanels;
 			if (!tabpanels) return;
 			var hoverbox = this.hoverbox = document.querySelector(UcfPrefs.t_hoversel) || document.querySelector("#nav-bar");
-			var {navtoolbox, topbar} = this.vtbb;
-			hoverbox.addEventListener("mouseenter", this);
-			hoverbox.addEventListener("mouseleave", this);
-			hoverbox.addEventListener("dragenter", this);
-			navtoolbox.addEventListener("popupshown", this);
-			navtoolbox.addEventListener("popuphidden", this);
+			var {navtoolbox, topbar} = ucf_toolbars_win;
+			this.addListener(hoverbox, "mouseenter", this);
+			this.addListener(hoverbox, "mouseleave", this);
+			this.addListener(hoverbox, "dragenter", this);
+			this.addListener(navtoolbox, "popupshown", this);
+			this.addListener(navtoolbox, "popuphidden", this);
 			setTimeout(() => {
-				document.documentElement.style.setProperty("--v-top-bar-height", `${this.vtbb.topbar.getBoundingClientRect().height}px`);
+				document.documentElement.style.setProperty("--v-top-bar-height", `${topbar.getBoundingClientRect().height}px`);
 			}, 0);
 		},
 		handleEvent(e) {
 			this[e.type](e);
 		},
+		addListener(elm, type, listener) {
+			elm.addEventListener(type, listener);
+			this.eventListeners.push({elm, type, listener});
+		},
 		destructor() {
-			var {hoverbox} = this;
-			var {navtoolbox, topbar} = this.vtbb;
-			hoverbox.removeEventListener("mouseenter", this);
-			hoverbox.removeEventListener("mouseleave", this);
-			hoverbox.removeEventListener("dragenter", this);
-			navtoolbox.removeEventListener("popupshown", this);
-			navtoolbox.removeEventListener("popuphidden", this);
+			for (let {elm, type, listener} of this.eventListeners)
+				elm.removeEventListener(type, listener);
+			if (!this._visible) return;
+			var {tabpanels} = this;
+			var {topbar} = ucf_toolbars_win;
+			tabpanels.removeEventListener("mouseenter", this);
+			tabpanels.removeEventListener("dragenter", this);
+			tabpanels.removeEventListener("mouseup", this);
+			topbar.removeEventListener("mouseenter", this);
+			topbar.removeEventListener("popupshown", this);
+			topbar.removeEventListener("popuphidden", this);
 		},
 		popupshown(e) {
 			if (e.target.localName !== "tooltip") return;
-				this.isPopupOpen = true;
+			this.isPopupOpen = true;
 		},
 		popuphidden(e) {
 			if (e.target.localName !== "tooltip") return;
@@ -228,7 +255,7 @@ const ucf_toolbars = {
 					if (!this._visible && !this.isPopupOpen)
 						this.showToolbar();
 					break;
-				case this.vtbb.topbar:
+				case ucf_toolbars_win.topbar:
 					this.isMouseOver = true;
 					break;
 				default:
@@ -243,13 +270,17 @@ const ucf_toolbars = {
 					if (!this._visible)
 						this.showToolbar();
 					break;
-				case this.tabpanels:
-					this.hideToolbar();
+				default:
+					this.hideToolbar(true);
 					break;
 			}
 		},
 		mouseleave() {
 			clearTimeout(this.showTimer);
+		},
+		mouseup(e) {
+			if (e.button) return;
+			this.hideToolbar(true);
 		},
 		showToolbar() {
 			clearTimeout(this.showTimer);
@@ -257,11 +288,11 @@ const ucf_toolbars = {
 				this._visible = true;
 				var docElm = document.documentElement;
 				var {tabpanels} = this;
-				var {topbar, topbox, navtoolbox} = this.vtbb; 
+				var {topbar, topbox, navtoolbox} = ucf_toolbars_win;
 				var tbrect = topbar.getBoundingClientRect();
 				var height = tbrect.height;
-				var overlaps = tbrect.bottom + height - this.vtbb.navtoolbox.getBoundingClientRect().bottom;
-				this.vtbb.topbox.setAttribute("v_top_bar_visible", "true");
+				var overlaps = tbrect.bottom + height - navtoolbox.getBoundingClientRect().bottom;
+				topbox.setAttribute("v_top_bar_visible", "true");
 				docElm.setAttribute("v_top_bar_visible", "true");
 				if (overlaps > 0) {
 					docElm.style.setProperty("--v-top-bar-overlaps", `${overlaps}px`);
@@ -270,29 +301,33 @@ const ucf_toolbars = {
 				docElm.style.setProperty("--v-top-bar-height", `${height}px`);
 				tabpanels.addEventListener("mouseenter", this);
 				tabpanels.addEventListener("dragenter", this);
+				tabpanels.addEventListener("mouseup", this);
 				topbar.addEventListener("mouseenter", this);
 				topbar.addEventListener("popupshown", this);
 				topbar.addEventListener("popuphidden", this);
 			}, UcfPrefs.t_showdelay);
 		},
-		hideToolbar() {
+		hideToolbar(nodelay) {
 			clearTimeout(this.hideTimer);
-			this.hideTimer = setTimeout(() => {
+			var onTimeout = () => {
 				if (this.isPopupOpen || this.isMouseOver) return;
 				var docElm = document.documentElement;
 				var {tabpanels} = this;
-				var {topbar, topbox} = this.vtbb;
+				var {topbar, topbox} = ucf_toolbars_win;
 				tabpanels.removeEventListener("mouseenter", this);
 				tabpanels.removeEventListener("dragenter", this);
+				tabpanels.removeEventListener("mouseup", this);
 				topbar.removeEventListener("mouseenter", this);
 				topbar.removeEventListener("popupshown", this);
 				topbar.removeEventListener("popuphidden", this);
-				this.vtbb.topbox.setAttribute("v_top_bar_visible", "false");
+				topbox.setAttribute("v_top_bar_visible", "false");
 				docElm.setAttribute("v_top_bar_visible", "false");
 				docElm.setAttribute("v_top_bar_overlaps", "false");
 				docElm.style.setProperty("--v-top-bar-overlaps", `${0}px`);
 				this._visible = false;
-			}, UcfPrefs.t_hidedelay);
+			};
+			if (!nodelay) this.hideTimer = setTimeout(onTimeout, UcfPrefs.t_hidedelay);
+			else onTimeout();
 		},
 	},
 	vert_autohide: {
@@ -303,30 +338,45 @@ const ucf_toolbars = {
 		showTimer: null,
 		hideTimer: null,
 		tabpanels: null,
-		init(that) {
-			this.vtbb = that;
-			Services.obs.addObserver(this, "browser-delayed-startup-finished");
-		},
-		observe(aSubject, aTopic, aData) {
-			Services.obs.removeObserver(this, "browser-delayed-startup-finished");
+		eventListeners: [],
+		init() {
 			var tabpanels = this.tabpanels = gBrowser.tabpanels;
-			if (!tabpanels || !this.vtbb.sidebarbox) return;
-			var {verticalbox} = this.vtbb;
-			verticalbox.addEventListener("mouseenter", this);
-			verticalbox.addEventListener("mouseleave", this);
-			verticalbox.addEventListener("dragenter", this);
+			var sidebarbox = this.sidebarbox = document.querySelector("#sidebar-box");
+			this.sidebar_tabs = document.querySelector("#st_toolbox");
+			if (!tabpanels || !sidebarbox) return;
+			var {verticalbox, verticalbar} = ucf_toolbars_win;
+			this.addListener(verticalbox, "mouseenter", this);
+			this.addListener(verticalbox, "mouseleave", this);
+			this.addListener(verticalbox, "dragenter", this);
 			setTimeout(() => {
-				document.documentElement.style.setProperty("--v-vertical-bar-width", `${this.vtbb.verticalbar.getBoundingClientRect().width}px`);
+				document.documentElement.style.setProperty("--v-vertical-bar-width", `${verticalbar.getBoundingClientRect().width}px`);
 			}, 0);
 		},
 		handleEvent(e) {
 			this[e.type](e);
 		},
+		addListener(elm, type, listener) {
+			elm.addEventListener(type, listener);
+			this.eventListeners.push({elm, type, listener});
+		},
 		destructor() {
-			var {verticalbox} = this.vtbb;
-			verticalbox.removeEventListener("mouseenter", this);
-			verticalbox.removeEventListener("mouseleave", this);
-			verticalbox.removeEventListener("dragenter", this);
+			for (let {elm, type, listener} of this.eventListeners)
+				elm.removeEventListener(type, listener);
+			if (!this._visible) return;
+			var {tabpanels} = this;
+			var {verticalbar, navtoolbox} = ucf_toolbars_win;
+			tabpanels.removeEventListener("mouseenter", this);
+			tabpanels.removeEventListener("dragenter", this);
+			tabpanels.removeEventListener("mouseup", this);
+			verticalbar.removeEventListener("mouseenter", this);
+			verticalbar.removeEventListener("popupshown", this);
+			verticalbar.removeEventListener("popuphidden", this);
+			navtoolbox.removeEventListener("popupshown", this);
+			navtoolbox.removeEventListener("popuphidden", this);
+			if (UcfPrefs.v_mouseenter_sidebar) {
+				this.sidebarbox.removeEventListener("mouseenter", this);
+				this.sidebar_tabs?.removeEventListener("mouseenter", this);
+			}
 		},
 		popupshown(e) {
 			if (e.target.localName !== "tooltip") return;
@@ -339,17 +389,18 @@ const ucf_toolbars = {
 		},
 		mouseenter(e) {
 			switch (e.currentTarget) {
-				case this.vtbb.verticalbox:
+				case ucf_toolbars_win.verticalbox:
 					this.isMouseOver = true;
 					this.isMouseSidebar = false;
 					if (!this._visible)
 						this.showToolbar();
 					break;
-				case this.vtbb.verticalbar:
+				case ucf_toolbars_win.verticalbar:
 					this.isMouseOver = true;
 					this.isMouseSidebar = false;
 					break;
-				case this.vtbb.sidebarbox:
+				case this.sidebarbox:
+				case this.sidebar_tabs:
 					this.isMouseOver = false;
 					this.isMouseSidebar = true;
 					this.hideToolbar();
@@ -362,19 +413,23 @@ const ucf_toolbars = {
 		},
 		dragenter(e) {
 			switch (e.currentTarget) {
-				case this.vtbb.verticalbox:
+				case ucf_toolbars_win.verticalbox:
 					this.isMouseSidebar = false;
 					if (!this._visible)
 						this.showToolbar();
 					break;
 				default:
 					this.isMouseSidebar = false;
-					this.hideToolbar();
+					this.hideToolbar(true);
 					break;
 			}
 		},
 		mouseleave() {
 			clearTimeout(this.showTimer);
+		},
+		mouseup(e) {
+			if (e.button) return;
+			this.hideToolbar(true);
 		},
 		showToolbar() {
 			clearTimeout(this.showTimer);
@@ -382,15 +437,18 @@ const ucf_toolbars = {
 				this._visible = true;
 				var docElm = document.documentElement;
 				var {tabpanels} = this;
-				var {verticalbar, navtoolbox, verticalbox} = this.vtbb;
+				var {verticalbar, navtoolbox, verticalbox} = ucf_toolbars_win;
 				verticalbox.setAttribute("v_vertical_bar_visible", "visible");
 				docElm.setAttribute("v_vertical_bar_visible", "visible");
 				docElm.style.setProperty("--v-vertical-bar-width", `${verticalbar.getBoundingClientRect().width}px`);
 				docElm.setAttribute("v_vertical_bar_sidebar", `${this.isMouseSidebar}`);
-				if (UcfPrefs.v_mouseenter_sidebar)
-					this.vtbb.sidebarbox.addEventListener("mouseenter", this);
+				if (UcfPrefs.v_mouseenter_sidebar) {
+					this.sidebarbox.addEventListener("mouseenter", this);
+					this.sidebar_tabs?.addEventListener("mouseenter", this);
+				}
 				tabpanels.addEventListener("mouseenter", this);
 				tabpanels.addEventListener("dragenter", this);
+				tabpanels.addEventListener("mouseup", this);
 				verticalbar.addEventListener("mouseenter", this);
 				verticalbar.addEventListener("popupshown", this);
 				verticalbar.addEventListener("popuphidden", this);
@@ -398,20 +456,20 @@ const ucf_toolbars = {
 				navtoolbox.addEventListener("popuphidden", this);
 			}, UcfPrefs.v_showdelay);
 		},
-		hideToolbar() {
+		hideToolbar(nodelay) {
 			clearTimeout(this.hideTimer);
 			var docElm = document.documentElement;
-			var {verticalbox} = this.vtbb;
+			var {verticalbox} = ucf_toolbars_win;
 			verticalbox.setAttribute("v_vertical_bar_visible", "visible_hidden");
 			docElm.setAttribute("v_vertical_bar_visible", "visible_hidden");
 			docElm.setAttribute("v_vertical_bar_sidebar", `${this.isMouseSidebar}`);
-			this.hideTimer = setTimeout(() => {
+			var onTimeout = () => {
 				if (this.isPopupOpen || this.isMouseOver) return;
-				var tabpanels = this.tabpanels;
-				var verticalbar = this.vtbb.verticalbar;
-				var navtoolbox = this.vtbb.navtoolbox;
+				var {tabpanels} = this;
+				var {verticalbar, navtoolbox} = ucf_toolbars_win;
 				tabpanels.removeEventListener("mouseenter", this);
 				tabpanels.removeEventListener("dragenter", this);
+				tabpanels.removeEventListener("mouseup", this);
 				verticalbar.removeEventListener("mouseenter", this);
 				verticalbar.removeEventListener("popupshown", this);
 				verticalbar.removeEventListener("popuphidden", this);
@@ -420,11 +478,15 @@ const ucf_toolbars = {
 				verticalbox.setAttribute("v_vertical_bar_visible", "hidden");
 				docElm.setAttribute("v_vertical_bar_visible", "hidden");
 				docElm.setAttribute("v_vertical_bar_sidebar", "false");
-				if (UcfPrefs.v_mouseenter_sidebar)
-					this.vtbb.sidebarbox.removeEventListener("mouseenter", this);
+				if (UcfPrefs.v_mouseenter_sidebar) {
+					this.sidebarbox.removeEventListener("mouseenter", this);
+					this.sidebar_tabs?.removeEventListener("mouseenter", this);
+				}
 				this._visible = false;
-			}, UcfPrefs.v_hidedelay);
+			};
+			if (!nodelay) this.hideTimer = setTimeout(onTimeout, UcfPrefs.v_hidedelay);
+			else onTimeout();
 		},
 	},
 };
-ucf_toolbars.init();
+ucf_toolbars_win.init();
