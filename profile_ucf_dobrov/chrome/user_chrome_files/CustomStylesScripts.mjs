@@ -76,7 +76,7 @@ export var UcfStylesScripts = {
 		load: [ // By event "load"
 			// { path: "custom_script_all_win.js", urlregxp: /^(?:chrome|about):/, ucfobj: true, }, // <-- For chrome|about protocol
 			// { path: "example_places.js", urlregxp: /chrome:\/\/browser\/content\/places\/places\.xhtml/, ucfobj: false, }, // <-- Example
-		{ path: "places_context_open.js", urlregxp: /chrome:\/\/browser\/content\/(?:browser|places\/(?:bookmarksSidebar|historySidebar|places))\.xhtml/, ucfobj: false, },
+		{ path: "sidebar_tabs_open_places.js", urlregxp: /chrome:\/\/browser\/content\/(?:browser|places\/(?:bookmarksSidebar|historySidebar|places))\.xhtml/, ucfobj: false, },
 		{ path: "undoBookmarks.js", urlregxp: /^chrome:\/\/browser\/content\/(?:browser|places\/(?:bookmarksSidebar|places))\.xhtml/, },
 		],
 	},
@@ -84,7 +84,6 @@ export var UcfStylesScripts = {
 		{ path: "custom_script.js", },
 		{ path: "ucb_aom-button.js" },
 		{ path: "ucb_undo-tab.js" },
-		{ path: "ucb_UrlTooltip.js" },
 		{ path: "ucb_SessionManager.js" },
 		{ path: "ucb_loads-favicons.js" },
 		{ path: "ucb_fav-export-html.js" },

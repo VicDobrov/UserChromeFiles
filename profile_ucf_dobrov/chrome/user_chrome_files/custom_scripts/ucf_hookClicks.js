@@ -99,7 +99,7 @@ Menu = { //alt правый клик, mid колёсико, upd обновлят
 			inf: `Колёсико: сохранить через SingleFile\nПравый клик: Сайт в боковую панель`,
 		alt(trg, url){
 			if(!F.sb) throw F.q +"ucf_SidebarTabs.js";
-			if(F.sb._open) F.sb.toggle()
+			if(F.sb._open) F.sb.toggle() //запомнить сайт
 			else F.sb.setPanel(0, url || trg.url || "https://"+ F.J);},
 		cmd(){HTML()}, mid(){HTML(true)},
 		upd(){Status(this.url = URL())} //получить URL вкладки

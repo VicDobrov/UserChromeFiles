@@ -22,6 +22,14 @@
 					"Description": "metager",
 					"IconURL": "https://www.google.com/favicon.ico"
 				},
+        {
+					"Name": "DuckDuckGo",
+					"URLTemplate": "https://duckduckgo.com/?q={searchTerms}&t=h_&kp=1&ia=web",
+					"Method": "GET",
+					"IconURL": "https://duckduckgo.com/favicon.ico",
+					"Alias": "Duck",
+					"Description": "Duck Duck Goose"
+        },
 				{
 					"Name": "Metager",
 					"URLTemplate": "https://metager.de/meta/meta.ger3?eingabe={searchTerms}",
@@ -32,6 +40,10 @@
 			"Default": "Google RU"
 		},
 		"Bookmarks": [
+			{ "Title": "Погода",
+				"URL": "https://meteo7.ru",
+				"Placement": "toolbar"
+			},
 			{ "Title": "Вести",
 				"URL": "https://regnum.ru",
 				"Placement": "toolbar"
@@ -39,20 +51,6 @@
 			{ "Title": "Видео",
 				"URL": "https://youtube.com",
 				"Placement": "toolbar"
-			},
-			{ "Title": "Погода",
-				"URL": "https://meteo7.ru",
-				"Placement": "toolbar"
-			},
-			{ "Title": "Фильмы",
-				"URL": "https://google.ru/search?q=Лучшие дорамы",
-				"Placement": "toolbar",
-				"Folder": "Отдых"
-			},
-			{ "Title": "Игры",
-				"URL": "https://yandex.ru/search?text=игры online",
-				"Placement": "toolbar",
-				"Folder": "Отдых"
 			},
 			{ "Title": "Фото",
 				"URL": "https://www.zastavki.com",
@@ -69,6 +67,11 @@
 				"Placement": "toolbar",
 				"Folder": "Отдых"
 			},
+			{ "Title": "Игры",
+				"URL": "https://yandex.ru/search?text=игры online",
+				"Placement": "toolbar",
+				"Folder": "Отдых"
+			},
 			{ "Title": "Гаджеты",
 				"URL": "https://4pda.to",
 				"Placement": "toolbar",
@@ -76,11 +79,6 @@
 			},
 			{ "Title": "ВКонтакте",
 				"URL": "https://vk.com/feed",
-				"Placement": "toolbar",
-				"Folder": "CоцСети"
-			},
-			{ "Title": "Телеграм",
-				"URL": "https://web.telegram.org/k",
 				"Placement": "toolbar",
 				"Folder": "CоцСети"
 			},
@@ -103,11 +101,6 @@
 				"URL": "https://all-forum.ru",
 				"Placement": "toolbar",
 				"Folder": "CоцСети"
-			},
-			{ "Title": "Хранение фото",
-				"URL": "https://imgbb.com",
-				"Placement": "toolbar",
-				"Folder": "INet"
 			},
 			{ "Title": "Яндекс диск",
 				"URL": "https://disk.yandex.ru",
@@ -136,9 +129,7 @@
 			}
 		],
 		"Preferences": {
-			"browser.search.update": false,
 			"browser.search.newSearchConfig.enabled": false,
-			"browser.warnOnQuitShortcut": false,
 			"datareporting.policy.dataSubmissionPolicyBypassNotification": true,
 			"extensions.blocklist.enabled": false,
 			"extensions.getAddons.showPane": false,
@@ -151,7 +142,14 @@
 			"security.ssl.errorReporting.enabled": false,
 			"browser.newtabpage.activity-stream.feeds.telemetry": false,
 			"toolkit.legacyUserProfileCustomizations.stylesheets": true,
+			"browser.newtabpage.activity-stream.feeds.section.highlights": true,
+			"browser.newtabpage.activity-stream.showSponsoredTopSites": false,
+			"browser.newtabpage.pinned": "[{\"url\":\"http://yandex.ru\",\"label\":\"Яндекс\"},{\"url\":\"https://vk.com/feed\",\"label\":\"ВКонтакте\"},{\"url\":\"https://ok.ru\",\"label\":\"Одноклассники\"},{\"url\":\"https://youtube.com\",\"label\":\"Youtube\"},{\"url\":\"https://ru.wikipedia.org\",\"label\":\"Википедия\"},{\"url\":\"https://m.tvzvezda.ru\",\"label\":\"TV Звезда\"},{\"url\":\"https://meteo7.ru\",\"label\":\"Погода\"},{\"url\":\"https://author.today\",\"label\":\"Книги\"}]",
 			"widget.macos.native-context-menus": false
+		},
+		"SupportMenu": {
+			"Title": "Русский форум Firefox",
+			"URL": "https://forum.mozilla-russia.org"
 		}
 	}
 }
