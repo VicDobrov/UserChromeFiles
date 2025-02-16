@@ -1,5 +1,4 @@
-(async ( // Sidebar Tabs VitaliyV, mod Dobrov: нужны UCF 2024+, ucb_SaveHTML.mjs
-	ID = "ucf_sidebar_tabs",
+(async (ID, API, // Sidebar Tabs VitaliyV, mod Dobrov: need UCF 2024+, ucb_SaveHTML.mjs
 	TABS = [
 		{ label: "Сайт",
 			src: "http://rus.vrw.ru", //последний адрес запоминается
@@ -308,7 +307,6 @@ order: 100 !important;
 				}).init();
 			`, UcfPrefs.customSandbox);
 		setUnloadMap(ID, this.destructor, this);
-		this.API = Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")];
 	},
 	getTabs() {
 		var str = panels_str = "", menus = [];
@@ -433,7 +431,7 @@ order: 100 !important;
 		} catch (e) {console.log(e)}
 	},
 	click(e) {
-		var url = !(e.shiftKey || e.button === 1) ? (gContextMenu?.linkURI?.displaySpec || this.API.URL()) : this.API.readFromClip();
+		var url = !(e.shiftKey || e.button === 1) ? (gContextMenu?.linkURI?.displaySpec || API.URL()) : API.readFromClip();
 		var {staIndex} = e.currentTarget;
 		var userContextId = gContextMenu?.contentData?.userContextId;
 		var triggeringPrincipal = gContextMenu?.principal;
@@ -576,7 +574,7 @@ order: 100 !important;
 				mitem.style.cssText = `list-style-image:url("${icon}");-moz-context-properties:fill,stroke,fill-opacity;stroke:currentColor;fill:currentColor;fill-opacity:var(--toolbarbutton-icon-fill-opacity,.8);`;
 			mitem.staIndex = aIndex;
 			fragment.append(mitem);
-			this.addCListener(mitem, "command", this);
+			this.addCListener(mitem, "click", this);
 		});
 		contextsel.before(fragment);
 		this.popupshowing = this.itemsShow;
@@ -601,4 +599,4 @@ order: 100 !important;
 		for (let {elm, type, listener} of this.eventCListeners)
 			elm.removeEventListener(type, listener);
 	},
-}).init())();
+}).init())("ucf_sidebar_tabs", Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")]);
