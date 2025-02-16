@@ -174,7 +174,7 @@ UcfAPI: {
 		to = dir.clone(); to.append(d +'.html');
 		return [dir,to.path,n,d,u,h]; //… имя, +дата, url, домен
 	},
-	FileOk(path, read, win = self.win){ //файл|папка есть?
+	FileOk(path = "", read, win = self.win){ //файл|папка есть?
 		let chr = path; if(path.startsWith("chrome://"))
 			path = Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).convertChromeURL(io.newURI(path)).spec;
 		path = path.replace(/.+?:\/\//,"").replace(/%20/g," ");

@@ -376,7 +376,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		256(btn){with(geId())
 			config.menu_open_close(btn, menupopup);
 		},
-		257(){Mouse[F.R][257]()}
+		257(){toTab('about:debugging#/runtime/this-firefox')} //дR
 	},
 	[F.Q]: {mousedownTarget: true,
 		0(btn, n){ //L
@@ -431,7 +431,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		0(){Status("Ctrl+Shift+C - copy tooltip's contents")},
 		128(){Menu.O.Remote.cmd()}, //C
 		256(){UCF()},
-		257(){toTab('about:debugging#/runtime/this-firefox')} //дR
+		257(){Mouse[F.E][257]()}
 	},
 	[F.M]: { //➿
 		2(trg,forward){bright(trg,forward,5)}, //яркость
@@ -747,8 +747,8 @@ listener = { //действия мыши, перехват существующ�
 	},
 	a: {__proto__: null,bubbles: true,screenX: 0,screenY: 0}
 },
-events = ["click","mousedown","mouseenter","wheel"], //перехват событий для id:
-els = document.querySelectorAll("#navigator-toolbox,#sidebar-box,#ucf-additional-vertical-bar,#appMenu-popup,#widget-overflow-mainView");
+events = ["click","mousedown","mouseenter","wheel"], //события для id:
+els = document.querySelectorAll("#navigator-toolbox,#ucf-additional-vertical-bar,#appMenu-popup,#widget-overflow-mainView");
 for(var el of els) for(var type of events) el.addEventListener(type,listener,true);
 window.addEventListener("keydown",keydown_win,true);
 setUnloadMap(F.id, this.destructor, this);
@@ -779,7 +779,7 @@ mode_skin = (txt,t,s = 'unset',o = '') => {setTimeout(()=>{ //опции FF ме
 }
 mode_skin(); [['ui.prefersReducedMotion',0],['browser.download.alwaysOpenPanel',false], //animation Fix
 ['browser.download.autohideButton',false]].forEach((p)=>Pref(...p)); //lockPref опций
-getIntPref = (p) => prefs.getIntPref(p,100),
+getIntPref = p => prefs.getIntPref(p,100),
 tabr = F.u +"opacity",url = `resource://${tabr}/`, //bright tabs
 sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService),
 css = `@-moz-document url(${F.X}browser.xhtml){
@@ -1080,7 +1080,7 @@ await BBSupd(1); //F.pc
 
 CustomizableUI.getWidget(F.F)?.label || CustomizableUI.createWidget({label:`Панели, Папки`,id: F.F,tooltiptext: Tag[F.F],
 	onCreated(btn){btn.style.setProperty("list-style-image",`url(${F.dir})`)}
-})
+});
 
 if(FileOk(F.as)) CustomizableUI.getWidget(F.R)?.label || CustomizableUI.createWidget({
 	label:F.R.replace('-',' '), id:F.R, defaultArea: CustomizableUI.AREA_NAVBAR, localized: false,
@@ -1099,8 +1099,8 @@ if(FileOk(F.as)) CustomizableUI.getWidget(F.R)?.label || CustomizableUI.createWi
 		return this.code = c;}
 });
 
-(async id => {with (document)
-	getElementById(F.O).removeAttribute("tooltip"), getElementById("nav-bar").tooltip = F.id; //script OK
+(async id => {
+	geId(F.O).removeAttribute("tooltip"); geId("nav-bar").tooltip = F.id; //script OK
 
 CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self = {id,
 	id: id, label: "Быстрые опции", localized: false, defaultArea: CustomizableUI.AREA_NAVBAR,
