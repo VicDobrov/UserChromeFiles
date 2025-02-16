@@ -88,7 +88,7 @@ Menu = { //alt правый клик, mid колёсико, upd обновлят
 	View: {
 		lab: `Мобильный дизайн | для Чтения`, inf: `Автоизменяемые строки выделены\n`+ F.b +`\nСкрытие/Показ кнопки Вид для Чтения`,
 		img: F.Z +"aboutdebugging-connect-icon.svg",
-		alt(btn){ // вложенные Sub-меню не допускаются
+		alt(btn){ //вложенные Sub-меню запрещены
 			doComm("key_toggleReaderMode", btn.ownerDocument)}, //штатный Режим чтения
 		cmd(btn){
 			doComm("key_responsiveDesignMode", btn.ownerDocument); //пункт меню с HotKey
@@ -579,7 +579,7 @@ get "urlbar-input"(){
 		trg.title = this.title +"\n\nБуфер обмена текст:\n"+ crop(clip,50,'\n',0,14);
 	Status("Ролик мыши: очистить панель, 📋 "+ crop(clip,128),3)
 },
-[F.L]: Te(F.L) + F.hk, "appMenu-print-button2": Te(F.L), //print
+[F.L]: Te(F.L), "appMenu-print-button2": Te(F.L), //print
 get [F[1]](){ //title-close
 	Status("правый клик: Свернуть, колёсико: Восстановить вкладку",3); return Te(F[0]);
 }, 
@@ -618,13 +618,13 @@ async ozu(){var info = await ChromeUtils.requestProcInfo(), bytes = info.memory;
 		for(var child of info.children) bytes += child.memory;
 		Status("Занято ОЗУ ~"+ formatBytes(bytes/1.2));
 },
-get [F.R](){return Tag[F.R] + F.p + F.hk},
+get [F.R](){return Tag[F.R] + F.p},
 get "add-ons-button"(){var s = Tag[F.E];
 	return tooltip(window.event.target, s.replace(s.split("\n",1),"") + F.p);
 },
 get [F.E](){
 	(window.event?.target).state = geId()?.menupopup.state;
-	this.ozu(); return Tag[F.E] + F.p.replace(/\n.*$/,'') +`${F.pl ? '\n\n↯ '+ F.pl : ""}`;
+	this.ozu(); return Tag[F.E] + F.p.replace(/\n.*$/,'') + F.pl;
 },
 get [F[2]](){ //zoompage
 	return tooltip_x(window.event.target,"⩉ Ролик ±	Изменить масштаб");
@@ -748,7 +748,7 @@ listener = { //действия мыши, перехват существующ�
 	a: {__proto__: null,bubbles: true,screenX: 0,screenY: 0}
 },
 events = ["click","mousedown","mouseenter","wheel"], //перехват событий для id:
-els = document.querySelectorAll("#navigator-toolbox,#ucf-additional-vertical-bar,#appMenu-popup,#widget-overflow-mainView");
+els = document.querySelectorAll("#navigator-toolbox,#sidebar-box,#ucf-additional-vertical-bar,#appMenu-popup,#widget-overflow-mainView");
 for(var el of els) for(var type of events) el.addEventListener(type,listener,true);
 window.addEventListener("keydown",keydown_win,true);
 setUnloadMap(F.id, this.destructor, this);
@@ -816,7 +816,6 @@ crop = (z = "",cut = 30,ch = '…\n',one = 1, lines) => { //обрезать/р�
 hints = new Map([ //опция Setup отсутствует ? вернуть строку
 	[F.u +"savedirs", crop(dirGet(0,1),33,'…\n',0,3)], [F.z, ua(1)]]),
 geId = i => document.getElementById(i || F.Q),
-goBit = (num = 0, bit = 0) => (num & (1<<bit)) != 0,
 TabAct = e => e.closest(".tabbrowser-tab"),
 toTab = (url = 'about:support', go) =>{ //открыть вкладку | закрыть её | выбрать
 	for(var tab of gBrowser.visibleTabs)
@@ -965,12 +964,9 @@ Cookies = async() =>{
 	await window.SiteDataManager.updateSites();
 	setTimeout(() => sb.editor.selection.collapseToEnd(), 50);
 },
-switchProxy = (pac = F.vpn) => {
-	var t = F.x,u = F.y;
-	if(Pref(t) != 2) //выключить
-		Pref(t,2), Pref(u,pac)
-	else
-		Pref(t,5), Pref(u,"localhost");
+switchProxy = (pac = F.vpn, n = 2, t = F.x, u = F.y) => {
+	if(Pref(t) == 2) n = 5, pac = "localhost";
+	Pref(t,n), Pref(u,pac);
 	mode_skin(); //разный фон замка
 	BrowserEx("reload");
 },
@@ -1006,22 +1002,6 @@ Noun = (n = 3, w = ["день","дня","дней"]) =>{ n = Math.abs(n);
 Lang = (s, d = 0, u = F.ya) =>{ try{
 	return s.replace("%s",d || "0").replace("%d",Noun(d)).replace("%u",u || F.yd || "")} catch{return s}
 },
-Printf = new Intl.RelativeTimeFormat("ru", {style: "long"}),
-BBS = (inf, bg, id) =>{try { //инфа в элем.
-	var btn = geId(id || F.pb || F.E);
-	if (/toolbarbut/.test(btn.className)) with(btn){
-		if(!inf) { clearTimeout(F.pt || BBSupd);
-			removeAttribute("badge");
-			return;}
-		if(bg && bg != F.pc) {
-			F.pc = bg || 1; // BBS(0, btn);
-			setAttribute("badged", true);
-			setAttribute("badgeStyle","color:white; background-color: "+ bg); //число: red
-			textContent = ""; render();
-		}; 
-		bg && setAttribute("badge", inf.toString().replace(/^\W+/,'').substr(-3) || "");
-	}; return btn;} catch {}
-},
 PassDays = async(url, you = "") =>{ //only url: нет имени пользователя
 	let logins = await Services.logins.getAllLogins();
 	try {var old = logins.filter(pas =>{
@@ -1037,9 +1017,9 @@ BBSarr = async(url, you, max = 0, g = {P:1, B:2, S:3}, m = 0) => {
 	if(url) a = [url, you, a[3], max]; //дни[:sec:id]/сайт/юзер/текст %s 0url ​1name ​2lab ​3max ​4upd ​5id
 	n = a[3] || max; t = a[1]; //опция | $USER
 	a[1] &&= Lang(t.split(':')[0]); t &&= t.split(':')[1];
-	F.ya = t || F.ya || F.yd; //%u имя в return массив добавить
-	F.pu = a[4]; F.pb = a[5]; //upd-sec id
+	F.ya = t || F.ya || F.yd; F.pu = a[4]; F.pb = a[5]; //upd-sec id
 	d = await PassDays(...a);	//url, you //pi Text pc Цвет pt TimeID pu Update
+	a[1] ||= F.r; you = d ? "\n"+ URL(a[0],1) +", "+ a[1].replace(/@.*/,'') : "";
 	m = isNaN(n) ? g[n[0].toUpperCase()] : 0; //режим BBS
 	if(d) { if(!isNaN(n)) //n=число
 			i = n - d, m = i > 0 ? 4 : 5;
@@ -1054,8 +1034,23 @@ BBSarr = async(url, you, max = 0, g = {P:1, B:2, S:3}, m = 0) => {
 		t = PlacesUtils.history.DBConnection.createStatement("SELECT count(fk) FROM moz_bookmarks");
 		t.executeStep(); i = t.getInt32(0); t.finalize();
 	}
-	a[2] = Lang(a[2] || F.h[m], i); F.pl = a[2]; //text
+	a[2] = Lang(a[2] || F.h[m], i); F.pl = a[2] ? '\n\n↯ '+ a[2] + you : ""; //text
 	return [d, max, i, c[m], ...a]; //дни max url name menu tag upd
+},
+BBS = (inf, bg, id) =>{try { //инфа в but
+	var btn = geId(id || F.pb || F.E);
+	if (/toolbarbut/.test(btn.className)) with(btn){
+		if(!inf) { clearTimeout(F.pt || BBSupd);
+			removeAttribute("badge");
+			return;}
+		if(bg && bg != F.pc) {
+			F.pc = bg || 1; // BBS(0, btn);
+			setAttribute("badged", true);
+			setAttribute("badgeStyle","color:white; background-color: "+ bg); //число: red
+			textContent = ""; render();
+		}
+		bg && setAttribute("badge", inf.toString().replace(/^\W+/,'').substr(-3) || "");
+	}; return btn;} catch {}
 },
 BBShow = async n =>{ //показ инфы
 	let a = await BBSarr();
@@ -1356,6 +1351,7 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 	}
 }))()})(F.Q);
 })
+
 (()=>{ //перенос кода в конец
 var io = "chrome://devtools/skin/images/", F = {Z: io, id: "ucf_hookExpert",
 	os: AppConstants.platform, ver: Services.appinfo.version.replace(/-.*/,''),
@@ -1372,7 +1368,7 @@ F.cs = F.s +"custom_scripts/"; F.as = F.cs + F.R +".js"; F.sb = ucf_custom_scrip
 var UcfAPI = Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")], //из ucb_SaveHTML
 {prefs,io} = Services, {Pref,dirGet,Status,FileOk,URL} = UcfAPI, ua = `"/usr/bin/osmo"`; //linux
 F.vpn = Pref([F.u +"vpn","https://p.thenewone.lol:8443/proxy.pac"]);
-var i = "ucf_hookClicks.js"; F.hv = (UcfAPI.FileOk(F.cs + i,1) || '').split('\n')[0].split(' ')[2] || '?'; F.hk = `\n\nкод ${i} версия ${F.hv}`;
+var i = "ucf_hookClicks.js"; F.hv = (UcfAPI.FileOk(F.cs + i,1) || '').split('\n')[0].split(' ')[2] || '?';
 i = FileOk(F.s +"version.txt",1); F.vu = i ? "UCF "+ i.split('\n')[0].split(' ').pop() +", " : "";
 if(F.os == "win") ua = `"C:\\Windows\\system32\\StikyNot.exe"` //ваши команды
 else if(F.os == "macosx") ua = `"/usr/bin/open","-b","com.apple.Stickies"`;
