@@ -131,13 +131,7 @@ Menu = { //alt правый клик, mid колёсико, upd обновлят
 			},
 			alt(){ let n = Pref(F.v); Pref(F.v, !n);
 				Status(`Подтверждение загрузки ${n ? "√ разреш" : "✘ запрещ"}ено`);}
-		}, /*
-		"Имя загруженной картинки из буфера": { inf: "Для фото, сохраняемых по клику Колёсиком",
-			upd(){
-				this.image = Pref(F.u +"nameClip") ? F.ok : F.no;
-			},
-			cmd(){let p = F.u +"nameClip"; Pref(p, !Pref(p));}
-		}, */
+		},
 		"Выполнять скрипты Java": {inf: "Поддержка графики, рекламы\nдействия горячих клавиш",
 			upd(){this.image = Pref("javascript.enabled") ? F.ok : F.no},
 			cmd(){Pref("javascript.enabled", !Pref("javascript.enabled"))}
@@ -373,25 +367,26 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		1(){Menu.Info.alt()}, //д
 		129(){Menu.O.DelCache.cmd()}, //дС
 		128(btn){btn.id && UCF()}, //UCFprefs
-		256(btn){with(geId())
-			config.menu_open_close(btn, menupopup);
+		256(btn, n){
+			with(geId())
+				config.menu_open_close(btn, menupopup);
 		},
 		257(){toTab('about:debugging#/runtime/this-firefox')} //дR
 	},
 	[F.Q]: {mousedownTarget: true,
+		M(btn, n){
+			btn.cmd[n] && btn.cmd[n](btn);
+			try{btn.menupopup.hidePopup();} catch{}
+		},
 		0(btn, n){ //L
-			if(btn.id == F.Q){
-				var bar = geId("ucf-additional-vertical-bar");
-				bar && window.setToolbarVisibility(bar,geId("sidebar-box").hidden);
-				Menu.Run.mid();
-				return;
-			}
-			if (btn.cmd){ //UserMenu
-				btn.cmd[n] && btn.cmd[n](btn);
-			} else if (btn.className == "menu-iconic"){
+			if (btn.className == "menu-iconic"){
 				aboutCfg(btn.pref.pref); //go параметр
 				Last && Last.hidePopup();
+				return;
 			};
+			var bar = geId("ucf-additional-vertical-bar");
+			bar && window.setToolbarVisibility(bar,geId("sidebar-box").hidden);
+			Menu.Run.mid();
 			mode_skin();
 		},
 		2(trg,forward){zoom(forward)}, //wheel
@@ -404,20 +399,13 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		16(btn){if (btn.id == F.Q) zoom(0,1)}, //L+Shift
 		24(btn){if (btn.id == F.Q) CfgProxy()}, //Shift+Alt
 		128(btn, n, trg){ //C Menu-1
-			if(btn.id)
-				btn.menupopup.openPopup(trg || btn, "after_start");
-			if (btn.cmd) //UserMenu
-				btn.cmd[n] && btn.cmd[n](btn);
-			mode_skin();
+			btn.menupopup.openPopup(trg || btn, "after_start");
 		},
 		129(btn){
 			if(btn.id) Userjs(btn);
 		}, //дC консоль
-		256(btn, n){
-			if(btn.id == F.Q) //SetupMenu
-				btn.config.menu_open_close(btn, btn.config);
-			else if (btn.cmd) //UserMenu
-				btn.cmd[n] && btn.cmd[n](btn);
+		256(btn, n){ //SetupMenu
+			btn.config.menu_open_close(btn, btn.config);
 			try{btn.parentNode.hidePopup();} catch{}
 		},
 		257(btn){ //дR
@@ -674,10 +662,10 @@ keydown_win = e => { //перехват клавиш, учитывая поля 
 listener = { //действия мыши, перехват существующих
 	handleEvent(e){
 		if(this.skip || e.detail > 1) return;
-		var trg = e.target, id = trg.id || trg.className; //trg.tagName;
+		var trg = e.target; //trg.tagName;
 		if(trg.id) Last = trg;
 		if(e.type == "mouseenter"){
-			let hint = Over[id] || Over[trg.parentNode.id];
+			let hint = Over[trg.id || trg.className] || Over[trg.parentNode.id];
 			if(hint && trg.tooltipText != hint)
 				trg.tooltipText = hint;
 			return;
@@ -685,18 +673,19 @@ listener = { //действия мыши, перехват существующ�
 		var sels = this.selectors.filter(this.filter, trg); //#id
 		var {length} = sels; if (!length) return;
 		var wheel = e.type.startsWith("w");
-		var num = e.metaKey*64 + e.ctrlKey*32 + e.shiftKey*16 + e.altKey*8 + (wheel ? 2 : e.button*128);
+		let ctl = e.ctrlKey*32 + e.shiftKey*16 + e.altKey*8;
+		var num = (!trg.id && trg.cmd) ? "M" : e.metaKey*4 + ctl + (wheel ? 2 : e.button*128);
 		var obj = Mus[
 			length > 1 && sels.find(this.find,num) || sels[0]
 		];
-		Debug() && console.log('■ but «'+ id +'» key '+ num); //wheel дважды
+		Debug() && console.log('■ '+ (e.button + ctl) +' but «'+ trg.id +'» key '+ num); //wheel дважды
 		if(wheel) return obj[num]?.(trg, e.deltaY < 0);
 // mousedown
 		if(e.type.startsWith("m")){
 			obj.mousedownTarget && this.stop(e);
 			this.longPress = false; //+задержка при обычном клике
 			if(++num in obj)
-				this.mousedownTID = setTimeout(this.onLongPress, 333, trg,obj,num);
+				this.mousedownTID = setTimeout(this.onLongPress, 333, trg,obj,num,e.button + ctl);
 			if(e.button == 2)
 				this.ctx = trg.getAttribute("context"), trg.setAttribute("context","");
 			return;
@@ -713,7 +702,7 @@ listener = { //действия мыши, перехват существующ�
 				num = "dispatch", this.mdt = obj.mousedownTarget;
 			obj = this;
 		}
-		obj[num](trg, num); //Click
+		obj[num](trg, e.button + ctl); //Click
 	},
 	find(sel){ //условия запуска ?
 		return Mus[sel][this] || Mus[sel][this + 1];
@@ -721,10 +710,10 @@ listener = { //действия мыши, перехват существующ�
 	filter(sel){return this.closest(sel); //родитель
 	},
 	get selectors(){
-		this.onLongPress = (trg,obj,num) => {
+		this.onLongPress = (trg,obj,num,but) => {
 			this.mousedownTID = null;
 			this.longPress = true;
-			obj[num](trg, num); //держать
+			obj[num](trg, but); //держать
 		}
 		delete this.selectors;
 		return this.selectors = Object.keys(Mus);
@@ -970,7 +959,7 @@ switchProxy = (pac = F.vpn, n = 2, t = F.x, u = F.y) => {
 	mode_skin(); //разный фон замка
 	BrowserEx("reload");
 },
-FavItem = (end = false,def_url = 'ua.ru', s = 0,m = 1)=>{ //first|last url Меню закладок
+FavItem = (end = false,def_url = 'ya.ru', s = 0,m = 1)=>{ //first|last url Меню закладок
 	var query = {}, options = {}, guid = PlacesUtils.bookmarks.menuGuid;
 	PlacesUtils.history.queryStringToQuery(`place:parent=${guid}&excludeQueries=1`,query,options);
 	var folder = PlacesUtils.history.executeQuery(query.value, options.value).root;
@@ -1078,10 +1067,6 @@ s && geId("nav-bar-customization-target").append(s);
 F.yd = dirGet("Home",1).replace(/.*[\\|\/]/,""); //$USER
 await BBSupd(1); //F.pc
 
-CustomizableUI.getWidget(F.F)?.label || CustomizableUI.createWidget({label:`Панели, Папки`,id: F.F,tooltiptext: Tag[F.F],
-	onCreated(btn){btn.style.setProperty("list-style-image",`url(${F.dir})`)}
-});
-
 if(FileOk(F.as)) CustomizableUI.getWidget(F.R)?.label || CustomizableUI.createWidget({
 	label:F.R.replace('-',' '), id:F.R, defaultArea: CustomizableUI.AREA_NAVBAR, localized: false,
 	onCreated(btn){with(btn){
@@ -1099,6 +1084,10 @@ if(FileOk(F.as)) CustomizableUI.getWidget(F.R)?.label || CustomizableUI.createWi
 		return this.code = c;}
 });
 
+CustomizableUI.getWidget(F.F)?.label || CustomizableUI.createWidget({label:`Панели, Папки`,id: F.F,tooltiptext: Tag[F.F],
+	onCreated(btn){btn.style.setProperty("list-style-image",`url(${F.dir})`)}
+});
+
 (async id => {
 	geId(F.O).removeAttribute("tooltip"); geId("nav-bar").tooltip = F.id; //script OK
 
@@ -1106,11 +1095,12 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 	id: id, label: "Быстрые опции", localized: false, defaultArea: CustomizableUI.AREA_NAVBAR,
 	onCreated(btn){
 		btn.setAttribute("image", F.qt); btn.domParent = null;
-		var doc = btn.ownerDocument, m = nn => doc.createXULElement(nn);
+		var doc = btn.ownerDocument;
 		this.createPopup(doc, btn, "config", Setup);
 		btn.linkedObject = this;
 		for(var type of ["contextmenu", "command"])
 			btn.setAttribute("on" + type, `linkedObject.${type}(event)`);
+		var m = nn => doc.createXULElement(nn);
 		var popup = m("menupopup"), menu = m("menuitem"); //UserMenu
 		menu.m = m; menu.fill = this.fill; menu.render = this.render;
 		popup.append(menu); btn.prepend(popup);
@@ -1142,7 +1132,7 @@ CustomizableUI.getWidget(id)?.label || (self => CustomizableUI.createWidget(self
 			else item.style.setProperty("font-style", "italic", "important");
 			if(img || /this\.image.*=/.test(upd))
 				item.className = name + "-iconic", item.setAttribute("image", img || F.io +"blocked.svg");
-			item.alt = alt; item.cmd = []; item.cmd[0] = cmd; item.cmd[128] = mid; item.cmd[256] = alt;
+			item.alt = alt; item.cmd = []; item.cmd[0] = cmd; item.cmd[1] = mid; item.cmd[2] = alt;
 			popup.append(item); //клики Mouse = {…
 			if(upd){ //обновляемый пункт меню
 				item.style.filter = "drop-shadow(0.1px 1px 0.1px #c99)";
