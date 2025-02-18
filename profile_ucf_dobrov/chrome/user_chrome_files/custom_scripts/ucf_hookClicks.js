@@ -184,7 +184,7 @@ Menu = { //alt правый клик, mid колёсико, upd обновлят
 		async upd(){ var e, n = "", i = F.sec; a = await BBSarr();
 			this.image = a[1] > 0 ? i.replace("-in","-") : i;
 			this.tooltipText = "◨ правый клик: изменить вывод\n◉ колёсико: обновить счётчик ↯";
-			this.label = a[6] || F.h[6];
+			this.label = a[6].split('\n')[0] || F.h[6];
 		},
 		alt(){ aboutCfg(F.u +"bbs");
 			Status("{Дни[:sec] | Сайт | Имя | Меню %s} обновление ждать 5 мин",15);
@@ -610,9 +610,9 @@ get [F.R](){return Tag[F.R] + F.p},
 get "add-ons-button"(){var s = Tag[F.E];
 	return tooltip(window.event.target, s.replace(s.split("\n",1),"") + F.p);
 },
-get [F.E](){
-	(window.event?.target).state = geId()?.menupopup.state;
-	this.ozu(); return Tag[F.E] + F.p.replace(/\n.*$/,'') + F.pl;
+get [F.E](){(window.event?.target).state = geId()?.menupopup.state;
+	this.ozu();
+	return Tag[F.E] + F.p.replace(/\n.*$/,'') + (F.pl ? "\n\n↯ "+ F.pl : "");
 },
 get [F[2]](){ //zoompage
 	return tooltip_x(window.event.target,"⩉ Ролик ±	Изменить масштаб");
@@ -922,7 +922,7 @@ Userjs = (e, js = F.cs +"User.js") => {
 Help = (help = F.s +"help.html") => { //помощь
 	(FileOk(help)) ? toTab(help) : toTab(F.J);
 },
-Icon = (c = '0c0')=>"data:image/svg+xml;charset=utf-8,<svg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='a' x1='16' x2='16' y1='32' gradientUnits='userSpaceOnUse'><stop stop-color='%23"+ c +"'/><stop stop-color='%23fff' offset='.8'/></linearGradient><linearGradient id='b' x2='32' y1='16' gradientTransform='matrix(1 0 0 1 2 2)'><stop stop-opacity='.5'/></linearGradient></defs><circle cx='16' cy='16' r='15' fill='url(%23a)' stroke='url(%23b)' stroke-width='2'/></svg>",
+Icon = (c = '0c0')=>"data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='a' x1='16' x2='16' y1='32' gradientUnits='userSpaceOnUse'><stop stop-color='%23"+ c +"'/><stop stop-color='%23fff' offset='.8'/></linearGradient><linearGradient id='b' x2='32' y1='16' gradientTransform='matrix(1 0 0 1 2 2)'><stop stop-opacity='.5'/></linearGradient></defs><circle cx='16' cy='16' r='15' fill='url(%23a)' stroke='url(%23b)' stroke-width='2'/></svg>",
 Translate = (brMM = gBrowser.selectedBrowser.messageManager) => { //перевод сайт | выдел. текст
 	brMM.addMessageListener('getSelect',listener = (msg) =>{
 		if(msg.data) //выделено
@@ -983,7 +983,7 @@ toFav =(url = URL())=> {with (PlacesUtils.bookmarks){ //без диалога
 				index: DEFAULT_INDEX
 			});} catch{}});
 }},
-Noun = (n = 3, w = ["день","дня","дней"]) =>{ n = Math.abs(n);
+Noun = (n = 3, w = ["день","дня ","дней"]) =>{ n = Math.abs(n);
 	if (Number.isInteger(n)) { let opt = [2, 0, 1, 1, 1, 2];
 		return w[(n % 100 > 4 && n % 100 < 20) ? 2 : opt[(n % 10 < 5) ? n % 10 : 5]];
 	};return w[1];
@@ -999,8 +999,8 @@ PassDays = async(url, you = "") =>{ //only url: нет имени пользов
 	} catch {return null} //no pass
 	return Math.floor((Date.now() -old)/864e5); //прошло
 },
-BBSarr = async(url, you, max = 0, g = {P:1, B:2, S:3}, m = 0) => {
-	var c = "indigo|blue|royalblue|dimgray|green|crimson|1".split('|'), d,i,n,t,
+BBSarr = async(url, you, max = 0, i = {P:1, B:2, S:3}, m = 0) => {
+	var c = "indigo|blue|royalblue|dimgray|green|crimson|1".split('|'), d,n,t,
 		a = Pref([F.u +"bbs","S|https://passport.yandex.ru|"+ F.yd]).split('|').map(s => s.trim());
 	a = [a[1],a[2] || "",a[3],...a.shift().split(':')];
 	if(url) a = [url, you, a[3], max]; //дни[:sec:id]/сайт/юзер/текст %s 0url ​1name ​2lab ​3max ​4upd ​5id
@@ -1008,28 +1008,31 @@ BBSarr = async(url, you, max = 0, g = {P:1, B:2, S:3}, m = 0) => {
 	a[1] &&= Lang(t.split(':')[0]); t &&= t.split(':')[1];
 	F.ya = t || F.ya || F.yd; F.pu = a[4]; F.pb = a[5]; //upd-sec id
 	d = await PassDays(...a);	//url, you //pi Text pc Цвет pt TimeID pu Update
-	a[1] ||= F.r; you = d ? "\n"+ URL(a[0],1) +", "+ a[1].replace(/@.*/,'') : "";
-	m = isNaN(n) ? g[n[0].toUpperCase()] : 0; //режим BBS
-	if(d) { if(!isNaN(n)) //n=число
+// console.log(d +"\t #"+ Math.random().toString().slice(2,5));
+	a[1] ||= F.r; you = (d != null) ? "\n"+ URL(a[0],1) +", "+ a[1].replace(/@.*/,'') : "";
+	m = isNaN(n) ? i[n[0].toUpperCase()] : 0; //режим BBS
+	if(d != null) { if(!isNaN(n)) //n=число
 			i = n - d, m = i > 0 ? 4 : 5;
 		if(m == 3) i = d;
 	} else if(m == 3) m = 0;
-	if(!m) { //Alien | № addons
-		i = ua(); if(i && (i != ua(1))) i = "aG!", m = 6; else
-		i = Object.keys((await AddonManager.getActiveAddons()).addons).length;
+	if(!m) { i = ua(); //Alien | № addons
+		if(i && (i != ua(1))) i = "aG!", m = 6; else {
+			i = t = 0; for(var n of await AddonManager.getAddonsByTypes(["extension"]))
+			if(!n.isBuiltin) if (n.isActive) i++; else t++;
+			you = t ? ", откл "+ t : "";}
 	}
 	if(m == 1) i = (await Services.logins.getAllLogins()).length;
 	if(m == 2) {
-		t = PlacesUtils.history.DBConnection.createStatement("SELECT count(fk) FROM moz_bookmarks");
-		t.executeStep(); i = t.getInt32(0); t.finalize();
+		n = PlacesUtils.history.DBConnection.createStatement("SELECT count(fk) FROM moz_bookmarks");
+		n.executeStep(); i = n.getInt32(0); n.finalize();
 	}
-	a[2] = Lang(a[2] || F.h[m], i); F.pl = a[2] ? '\n\n↯ '+ a[2] + you : ""; //text
+	a[2] = F.pl = Lang(a[2] || F.h[m], i) + you; //menu, hint
 	return [d, max, i, c[m], ...a]; //дни max url name menu tag upd
 },
 BBS = (inf, bg, id) =>{try { //инфа в but
 	var btn = geId(id || F.pb || F.E);
 	if (/toolbarbut/.test(btn.className)) with(btn){
-		if(!inf) { clearTimeout(F.pt || BBSupd);
+		if(inf == null) { clearTimeout(F.pt || BBSupd);
 			removeAttribute("badge");
 			return;}
 		if(bg && bg != F.pc) {
@@ -1353,7 +1356,7 @@ var io = "chrome://devtools/skin/images/", F = {Z: io, id: "ucf_hookExpert",
 }, Last, Mus = {};
 ['titlebar-button.titlebar-close',,'zoompage-we_dw-dev-',,'_531906d3-e22f-4a6c-a102-8057b88a1a63_-',,'_b9db16a4-6edc-47ec-a1f4-b86292ed211d_-'].forEach((c,i)=>{ //addons
 	if(c) F[i] = i == 0 ? c : c +"BAP", F[i+1] = i == 0 ? c.replace("."," ") : c +"browser-action";});
-`Правый клик: правка команд меню "Имя ║ Java-код"\n|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор смещает на пиксель|◧ + Shift, Колёсико: не закрывать|ваши данные…|всего расширений %s^всего паролей хранится: %s^всего закладок браузера %s^%s %d обновлён пароль^%s %d до смены пароля^%s %d назад истёк пароль!^Пароли и даты аккаунтов|✘ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|Ø крутить ±		Яркость страниц |по-умолчанию|browser.display.use_document_fonts|about:config|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tпосл. меню Действия|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|browser.download.improvements_to_download_panel|permissions.default.image|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|chrome://browser/content/|browser.cache.memory.max_entry_size`.split('|').forEach((c,i)=>{k = i == 0 ? 97 : i == 26 ? 39 : k; F[String.fromCharCode(i+k)] = c;}); F.h = F.h.split('^');
+`Правый клик: правка команд меню "Имя ║ Java-код"\n|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор смещает на пиксель|◧ + Shift, Колёсико: не закрывать|ваши данные…|расширений активно %s^всего паролей хранится: %s^всего закладок браузера %s^%s %d обновлён пароль^%s %d до смены пароля^%s %d назад истёк пароль!^Пароли и даты аккаунтов|✘ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|Ø крутить ±		Яркость страниц |по-умолчанию|browser.display.use_document_fonts|about:config|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tпосл. меню Действия|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|browser.download.improvements_to_download_panel|permissions.default.image|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|chrome://browser/content/|browser.cache.memory.max_entry_size`.split('|').forEach((c,i)=>{k = i == 0 ? 97 : i == 26 ? 39 : k; F[String.fromCharCode(i+k)] = c;}); F.h = F.h.split('^');
 F.cs = F.s +"custom_scripts/"; F.as = F.cs + F.R +".js"; F.sb = ucf_custom_script_win.ucf_sidebar_tabs;
 var UcfAPI = Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")], //из ucb_SaveHTML
 {prefs,io} = Services, {Pref,dirGet,Status,FileOk,URL} = UcfAPI, ua = `"/usr/bin/osmo"`; //linux
