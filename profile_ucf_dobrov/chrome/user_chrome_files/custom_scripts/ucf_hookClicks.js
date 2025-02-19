@@ -86,7 +86,7 @@ ${F.l}`, "wheel-stop":
 
 Menu = { //alt правый клик, mid колёсико, upd обновлять строку, имя курсивом: нет tooltip
 	View: {
-		lab: `Мобильный дизайн | для Чтения`, inf: `Автоизменяемые строки выделены\n`+ F.b +`\nСкрытие/Показ кнопки Вид для Чтения`,
+		lab: `Мобильный дизайн | для Чтения`, inf: `Автоизменяемые строки выделены\n`+ F.b +`\n◉ значок в адресе «Вид для Чтения»`,
 		img: F.Z +"aboutdebugging-connect-icon.svg",
 		alt(btn){ //вложенные Sub-меню запрещены
 			doComm("key_toggleReaderMode", btn.ownerDocument)}, //штатный Режим чтения
@@ -184,7 +184,7 @@ Menu = { //alt правый клик, mid колёсико, upd обновлят
 		async upd(){ var e, n = "", i = F.sec; a = await BBSarr();
 			this.image = a[1] > 0 ? i.replace("-in","-") : i;
 			this.tooltipText = "◨ правый клик: изменить вывод\n◉ колёсико: обновить счётчик ↯";
-			this.label = a[6].split('\n')[0] || F.h[6];
+			this.label = a[5].split('\n')[0] || F.h[6];
 		},
 		alt(){ aboutCfg(F.u +"bbs");
 			Status("{Дни[:sec] | Сайт | Имя | Меню %s} обновление ждать 5 мин",15);
@@ -321,7 +321,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		129(){BrowserEx("fullScreen")}, //дС
 		136(){this[129]()}, //С+Alt
 		144(){Mouse[F.Q][136]()}, //C+Shift
-		256(){minimize()},
+		// 256(){minimize()},
 		264(){toTab()}, //R+Alt
 		272(btn){btn.ownerGlobal.PlacesCommandHook.showPlacesOrganizer("History")} //R+Shift
 	},
@@ -1003,12 +1003,11 @@ BBSarr = async(url, you, max = 0, i = {P:1, B:2, S:3}, m = 0) => {
 	var c = "indigo|blue|royalblue|dimgray|green|crimson|1".split('|'), d,n,t,
 		a = Pref([F.u +"bbs","S|https://passport.yandex.ru|"+ F.yd]).split('|').map(s => s.trim());
 	a = [a[1],a[2] || "",a[3],...a.shift().split(':')];
-	if(url) a = [url, you, a[3], max]; //дни[:sec:id]/сайт/юзер/текст %s 0url ​1name ​2lab ​3max ​4upd ​5id
+	if(url) a = [url, you, a[3], max]; //дни[:sec:id]/сайт/юзер/текст %s
 	n = a[3] || max; t = a[1]; //опция | $USER
 	a[1] &&= Lang(t.split(':')[0]); t &&= t.split(':')[1];
 	F.ya = t || F.ya || F.yd; F.pu = a[4]; F.pb = a[5]; //upd-sec id
-	d = await PassDays(...a);	//url, you //pi Text pc Цвет pt TimeID pu Update
-// console.log(d +"\t #"+ Math.random().toString().slice(2,5));
+	d = await PassDays(...a);	//F.pl text F.pc Цвет F.pt TimeID F.pu Update
 	a[1] ||= F.r; you = (d != null) ? "\n"+ URL(a[0],1) +", "+ a[1].replace(/@.*/,'') : "";
 	m = isNaN(n) ? i[n[0].toUpperCase()] : 0; //режим BBS
 	if(d != null) { if(!isNaN(n)) //n=число
@@ -1027,7 +1026,7 @@ BBSarr = async(url, you, max = 0, i = {P:1, B:2, S:3}, m = 0) => {
 		n.executeStep(); i = n.getInt32(0); n.finalize();
 	}
 	a[2] = F.pl = Lang(a[2] || F.h[m], i) + you; //menu, hint
-	return [d, max, i, c[m], ...a]; //дни max url name menu tag upd
+	return [d, i, c[m], ...a]; //дни count bg url you menu max upd id
 },
 BBS = (inf, bg, id) =>{try { //инфа в but
 	var btn = geId(id || F.pb || F.E);
@@ -1046,7 +1045,7 @@ BBS = (inf, bg, id) =>{try { //инфа в but
 },
 BBShow = async n =>{ //показ инфы
 	let a = await BBSarr();
-	n &&= a[2]; BBS(n, a[3]);
+	n &&= a[1]; BBS(n, a[2]);
 },
 BBSupd = async i =>{ //таймер кнопки
 	await BBShow(1);
