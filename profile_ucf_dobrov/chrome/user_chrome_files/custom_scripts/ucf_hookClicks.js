@@ -10,6 +10,7 @@
 
 `◧ лев. Держать  папка [Загрузки]\n
 ◨ правый клик (Alt+S) ➜ Сохранить\n    в единый Html всё / выделенное
+◨ пр. + Shift	сайт в PDF
 ◉ колёсико, ${F.tc("Super","Ctrl+Shift")}+S как Текст\n
 ◧ дважды на Фото: найти Похожие
 ◧ лев. + Shift   Графика вкл/выкл}`,[F.P]: //PanelUI фон кнопки Blue Gray Red зел жёлт
@@ -244,13 +245,26 @@ Keys = { //перехват-клавиш KeyA[_mod][_OS](e,t){код} и KeyB: "
 	KeyS_15_macosx: "KeyS_6", // Super+S или Windows: KeyA_win
 	KeyS_1(e,t){HTML()}, //Alt+S | e: Event, t: gBrowser.selectedTab
 	KeyB_5(e){Menu.Site.alt(e, URL())}, //Ctrl+Alt+B
+	F1(e){Menu.View.alt(e)}, //для чтения
 /*
 	mod = metaKey*8 + ctrlKey*4 + shiftKey*2 + altKey
 	mod + I в конце: лишь в полях ввода, «i» кроме полей ввода
 	1я буква строчная: передать нажатия, запрет preventDefault
 	отделять «_» от кода при модификаторах и/или «iI»-флаг */
 },
-
+ps = Ci.nsIPrintSettings, pdf = { // опции экспорта в PDF
+	paperWidth: 8.5, paperHeight: 11,
+	paperSizeUnit: ps.kPaperSizeInches, //kPaperSizeMillimeters
+	marginLeft: .2, marginRight: .2, marginTop: .2, marginBottom: .2,
+	edgeLeft: .1, edgeRight: .1, edgeTop: 0, edgeBottom: 0,
+	headerStrLeft: "&T", headerStrCenter: "", headerStrRight: "&U",
+	footerStrLeft: "", footerStrCenter: "", footerStrRight: "",
+	printerName: "", printSilent: true, printBGColors: true, printBGImages: false,
+	// orientation: ps.kPortraitOrientation, // kLandscapeOrientation
+	// scaling: 1, shrinkToFit: true, // overrides scaling
+	// isInitializedFromPrefs: false, isInitializedFromPrinter: false,
+	printToFile: true, outputDestination: ps.kOutputDestinationFile, //outputFormat: ps.kOutputFormatPDF, 
+},
 Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 	"urlbar-input": {
 		2(trg, forward){trg.value = ""} //очистить колёсиком
@@ -285,14 +299,14 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		256(){BrowserEx("reloadSkipCache")}, //R
 		257(){switchProxy()} //дR
 	},
+	"appMenu-print-button2": { //меню Печать…
+		1(){Help()}, 128(){Expert()},
+		256(){doComm()}
+	},
 	[F.L]: { //print
 		1(){Help()}, //д
 		128(){Expert()},
 		256(){doComm()} //R print
-	},
-	"appMenu-print-button2": { //меню Печать…
-		1(){Help()}, 128(){Expert()},
-		256(){Mouse[F.L][256]()}
 	},
 	[F.T]: { //★
 		1(){Translate()}, //держать
@@ -310,7 +324,8 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 		128(){Exp()
 			? saveSelToTxt() : //сохранить|выделен. как .txt
 			Downloads.getSystemDownloadsDirectory().then(path => FileUtils.File(path).launch(),Cu.reportError)},
-		256(){HTML()} //R web
+		256(){HTML()}, //R web
+		272(){PDF()} //R+Shift
 	},
 	[F.P]: {mousedownTarget: true, //PanelUI
 		2(trg,forward){zoom(forward)}, //wheel
@@ -622,9 +637,7 @@ get [F[2]](){ //zoompage
 BrExp(t = F.l.slice(12) + br_val()){
 	return t +` ${Exp() ? "Экспертный" : "Простой"} режим кнопок`},
 get clipboard(){
-	return (UcfAPI.readFromClip() || "/не текст/").replace(/[\r?\n?]|\s+/g,' ').trim();},
-get title(){
-	return document.title || gBrowser.contentTitle || gBrowser.selectedTab.label;}
+	return (UcfAPI.readFromClip() || "/не текст/").replace(/[\r?\n?]|\s+/g,' ').trim();}
 };
 
 ((obj,del,re) => { //парсинг блока клавиш ускоряет обработку нажатий
@@ -814,7 +827,7 @@ toTab = (url = 'about:support', go) =>{ //открыть вкладку | зак
 		gBrowser.selectedTab = gBrowser.visibleTabs[gBrowser.selectedTab._tPos +1];
 },
 Title = n => {try{return UcfAPI.TitlePath(n)[3];}
-	catch {return document.title || gBrowser.selectedTab.label}
+	catch {return document.title || gBrowser.contentTitle || gBrowser.selectedTab.label}
 },
 aboutCfg = (filter, win = window) => { //на опцию
 	var setFilter = (e, wnd, input = (e?.target || wnd.content.document).getElementById("about-config-search")) => {try{
@@ -856,6 +869,16 @@ saveSelToTxt = async () => { //в .txt Всё или Выбранное
 HTML = (ext = false, sfile = geId(F[4])) => { //addon SingleFile
 	try{if(!ext) {UcfAPI.SingleHTML(true,window); return};} catch{}
 	if(!sfile) throw "нет расширения SingleFile"; sfile.click();
+},
+PDF =()=> { //сохранить страницу как PDF
+	var ps = Cc["@mozilla.org/gfx/printsettings-service;1"].getService(Ci.nsIPrintSettingsService).createNewPrintSettings();
+	for(var key in pdf) if (key in ps) ps[key] = pdf[key];
+	(PDF = async() => {
+		lab = Title(), path = UcfAPI.dirGet(0,lab,1) +".pdf";
+		ps.toFileName = path;
+		await gBrowser.selectedBrowser.browsingContext.print(ps); //сразу печать
+		UcfAPI.Succes(path, 1, '√ PDF записан: '+ lab);
+	})()
 },
 tooltip = (id = geId(F.T), s = "\n◨ правый клик: Без запроса") => {
 	if(s && id && id.tooltipText.indexOf(s) == -1)

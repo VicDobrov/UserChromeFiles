@@ -155,7 +155,7 @@ UcfAPI: {
 		return url;
 	},
 	DateHour(u,m,t = 1){let d = u ? new Date(u) : new Date();
-		return d.getDate() + (m ? m[d.getMonth()] : '.'+ (d.getMonth()+1) +'.') + d.getFullYear().toString().slice(-2) + (t ? '-'+ d.toLocaleTimeString().replace(/:/g,'։') : '');
+		return d.getDate() + (m ? m[d.getMonth()] : '.'+ (d.getMonth()+1) +'.') + d.getFullYear().toString().slice(-2) + (t ? '-'+ d.toLocaleTimeString().replace(/:/g,'꞉') : '');
 	},
 	TitlePath(to, d, h, win = self.win, n = 0, u = 99){ //0 web|2 pic|-№ cut, name, url
 		if(parseInt(to) > 0) [n,to] = [to,n];
@@ -164,14 +164,14 @@ UcfAPI: {
 			to = prefs.getStringPref("extensions.user_chrome_files.savedirs","|||0");
 		to = to.split('|').slice(0 + n, 2 + n); //Dir/Sub|[empty|0 title|1 url]
 		d = /^blank/.test(d || "blank") ? win.gBrowser.selectedTab.label : d;
-		d = d.replace(/\s+/g,' ').replace(/:/g,'։').replace(/[|<>]+/g,'_').replace(/([\\\/?*\"'`]+| ։։ .*)/g,'').slice(0,u).trim();
+		d = d.replace(/\s+/g," ").replace(/:/g,"꞉").replace(/[|<>]+/g,"_").slice(0,u).trim(); //.replace(/([\\\/?*\"'`]+| ꞉꞉ .*)/g,"")
 		n = this.URL(); u = h || n; h = this.URL(0, 1); n = d;
 		to[1] = (to[1] == "0") ? d : (to[1] == "1") ? h : "";
 		d += "_"+ this.DateHour(); //дата
 		let dir = this.dirGet(0,2);
 		let map = s => win.DownloadPaths.sanitize(s); //FIX имён
 		to.map(map).forEach(dir.append);
-		to = dir.clone(); to.append(d +'.html');
+		to = dir.clone(); to.append(d +".html");
 		return [dir,to.path,n,d,u,h]; //… имя, +дата, url, домен
 	},
 	FileOk(path = "", read, win = self.win){ //файл|папка есть?
