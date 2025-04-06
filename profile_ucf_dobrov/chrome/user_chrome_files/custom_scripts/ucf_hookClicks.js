@@ -68,12 +68,12 @@ ${F.l}`, "ReaderView": //disable tooltip: [F.C]: ``
 `клик мыши	Сведения о защите сайта\n
 ◨ правый клик	Куки и данные сайта{
 ◉ колёсико		открыть/закрыть в Sidebar︰
-◉ колёсико		ServiceWorkers
-◧ лев. + Shift	Медиа на странице\n
+◉ колёсико		Удалить личные данные
+◧ лев. + Alt		Медиа на странице\n
 ◧ лев. держать	⇆ Web-шрифты}
 ${F.l}`, "wheel-stop":
 `\n
-◉ Колёсико	Прервать обновления {︰
+◉ колёсико	Прервать обновления {︰
 ◨ п.держать	Антизапрет ⇆ Без прокси}`, [F[0]]: //☒ кроме Windows
 
 `Закрыть Firefox ${F.ver}\n
@@ -81,9 +81,14 @@ ${F.l}`, "wheel-stop":
 ◧ держать	краткая Справка\n◨ пр. клик	⇲ Свернуть`, [F.R]:
 
 `	Атрибут-Инспектор
-◉ колёсико	Инструменты браузера\n\n◨ пр. клик`, [F.E]: //extensions
+◉ колёсико	Инструменты браузера\n
+◨ пр. клик`, [F.E]: //extensions
 
-`Расширения ${F.vu}hMK ${F.hv}\n\n◨ прав. клик	меню «Действия»\n◧ лев. держать	Счётчик в кнопке\n\n◉ колёсико`}, //опции UCF
+`Расширения ${F.vu}hMK ${F.hv}\n
+◨ прав. клик	меню «Действия»
+◧ лев. + Alt	ServiceWorkers
+◧ лев. держать	Счётчик в кнопке
+\n◉ колёсико`}, //опции UCF
 
 Menu = { //alt правый клик, mid колёсико, upd обновлять строку, имя курсивом: нет tooltip
 	View: {
@@ -97,7 +102,7 @@ Menu = { //alt правый клик, mid колёсико, upd обновлят
 		mid(){let p = "reader.parse-on-load.enabled"; Pref(p, !Pref(p)); BrowserEx("reload");}
 	},
 	Site: {lab: `сайт в единый HTML ${F.sb ? "| в SideBar" : ""}`, img: F.Z +"globe.svg",
-			inf: `Колёсико: сохранить через SingleFile\nПравый клик: Сайт в боковую панель`,
+			inf: `колёсико: сохранить через SingleFile\nправый клик: Сайт в боковую панель`,
 		alt(trg, url){
 			if(!F.sb) throw F.q +"ucf_SidebarTabs.js";
 			if(F.sb._open) F.sb.toggle() //запомнить сайт
@@ -111,7 +116,7 @@ Menu = { //alt правый клик, mid колёсико, upd обновлят
 			with (gBrowser) selectAllTabs(),reloadMultiSelectedTabs(),clearMultiSelectedTabs()}
 	},
 	Fav: {lab: `Закладки 1-я строка ⇅ Последняя`,
-		inf: `на Яндекс, если меню «Закладки» пустое\nправ. клик + Alt на кнопке Быстрых опций\nКолёсико: переключить авто-прокрутку страниц`,
+		inf: `на Яндекс, если меню «Закладки» пустое\nправ. клик + Alt на кнопке Быстрых опций\nколёсико: переключить авто-прокрутку страниц`,
 		cmd(){
 			toTab(FavItem())},
 		alt(){toTab(FavItem(true))},
@@ -205,7 +210,7 @@ Menu = { //alt правый клик, mid колёсико, upd обновлят
 			UcfAPI.Flash(0,'rgba(100,0,225,0.1)',0, F.e);},
 		alt(){toTab()}
 	},
-	"Краткая справка | Жесты, Кнопки": { inf: F.b, img: F.Z +"help.svg",
+	"Краткая справка | Жесты, Кнопки": { inf: F.b, img: F.Z +"help.svg", //справку кликов доработать
 		alt(s = "ucf_mousedrag.js"){
 			h = geId("nav-bar").ucf_mousedrag || F.q + s;
 			h = `Перетащите фото вправо, чтобы сохранить\n\n`+ h +'\n\n'+ GetHelp();
@@ -354,11 +359,11 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 	[F.O]: { //щит
 		2(trg,forward){bright(trg,forward)},
 		1(){Mouse[F.Q][136]()}, //д Шрифты
-		16(btn){ //Shift
+		8(btn){ //Alt
 			BrowserEx("pageInfo", btn,"mediaTab") //securityTab feed… perm…
 		},
 		256(btn){Cookies()}, //R куки
-		128(btn){Exp() ? toTab("about:serviceworkers") : Menu.Site.alt(btn, URL())} //С
+		128(btn){Exp() ? window.Sanitizer.showUI(window) : Menu.Site.alt(btn, URL())} //С
 	},
 	[F.F]: { //favdirs кнопка
 		0(btn){
@@ -380,6 +385,7 @@ Mouse = { // Meta*64 Ctrl*32 Шифт*16 Alt*8 (Wh ? 2 : But*128) long*1
 	},
 	[F.E]: {mousedownTarget: true,
 		1(){Menu.Info.alt()}, //д
+		8(){toTab("about:serviceworkers")}, //Alt
 		129(){Menu.O.DelCache.cmd()}, //дС
 		128(btn){btn.id && UCF()}, //UCFprefs
 		256(btn, n){
@@ -1378,7 +1384,7 @@ var io = "chrome://devtools/skin/images/", F = {Z: io, id: "ucf_hookExpert",
 }, Last, Mus = {};
 ['titlebar-button.titlebar-close',,'zoompage-we_dw-dev-',,'_531906d3-e22f-4a6c-a102-8057b88a1a63_-',,'_b9db16a4-6edc-47ec-a1f4-b86292ed211d_-'].forEach((c,i)=>{ //addons
 	if(c) F[i] = i == 0 ? c : c +"BAP", F[i+1] = i == 0 ? c.replace("."," ") : c +"browser-action";});
-`Правый клик: правка команд меню "Имя ║ Java-код"\n|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор смещает на пиксель|◧ + Shift, Колёсико: не закрывать|ваши данные…|расширений активно %s^всего паролей хранится: %s^всего закладок браузера %s^%s %d обновлён пароль^%s %d до смены пароля^%s %d назад истёк пароль!^Пароли и даты аккаунтов|✘ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|Ø крутить ±		Яркость страниц |по-умолчанию|browser.display.use_document_fonts|about:config|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tпосл. меню Действия|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|browser.download.improvements_to_download_panel|permissions.default.image|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|chrome://browser/content/|browser.cache.memory.max_entry_size`.split('|').forEach((c,i)=>{k = i == 0 ? 97 : i == 26 ? 39 : k; F[String.fromCharCode(i+k)] = c;}); F.h = F.h.split('^');
+`правый клик: правка команд меню "Имя ║ Java-код"\n|◨ правый клик мыши: вторая команда|◨ правый клик: Сброс ◧ Открыть опцию ⟳ Обновить ↯ Перезапуск|Запрещённые сайты через VPN|Захват цвета в Буфер обмена. Курсор смещает на пиксель|◧ + Shift, Колёсико: не закрывать|ваши данные…|расширений активно %s^всего паролей хранится: %s^всего закладок браузера %s^%s %d обновлён пароль^%s %d до смены пароля^%s %d назад истёк пароль!^Пароли и даты аккаунтов|✘ Запрещено сохранять логины и пароли|↯ Не запоминать историю посещений|↯ Удалять историю посещений, закрывая браузер|Ø крутить ±		Яркость страниц |по-умолчанию|browser.display.use_document_fonts|about:config|\tопции UserChromeFiles\n◨ держать\tОтладка дополнений\nAlt + x\t\tпосл. меню Действия|Ошибка файла — |[ пустая строка ]|chrome://user_chrome_files/content/|browser.safebrowsing.downloads.remote.block_dangerous|extensions.user_chrome_files.|browser.download.improvements_to_download_panel|permissions.default.image|network.proxy.type|network.proxy.autoconfig_url|general.useragent.override|pageAction-urlbar-|tabbrowser-tab|tabs-newtab-button|downloads-button|unified-extensions-button|favdirs-button|Mozilla/5.0 (|Macintosh; Intel Mac OS X 10.15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0 YaBrowser/22.5.0.1916 Yowser/2.5 Safari/537.36|identity-box|victor-dobrov.narod.ru/help-FF.html|_2495d258-41e7-4cd5-bc7d-ac15981f064e_|print-button|reader-mode-button|reload-button|tracking-protection-icon-container|PanelUI-menu-button|QuickToggle|Attributes-Inspector|dom.event.clipboardevents.enabled|star-button-box|browser.cache.memory.enable|browser.cache.disk.enable|browser.cache.disk.smart_size.enabled|chrome://browser/content/|browser.cache.memory.max_entry_size`.split('|').forEach((c,i)=>{k = i == 0 ? 97 : i == 26 ? 39 : k; F[String.fromCharCode(i+k)] = c;}); F.h = F.h.split('^');
 F.cs = F.s +"custom_scripts/"; F.as = F.cs + F.R +".js"; F.sb = ucf_custom_script_win.ucf_sidebar_tabs;
 var UcfAPI = Cu.getGlobalForObject(Cu)[Symbol.for("UcfAPI")], //из ucb_SaveHTML
 {prefs,io} = Services, {Pref,dirGet,Status,FileOk,URL} = UcfAPI, ua = `"/usr/bin/osmo"`; //linux
